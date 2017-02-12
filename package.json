@@ -1,0 +1,39 @@
+{
+  "name": "impsys",
+  "version": "1.0.0",
+  "description": "Sistema para cálculo de importações.",
+  "main": "server.js",
+  "dependencies": {
+    "async": "^2.0.1",
+    "body-parser": "^1.15.0",
+    "compression": "^1.6.1",
+    "connect": "^3.4.1",
+    "connect-flash": "^0.1.1",
+    "cors": "^2.7.1",
+    "crypto": "0.0.3",
+    "express": "^4.13.4",
+    "express-handlebars": "^3.0.0",
+    "express-session": "^1.13.0",
+    "gulp-util": "^3.0.7",
+    "handlebars": "^4.0.5",
+    "htmlparser2": "^3.9.0",
+    "http": "0.0.0",
+    "https": "^1.0.0",
+    "jquery": "^2.2.3",
+    "method-override": "^2.3.5",
+    "mongoose": "^4.4.9",
+    "mongoose-currency": "^0.2.0",
+    "mongoose-deep-populate": "^3.0.0",
+    "morgan": "^1.7.0",
+    "multer": "^1.1.0",
+    "passport": "^0.3.2",
+    "passport-local": "^1.0.0",
+    "path": "^0.12.7",
+    "request": "^2.72.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Vittorio",
+  "license": "ISC"
+}

@@ -1,0 +1,26 @@
+<section data-ng-controller="DespesasController" data-ng-init="find()">
+    <div class="container">
+        <h2>Despesas</h2>
+        <hr>
+        <ul class="list-group">
+            <li class="list-group-item" data-ng-repeat="item in despesas">
+                    <a href="#!/despesas/{{item._id}}">
+                        <div>
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <h4 data-ng-bind="item.nome"></h4>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-6">
+                                    <span class="text-primary" data-ng-bind="item.tipo"></span>
+                                    <p class="text-primary" data-ng-bind="item.valor | currency: item.moeda" ng-show="item.valor"></p>
+                                    <p class="text-primary" data-ng-bind="item.aliquota"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+            </li>
+        </ul>
+    </div>
+</section>

@@ -1,0 +1,158 @@
+<section data-ng-controller="ProdutosController" data-ng-init="findOne()">
+    <div class="container">
+        <h2>Editar Produto</h2>
+        <hr>
+        <form data-ng-submit="update()" novalidate name="form">
+            <div class="container">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a data-toggle="tab" href="#principal">Principal</a></li>
+                    <li><a data-toggle="tab" href="#impostos">Impostos</a></li>
+                    <li><a data-toggle="tab" href="#medidas">Medidas</a></li>
+                    <li><a data-toggle="tab" href="#notas">Notas</a></li>
+                </ul>
+
+                <div class="tab-content">
+                    <div id="principal" class="tab-pane fade in active">
+                        <h3>Dados Básicos</h3><br/>
+                        <div class="">
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <img ngf-drop ng-model="file" style="width: 150px; margin: 5px 0 25px 0; border: 1px solid lightgray;" ng-show="!!file" ngf-thumbnail="file || produto.img_url">
+                                    <!--<img style="width: 150px; margin: 5px 0 25px 0; border: 1px solid lightgray;" ng-show="!!file" ngf-thumbnail="produto.img_url || 'uploads/images/no-thumb.png'">-->
+                                    <div class="form-group">
+                                        <input
+                                                type="image"
+                                                ngf-select
+                                                ng-model="file"
+                                                name="file"
+                                                ngf-pattern="'image/*'"
+                                                accept="image/*"
+                                                ngf-max-size="20MB"
+                                        />
+                                        <i ng-show="form.file.$error.required">*required</i><br>
+                                        <i ng-show="form.file.$error.maxSize">File too large
+                                            {{file.size / 1000000|number:1}}MB: max 20M</i>
+                                        <!--  Multiple files
+                                         <div class="button" ngf-select ng-model="up.files" ngf-multiple="true">Select</div>
+                                         Drop files: <div ngf-drop ng-model="up.files" class="drop-box">Drop</div> -->
+                                        <!--<p>{{up.progress}}</p>-->
+                                    </div>
+                                </div>
+                                <div class="col-sm-10">
+                                    <div class="row">
+                                        <div class="col-xs-6">
+                                            <div class="form-group">
+                                                <label for="inputNome">Nome:</label>
+                                                <input type="text" class="form-control" id="inputNome" data-ng-model="produto.nome">
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-6">
+                                            <div class="form-group">
+                                                <label for="inputFornecedor">Fornecedor</label>
+                                                <select name="produto.fornecedor" id="inputFornecedor"
+                                                        class="form-control"
+                                                        data-ng-model="produto.fornecedor"
+                                                        data-ng-options="item as item.nome_fornecedor for item in ListaFornecedores track by item._id"
+                                                ></select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-xs-2">
+                                            <div class="form-group">
+                                                <label for="inputModelo">Modelo:</label>
+                                                <input type="text" class="form-control" id="inputModelo" data-ng-model="produto.modelo">
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-2">
+                                            <div class="form-group">
+                                                <label for="inputMoq">MOQ:</label>
+                                                <input type="text" class="form-control" id="inputMoq" data-ng-model="produto.moq">
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-8">
+                                            <div class="form-group">
+                                                <label for="inputWebsite">Website:</label>
+                                                <input type="text" class="form-control" id="inputWebsite" data-ng-model="produto.website">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <label for="inputDescricao">Descrição:</label>
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="inputDescricao" data-ng-model="produto.descricao">
+                            </div>
+                            <label for="inputCusto_usd">Custo Usd:</label>
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="inputCusto_usd" data-ng-model="produto.custo_usd">
+                            </div>
+                        </div>
+                    </div>
+                    <div id="impostos" class="tab-pane fade">
+                        <h3>Dados sobre Impostos</h3>
+                        <div class="">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label for="selectNcm">NCM: </label>
+                                        <select class="form-control" name="produto.ncm" id="selectNcm"
+                                                data-ng-model="produto.ncm"
+                                                ng-change="atualizaImpostosEdit()"
+                                                data-ng-options="item as item.cod_com_descricao for item in ListaNcms track by item._id"></select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group form-group-sm">
+                                        <label style="margin-top: 30px;"> <input icheck type="checkbox" ng-model="produto.usa_impostos_ncm"> Impostos NCM </label>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <label for="inputIi">Imposto de Importação:</label>
+                            <div class="form-group">
+                                <input type="number" class="form-control" id="inputIi" data-ng-model="produto.impostos.ii">
+                            </div>
+                            <label for="inputImpostoIpi">IPI:</label>
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="inputImpostoIpi" data-ng-model="produto.impostos.ipi">
+                            </div>
+                            <label for="inputImpostoPis">Pis:</label>
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="inputImpostoPis" data-ng-model="produto.impostos.pis">
+                            </div>
+                            <label for="inputImpostoCofins">Cofins:</label>
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="inputImpostoCofins" data-ng-model="produto.impostos.cofins">
+                            </div>
+                        </div>
+                    </div>
+                    <div id="medidas" class="tab-pane fade">
+                        <h3>Medidas</h3>
+                        <label for="inputCbm">CBM</label>
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="inputCbm" data-ng-model="produto.medidas.cbm">
+                        </div>
+                        <label for="inputPeso">Peso</label>
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="inputPeso" data-ng-model="produto.medidas.peso">
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="notas">
+                        <h3>Notas</h3><br>
+                        <div class="form-group">
+                            <div class="form-group">
+                                <textarea name="inputNotas" id="inputNotas" cols="30" rows="10" class="form-control"
+                                          placeholder="Dados e observações sobre o produto" data-ng-model="produto.notas"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <br>
+                <input type="submit" class="btn btn-info" value="Update">
+            </div>
+        </form>
+    </div>
+</section>

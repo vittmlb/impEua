@@ -1,0 +1,164 @@
+<section ng-controller="ProdutosController" data-ng-init="findOne()">
+    <div class="row wrapper border-bottom white-bg page-heading">
+        <div class="col-lg-10">
+            <h2>Produto</h2>
+            <ol class="breadcrumb">
+                <li>
+                    <a href="index.html">Home</a>
+                </li>
+                <li class="active">
+                    <a>Página Produto</a>
+                </li>
+            </ol>
+        </div>
+
+    </div>
+    <div class="wrapper wrapper-content animated fadeInRight">
+
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="ibox">
+                    <div class="ibox-content">
+                        <div class="row">
+                            <div class="col-xs-2">
+                                <figure >
+                                    <img ng-src="{{produto.img_url}}" alt="image of {{produto.nome}}" style="width: 120px; height: 120px; border: 1px solid lightgray">
+                                </figure>
+                            </div>
+                            <div class="col-xs-8">
+                                <h2 style="display: inline;" ></h2>
+                                <h2 class="font-bold m-b-xs">
+                                    {{ produto.nome }}
+                                </h2>
+                                <small>{{ produto.descricao }}</small>
+                                <div class="m-t-md">
+                                    <h2 class="product-main-price">{{ produto.custo_usd | currency: 'U$ ' }} <small class="text-muted">Exclude Tax</small> </h2>
+                                </div>
+                                <hr>
+                            </div>
+                            <div class="col-xs-2">
+                                <button ng-click="delete()" style="top: 5px; margin-left: 10px; position: relative;" class="btn btn-sm btn-white pull-right"><i class="fa fa-times"></i></button>
+                                <a href="#!/produtos/{{ produto._id }}/edit" style="top: 5px; margin-left: 10px; position: relative;" class="btn btn-sm btn-white pull-right"><i class="fa fa-pencil"></i></a>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <h2 style="margin-bottom: 20px;">Dados do Produto</h2>
+                                <span class="label label-primary" ng-show="!produto.ncm.li">Sem LI</span>
+                                <span class="label label-danger" ng-show="produto.ncm.li">Licença</span>
+                                <span>{{ produto.ncm.descricao }}</span>
+                                <br/><br/>
+                            </div>
+                            <div class="col-xs-12">
+                                <h5>II: {{ produto.ncm.impostos.ii | percentage: 2}}</h5>
+                                <h5>IPI: {{ produto.ncm.impostos.ipi | percentage: 2}}</h5>
+                                <h5>PIS: {{ produto.ncm.impostos.pis | percentage: 2}}</h5>
+                                <h5>Cofins: {{ produto.ncm.impostos.cofins | percentage: 2}}</h5>
+                                <br>
+                                <a href="{{ produto.website }}" class="text-info">
+                                    <i class="fa fa-link text-muted"></i> Link para o produto
+                                </a>
+                                <br/><br/>
+
+                                <div class="text-muted">
+                                    {{ produto.notas }}
+                                </div>
+                                Estudo
+                                <div data-ng-repeat="estudo in produto._estudoId">
+                                    Estudo: {{ estudo }}
+                                </div>
+                                <dl class="small m-t-md">
+                                    <dt>Fornecedor</dt>
+                                    <dd>{{ produto.fornecedor.nome_fornecedor }}</dd>
+                                    <dt>Euismod</dt>
+                                    <dd>Vestibulum id ligula porta felis euismod semper eget lacinia odio sem nec elit.</dd>
+                                    <dd>Donec id elit non mi porta gravida at eget metus.</dd>
+                                    <dt>Malesuada porta</dt>
+                                    <dd>Etiam porta sem malesuada magna mollis euismod.</dd>
+                                </dl>
+                                <hr>
+
+                                <div>
+                                    <div class="btn-group">
+                                        <button class="btn btn-primary btn-sm"><i class="fa fa-cart-plus"></i> Add to cart</button>
+                                        <button class="btn btn-white btn-sm"><i class="fa fa-star"></i> Add to wishlist </button>
+                                        <button class="btn btn-white btn-sm"><i class="fa fa-envelope"></i> Contact with author </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <h3>{{ ncm.descricao }}</h3>
+                        <br/>
+                        <h4>II: {{ ncm.impostos.ii | percentage: 2}}</h4>
+                        <h4>IPI: {{ ncm.impostos.ipi | percentage: 2}}</h4>
+                        <h4>PIS: {{ ncm.impostos.pis | percentage: 2}}</h4>
+                        <h4>Cofins: {{ ncm.impostos.cofins | percentage: 2}}</h4>
+                        <br/>
+                        <h4>Observações: </h4>
+                        <p>
+                            {{ ncm.obs }}
+                        </p>
+
+                    </div>
+                </div>
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>Produtos relacionados a este NCM</h5>
+
+                        <div ibox-tools></div>
+                    </div>
+                    <div class="ibox-content">
+
+                        <table class="table table-hover">
+                            <thead>
+                            <tr>
+                                <th>Produto</th>
+                                <th>Modelo</th>
+                                <th>Custo</th>
+                                <th>Opções</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr data-ng-repeat="prod in ncm._produtoId">
+                                <td>{{ prod.nome }}</td>
+                                <td>{{ prod.modelo }}</td>
+                                <td>{{ prod.custo_usd | currency: 'U$ ' }}</td>
+                                <td>
+                                    <a href="#!/produtos/{{ prod._id }}"><i style="color: dimgray; font-size: 1.1em; margin-left: 10px;" class="fa fa-pencil pull-left"></i></a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 m-b-lg">
+                <div id="vertical-timeline" class="vertical-container light-timeline no-margins">
+                    <div class="vertical-timeline-block">
+                        <div data-ng-repeat="estudo in produto._estudoId | limitTo: 2" class="vertical-timeline-block">
+                            <div class="vertical-timeline-icon navy-bg">
+                                <i class="fa fa-briefcase"></i>
+                            </div>
+
+                            <div class="vertical-timeline-content">
+                                <h2 style="margin-bottom: 0">{{ estudo.nome_estudo }}</h2>
+                                <span class="small">Criado em: {{ estudo.criadoEm | date: 'dd/MM/yyyy' }}</span>
+                                <div ng-repeat="prd in estudo.produtosDoEstudo">
+                                    <h3>{{ prd.produto_ref }}</h3>
+                                </div>
+                                <p>{{ estudo.criadoEm | date: 'dd/MM/yyyy' }}</p>
+                                <a href="#!/produtos/{{ prod._id }}" class="btn btn-sm btn-primary">Detalhes</a>
+                                <span class="vertical-date">
+                                        Preço<br>
+                                        <small>{{ prod.custo_usd | currency: 'U$ ' }}</small>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

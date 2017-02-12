@@ -1,0 +1,50 @@
+<section data-ng-controller="DespesasController" data-ng-init="findOne()">
+    <div class="container">
+        <form data-ng-submit="update()">
+            <div class="col-xs-8">
+                <h2>Editar Despesa</h2>
+                <hr>
+                <label for="inputNomeDespesa">Nome da Despesa:</label>
+                <div class="form-group">
+                    <input type="text" class="form-control" id="inputNomeDespesa" data-ng-model="despesa.nome">
+                </div>
+                <div class="row">
+                    <div class="col-xs-6">
+                        <label for="inputTipoDespesa">Tipo da Despesa:</label>
+                        <div class="form-group">
+                            <select class="form-control" name="inputTipoDespesa" id="inputTipoDespesa" data-ng-model="despesa.tipo">
+                                <option class="form-control" ng-repeat="tipoDespesa in enumTiposDespesas" value="{{tipoDespesa}}">{{tipoDespesa}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-xs-6">
+                        <label for="inputAtiva" class="checkbox  checkbox-inline">
+                            <input type="checkbox" id="inputAtiva" class="checkbox" data-ng-model="despesa.ativa">Despesa Ativa?
+                        </label>
+                    </div>
+                </div>
+                <!--<label for="inputTipoDespesa">Tipo da Despesa:</label>-->
+                <!--<div class="form-group">-->
+                    <!--<select class="form-control" name="inputTipoDespesa" id="inputTipoDespesa" data-ng-model="despesa.tipo">-->
+                        <!--<option class="form-control" ng-repeat="tipoDespesa in enumTiposDespesas" value="{{tipoDespesa}}">{{tipoDespesa}}</option>-->
+                    <!--</select>-->
+                <!--</div>-->
+                <label for="inputTipoMoeda">Moeda: </label>
+                <div class="form-group">
+                    <select name="inputTipoMoeda" id="inputTipoMoeda" class="form-control" data-ng-model="despesa.moeda">
+                        <option ng-repeat="tipoMoeda in enumTiposMoedas" value="{{tipoMoeda}}" class="form-control">{{tipoMoeda}}</option>
+                    </select>
+                </div>
+                <label for="inputValorDespesa">Valor:</label>
+                <div class="form-group">
+                    <input type="text" class="form-control" id="inputValorDespesa" data-ng-model="despesa.valor">
+                </div>
+                <label for="inputAliquota">Alíquota:</label>
+                <div class="form-group">
+                    <input type="text" class="form-control" id="inputAliquota" data-ng-model="despesa.aliquota">
+                </div>
+                <input type="submit" class="btn btn-info" value="Update">
+            </div>
+        </form>
+    </div>
+</section>

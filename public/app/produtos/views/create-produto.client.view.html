@@ -1,0 +1,220 @@
+<section ng-controller="ProdutosController">
+    <div class="tabs-container">
+
+    </div>
+    <div class="">
+        <h2>Cadastro de Produto</h2>
+        <hr>
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>Cadastrar Produtos</h5>
+                <div ibox-tools=""></div>
+            </div>
+            <div class="ibox-content">
+                <form data-ng-submit="create()" novalidate name="form">
+                    <div class="container">
+                        <ul class="nav nav-tabs">
+                            <li class="active"><a data-toggle="tab" href="#principal">Principal</a></li>
+                            <li><a data-toggle="tab" href="#impostos">Impostos</a></li>
+                            <li><a data-toggle="tab" href="#medidas">Medidas</a></li>
+                            <li><a data-toggle="tab" href="#notas">Notas</a></li>
+                        </ul>
+
+                        <div class="tab-content">
+                            <div id="principal" class="tab-pane fade in active">
+                                <h3>Dados Básicos</h3><br/>
+                                <div class="row">
+                                    <div class="col-sm-2">
+                                        <img ngf-drop ng-model="file" style="width: 150px; margin: 5px 0 25px 0; border: 1px solid lightgray;" ng-show="!!file" ngf-thumbnail="file || 'uploads/images/no-thumb.png'">
+                                        <div class="form-group">
+                                            <input
+                                                    type="image"
+                                                    ngf-select
+                                                    ng-model="file"
+                                                    name="file"
+                                                    ngf-pattern="'image/*'"
+                                                    accept="image/*"
+                                                    ngf-max-size="20MB"
+                                            />
+                                            <i ng-show="form.file.$error.required">*required</i><br>
+                                            <i ng-show="form.file.$error.maxSize">File too large
+                                                {{file.size / 1000000|number:1}}MB: max 20M</i>
+                                            <!--  Multiple files
+                                             <div class="button" ngf-select ng-model="up.files" ngf-multiple="true">Select</div>
+                                             Drop files: <div ngf-drop ng-model="up.files" class="drop-box">Drop</div> -->
+                                            <!--<p>{{up.progress}}</p>-->
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-10">
+                                        <div class="row">
+                                            <div class="col-xs-6">
+                                                <div class="form-group">
+                                                    <label for="inputNome">Nome:</label>
+                                                    <input type="text" class="form-control" id="inputNome" data-ng-model="nome">
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-6">
+                                                <div class="form-group">
+                                                    <label for="inputFornecedor">Fornecedor</label>
+                                                    <select name="fornecedor" id="inputFornecedor"
+                                                            class="form-control"
+                                                            data-ng-model="fornecedor"
+                                                            data-ng-options="item as item.nome_fornecedor for item in ListaFornecedores track by item._id"
+                                                    ></select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-xs-2">
+                                                <div class="form-group">
+                                                    <label for="inputModelo">Modelo:</label>
+                                                    <input type="text" class="form-control" id="inputModelo" data-ng-model="modelo">
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-2">
+                                                <div class="form-group">
+                                                    <label for="inputMoq">MOQ:</label>
+                                                    <input type="text" class="form-control" id="inputMoq" data-ng-model="moq">
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-8">
+                                                <div class="form-group">
+                                                    <label for="inputWebsite">Website:</label>
+                                                    <input type="text" class="form-control" id="inputWebsite" data-ng-model="website">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="">
+                                    <div class="form-group">
+                                        <label for="inputDescricao">Descrição:</label>
+                                        <input type="text" class="form-control" id="inputDescricao" data-ng-model="descricao">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="inputCusto_usd">Custo Usd:</label>
+                                        <input type="text" class="form-control" id="inputCusto_usd" data-ng-model="custo_usd">
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="impostos" class="tab-pane fade">
+                                <h3>Dados sobre Impostos</h3><br/>
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="form-group">
+                                                <label for="selectHs">NCM</label>
+                                                <select name="hs" id="selectHs" class="form-control" data-ng-model="hs" ng-change="atualizaImpostos()">
+                                                    <option data-ng-repeat="hs in ListaHsCodes" value="{{ hs }}">{{ hs.cod_com_descricao }}</option>
+                                                </select>
+                                                <!--<select name="ncm"-->
+                                                <!--id="selectNcm"-->
+                                                <!--class="form-control"-->
+                                                <!--ng-model="ncm"-->
+                                                <!--ng-options="item.cod_com_descricao for item in ListaNcms"-->
+                                                <!--ng-init="ncm.cod_com_descricao"-->
+                                                <!--&gt;-->
+                                                <!--</select>-->
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div class="form-group form-group-sm">
+                                                <label style="margin-top: 30px;"> <input icheck type="checkbox" ng-model="usa_impostos_ncm"> Impostos NCM </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="inputDuty">Duty Tax: </label>
+                                        <input type="text" class="form-control" id="inputDuty" data-ng-model="duty">
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div id="medidas" class="tab-pane fade">
+                                <h3>Medidas</h3><br/>
+                                <div class="row">
+                                    <div class="col-xs-3">
+                                        <div class="form-group">
+                                            <label for="inputCbm">CBM</label>&nbsp;&nbsp;
+                                            <span class="text-muted text-center">{{cbmProduto20 | number: 5}}</span> /
+                                            <span class="text-muted">{{cbmProduto40 | number: 5}}</span> /
+                                            <span class="text-muted">{{cbmProdutoMedidas | number: 5}}</span>
+                                            <input type="text" class="form-control" id="inputCbm" data-ng-model="medidas.cbm">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="inputPeso">Peso</label>
+                                            <input type="text" class="form-control" id="inputPeso" data-ng-model="medidas.peso">
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-1"></div>
+                                    <div class="col-xs-8">
+                                        <div class="row">
+                                            <div class="col-xs-2">
+                                                <div class="form-group">
+                                                    <label class="text-center" for="inputVolCntr20">Vol. Cntr 20"</label>
+                                                    <input type="text" class="form-control" id="inputVolCntr20" ng-model="volCBM20" ng-change="calculaCBM(20)">
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-2">
+                                                <div class="form-group">
+                                                    <label for="inputQtdCntr20">Qtd. Cntr 20"</label>
+                                                    <input type="text" class="form-control" id="inputQtdCntr20" ng-model="qtdCBM20" ng-change="calculaCBM(20)">
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-1"></div>
+                                            <div class="col-xs-2">
+                                                <div class="form-group">
+                                                    <label class="text-center" for="inputVolCntr40">Vol. Cntr 40"</label>
+                                                    <input type="text" class="form-control" id="inputVolCntr40" ng-model="volCBM40" ng-change="calculaCBM(40)">
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-2">
+                                                <div class="form-group">
+                                                    <label for="inputQtdCntr40">Qtd. Cntr 40"</label>
+                                                    <input type="text" class="form-control" id="inputQtdCntr40" ng-model="qtdCBM40" ng-change="calculaCBM(40)">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-xs-4">
+                                                <div class="form-group">
+                                                    <label for="inputLargura">Largura (cm)</label>
+                                                    <input type="text" class="form-control" id="inputLargura" placeholder="L (cm)" ng-model="largura" ng-change="calculaCBM('medidas')">
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-4">
+                                                <div class="form-group">
+                                                    <label for="inputAltura">Altura (cm)</label>
+                                                    <input type="text" class="form-control" id="inputAltura" placeholder="H (cm)" ng-model="altura" ng-change="calculaCBM('medidas')">
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-4">
+                                                <div class="form-group">
+                                                    <label for="inputComprimento">Comprimento</label>
+                                                    <input type="text" class="form-control" id="inputComprimento" placeholder="C (cm)" ng-model="comprimento" ng-change="calculaCBM('medidas')">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="notas">
+                                <h3>Notas</h3><br>
+                                <div class="form-group">
+                        <textarea class="form-control" name="inputNotas" id="inputNotas" cols="30" rows="10"
+                                  placeholder="Dados e observações sobre o produto" data-ng-model="notas"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="container">
+                        <br>
+                        <input type="submit" class="btn btn-info pull-right" value="Cadastrar">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+

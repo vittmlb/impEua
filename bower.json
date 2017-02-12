@@ -1,0 +1,30 @@
+{
+  "name": "impsys",
+  "description": "Sistema para cálculo de importações.",
+  "main": "server.js",
+  "authors": [
+    "Vittorio"
+  ],
+  "license": "ISC",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "~3.3.6",
+    "angular": "^1.5.8",
+    "angular-route": "~1.5.3",
+    "angular-resource": "~1.5.3",
+    "angular-bootstrap": "^1.3.3",
+    "angularUtils-pagination": "angular-utils-pagination#^0.11.1",
+    "angular-animate": "^1.5.5",
+    "angular-ui-router": "^0.3.0",
+    "ng-file-upload": "^12.0.4",
+    "angular-footable": "^1.0.3",
+    "angular-sweetalert": "latest"
+  }
+}

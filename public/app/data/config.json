@@ -1,0 +1,12 @@
+{
+  "cotacao_dolar": 3.27,
+  "cotacao_dolar_paypal": 3.27,
+  "volume_cntr_20": 28,
+  "iof_cartao": 0.06,
+  "taxa_paypal": 0.05,
+  "frete_maritimo_usd": 1450,
+  "comissao_ml": 0.10,
+  "aliquota_simples": 0.06,
+  "seguro_frete_maritimo_usd": 100,
+  "percentual_comissao_conny": 0.05
+}

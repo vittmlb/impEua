@@ -1,0 +1,78 @@
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-4">
+        <h2>Cidades</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a href="index.html">Home</a>
+            </li>
+            <li class="active">
+                <strong>Lista Cidades</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="wrapper wrapper-content animated fadeInUp">
+            <section data-ng-controller="CidadesController" data-ng-init="find()">
+                <div class="ibox">
+                    <div class="ibox-title">
+                        <h5>Lista de Cidades</h5>
+
+                        <div class="ibox-tools">
+                            <a ui-sref="cidade_create" class="btn btn-primary btn-xs">Criar nova Cidade</a>
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="row m-b-sm m-t-sm">
+                            <div class="col-md-1">
+                                <button type="button" id="loading-example-btn" class="btn btn-white btn-sm"><i class="fa fa-refresh"></i> Refresh</button>
+                            </div>
+                            <div class="col-md-11">
+                                <div class="input-group"><input type="text" placeholder="Busca" class="input-sm form-control" ng-model="query"> <span class="input-group-btn">
+                                        <button type="button" class="btn btn-sm btn-primary"> Go!</button> </span></div>
+                            </div>
+                        </div>
+
+                        <div class="project-list">
+
+                            <table class="table table-hover">
+                                <tbody>
+                                <tr data-ng-repeat="cidade in cidades | filter: query">
+                                    <!--<td class="project-status">-->
+                                    <!--<span class="label label-primary" ng-show="!ncm.li">Sem LI</span>-->
+                                    <!--<span class="label label-danger" ng-show="ncm.li">Licença</span>-->
+                                    <!--</td>-->
+                                    <td class="project-title">
+                                        <a href="#!/cidades/{{ cidade._id }}">{{ cidade.nome_cidade }}</a>
+                                        <br/>
+                                        <small style="font-size: 0.9em;">{{ cidade.estado_cidade.nome_estado }}</small>
+                                    </td>
+                                    <td class="project-title">
+                                        <a>Fornecedores</a>
+                                        <br>
+                                        <small>II:</small><small class="text-info"> {{ ncm.impostos.ii | percentage: 2}}</small>
+                                        <small>IPI: {{ ncm.impostos.ipi | percentage: 2 }}</small>
+                                        <small>Pis: {{ ncm.impostos.pis | percentage: 2 }}</small>
+                                        <small>Cofins: {{ ncm.impostos.cofins | percentage: 2 }}</small>
+                                    </td>
+                                    <td class="project-people">
+                                        <a href=""><img alt="image" class="flag" ng-src="{{ cidade.estado_cidade.pais_estado.flag_url }}"></a>
+
+                                    </td>
+                                    <td class="project-actions">
+                                        <a href="#!/cidades/{{ cidade._id }}" class="btn btn-white btn-sm"><i class="fa fa-eye"></i></a>
+                                        <a href="#!/cidades/{{ cidade._id }}/edit" class="btn btn-white btn-sm"><i class="fa fa-pencil"></i></a>
+                                        <a ng-click="deleteAlert(cidade)" class="btn btn-white btn-sm"><i class="fa fa-times"></i></a>
+                                    </td>
+                                </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>

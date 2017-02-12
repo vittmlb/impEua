@@ -1,0 +1,48 @@
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2>Produtos</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a href="index.html">Home</a>
+            </li>
+            <li>
+                <a>E-commerce</a>
+            </li>
+            <li class="active">
+                <strong>Products grid</strong>
+            </li>
+        </ol>
+    </div>
+    <div class="col-lg-2">
+
+    </div>
+</div>
+<section data-ng-controller="ProdutosController" data-ng-init="find()">
+    <div class="container">
+        <div class="wrapper wrapper-content animated fadeInRight">
+            <ul style="list-style-type: none;" class="list-group">
+                <li class="" data-ng-repeat="item in produtos">
+                    <div class="col-md-3">
+                        <div class="ibox">
+                            <div class="ibox-content product-box">
+                                <a href="#!/produtos/{{item._id}}">
+                                    <div class="product-imitation" style="padding:10px 0;">
+                                        <img style="width: 200px; height: 200px;" ng-src="{{item.img_url}}" alt="">
+                                    </div>
+                                    <div class="product-desc">
+                                        <span class="product-price">{{item.custo_usd | currency: 'U$ '}}</span>
+                                        <small class="text-muted">Modelo: {{item.modelo}}</small>
+                                        <small ng-show="item.moq">Moq: {{item.moq}}</small>
+                                        <a href="#!/produtos/{{item._id}}" class="product-name">{{item.nome | limitTo: 23}}</a>
+                                        <div class="small m-t-xs">{{item.descricao | limitTo: 30}}</div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div style="padding-bottom: 60px;"></div>
+</section>

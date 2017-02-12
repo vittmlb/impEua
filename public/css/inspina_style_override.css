@@ -1,0 +1,55 @@
+/**
+Meu CSS com alterações que façam um "override" ao css inspinia.
+**/
+
+/* MODAL PRODUTOS */
+.produto-modal-people,
+.produto-modal-actions {
+    text-align: left;
+    vertical-align: middle;
+}
+dd.produto-modal-people {
+    text-align: left;
+    margin-top: 5px;
+}
+.produto-modal-people img {
+    width: 45px;
+    height: 45px;
+}
+.produto-modal-title a {
+    font-size: 14px;
+    color: #676a6c;
+    font-weight: 600;
+}
+.produto-modal-list table tr td {
+    border-top: none;
+    border-bottom: 1px solid #e7eaec;
+    padding: 15px 20px;
+    vertical-align: middle;
+}
+.produto-modal-manager .tag-list li a {
+    font-size: 10px;
+    background-color: white;
+    padding: 5px 12px;
+    color: inherit;
+    border-radius: 2px;
+    border: 1px solid #e7eaec;
+    margin-right: 5px;
+    margin-top: 5px;
+    display: block;
+}
+.produto-modal-files li a {
+    font-size: 11px;
+    color: #676a6c;
+    margin-left: 10px;
+    line-height: 22px;
+}
+
+.produto-modal-list tr {
+    transform-origin: center top;
+    transition: transform .4s;
+}
+.produto-modal-list tr:hover {
+    cursor: pointer;
+    transform: scale(1.1);
+}

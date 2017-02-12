@@ -1,0 +1,37 @@
+<section data-ng-controller="FornecedoresController" data-ng-init="findOne()">
+    <div class="ibox float-e-margins">
+        <div class="ibox-title">
+            <h5>Cadastrar Fornecedores</h5>
+            <div ibox-tools=""></div>
+        </div>
+        <div class="ibox-content">
+            <div class="container">
+                <form data-ng-submit="update()">
+                    <div class="form-group">
+                        <label for="inputFornecedorNome">Nome do Fornecedor</label>
+                        <input type="text" class="form-control" id="inputFornecedorNome" data-ng-model="fornecedor.nome_fornecedor" placeholder="Nome do Fornecedor">
+                    </div>
+                    <div class="form-group">
+                        <label for="inputRazaoSocial">Razão Social</label>
+                        <input type="text" class="form-control" id="inputRazaoSocial" data-ng-model="fornecedor.razao_social" placeholder="Razão Social">
+                    </div>
+                    <div class="form-group">
+                        <label for="inputEmail">Email</label>
+                        <input type="text" class="form-control" id="inputEmail" data-ng-model="fornecedor.email" placeholder="email">
+                    </div>
+                    <div class="form-group">
+                        <label for="selectCidadeFornecedor">Cidade do Fornecedor</label>
+                        <select name="fornecedor.cidade_fornecedor" id="selectCidadeFornecedor"
+                                class="form-control"
+                                data-ng-model="fornecedor.cidade_fornecedor"
+                                data-ng-options="item as item.nome_cidade for item in ListaCidades track by item._id"
+                        ></select>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" class="btn btn-info pull-right" value="Atualizar">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>

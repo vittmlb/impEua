@@ -1,0 +1,70 @@
+<section data-ng-controller="HscodeController">
+    <div class="row wrapper border-bottom white-bg page-heading">
+        <div class="col-lg-10">
+            <h2>Código HS</h2>
+            <ol class="breadcrumb">
+                <li>
+                    <a href="index.html">Home</a>
+                </li>
+                <li class="active">
+                    <a>Cadastrar Código HS</a>
+                </li>
+            </ol>
+        </div>
+    </div>
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>Formulário de Cadastro de Código HS</h5>
+                        <div ibox-tools></div>
+                    </div>
+                    <div class="ibox-content">
+                        <form data-ng-submit="create()" class="form-horizontal">
+                            <div class="form-group"><label class="col-sm-2 control-label">Código HS</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="inputCodHs" data-ng-model="cod_hs" placeholder="Código HS">
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group"><label class="col-sm-2 control-label">Descrição</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="inputDescricao" data-ng-model="descricao" placeholder="Descrição">
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group"><label class="col-sm-2 control-label">Licença para Importação <br/>
+                                <small class="text-navy">produto requer li ?</small>
+                            </label>
+                                <div class="col-sm-10">
+                                    <div style="margin-top: 11px;"><label> <input type="checkbox"  id="checkBoxLi" data-ng-model="li"> Licença Importação </label></div>
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group"><label class="col-sm-2 control-label">Duty Tax </label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="inputDuty" data-ng-model="duty" placeholder="Duty">
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group"><label class="col-sm-2 control-label">OBS</label>
+
+                                <div class="col-sm-10">
+                                    <textarea class="form-control" name="inputObs" id="inputObs" cols="30" rows="10" data-ng-model="obs" placeholder="Obs"></textarea>
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <input style="margin-left: 15px;" type="submit" class="btn btn-primary pull-right" value="Cadastrar">
+                                    <button class="btn btn-white pull-right" type="submit">Cancel</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

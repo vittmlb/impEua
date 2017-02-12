@@ -1,0 +1,47 @@
+<section data-ng-controller="ContatosController" data-ng-init="find()">
+    <div class="row wrapper border-bottom white-bg page-heading">
+        <div class="col-lg-9">
+            <h2>Contatos</h2>
+            <ol class="breadcrumb">
+                <li>
+                    <a href="index.html">Home</a>
+                </li>
+                <li class="active">
+                    <strong>Contatos</strong>
+                </li>
+            </ol>
+        </div>
+    </div>
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-lg-3" data-ng-repeat="contato in contatos">
+                <div class="contact-box center-version">
+
+                    <a href="#!/contatos/{{ contato._id }}">
+
+                        <!--<img alt="image" class="img-circle" src="img/a2.jpg">-->
+
+
+                        <h3 class="m-b-xs"><strong>{{ contato.nome_contato }}</strong></h3>
+                        <div class="font-bold">Graphics designer</div>
+                        <address class="m-t-md">
+                            <strong>Twitter, Inc.</strong><br>
+                            795 Folsom Ave, Suite 600<br>
+                            San Francisco, CA 94107<br>
+                            <abbr title="Phone">P:</abbr> (123) 456-7890
+                        </address>
+
+                    </a>
+                    <div class="contact-box-footer">
+                        <div class="m-t-xs btn-group">
+                            <a class="btn btn-xs btn-white"><i class="fa fa-phone"></i> Call </a>
+                            <a class="btn btn-xs btn-white"><i class="fa fa-envelope"></i> Email</a>
+                            <a class="btn btn-xs btn-white"><i class="fa fa-user-plus"></i> Follow</a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

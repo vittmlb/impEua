@@ -1,0 +1,58 @@
+<section data-ng-controller="EstadosController" data-ng-init="findOne()">
+    <div class="row wrapper border-bottom white-bg page-heading">
+        <div class="col-lg-10">
+            <h2>Estado</h2>
+            <ol class="breadcrumb">
+                <li>
+                    <a href="index.html">Home</a>
+                </li>
+                <li class="active">
+                    <a>Cadastrar Estado</a>
+                </li>
+            </ol>
+        </div>
+    </div>
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>Cadastramento de Estado</h5>
+                        <div ibox-tools></div>
+                    </div>
+                    <div class="ibox-content">
+                        <br/><br/>
+                        <form data-ng-submit="update()" class="form-horizontal">
+                            <div class="form-group"><label class="col-sm-2 control-label">Nome do Estado</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="inputNomeEstado" data-ng-model="estado.nome_estado" placeholder="Nome do Estado">
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group"><label class="col-sm-2 control-label">Sigla do Estado</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="inputSiglaEstado" data-ng-model="estado.sigla_estado" placeholder="Sigla Estado">
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group"><label for="inputNomePaisEn" class="col-sm-2 control-label">Nome do País (EN)</label>
+                                <div class="col-sm-10">
+                                    <select class="form-control" name="pais_estado" id="inputNomePaisEn"
+                                            data-ng-model="estado.pais_estado"
+                                            data-ng-options="item as item.nome_pais for item in ListaPaises track by item._id"
+                                    ></select>
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <input style="margin-left: 15px;" type="submit" class="btn btn-primary pull-right" value="Update">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

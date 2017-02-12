@@ -1,0 +1,91 @@
+<section data-ng-controller="EstadosController" data-ng-init="findOne()">
+    <div class="row wrapper border-bottom white-bg page-heading">
+        <div class="col-lg-10">
+            <h2>Estado</h2>
+            <ol class="breadcrumb">
+                <li>
+                    <a href="index.html">Home</a>
+                </li>
+                <li class="active">
+                    <a>Página Estado</a>
+                </li>
+            </ol>
+        </div>
+    </div>
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="ibox">
+                    <div class="ibox-content">
+                        <div class="row">
+                            <div class="col-xs-8">
+                                <h2 style="display: inline;" >{{ estado.nome_estado }} <span class="flag"><img style="height: 25px;" ng-src="{{ estado.pais_estado.flag_url }}" alt=""></span></h2>
+                            </div>
+                            <div class="col-xs-4">
+                                <button ng-click="deleteAlert()" style="top: 5px; margin-left: 10px; position: relative;" class="btn btn-sm btn-white pull-right"><i class="fa fa-times"></i></button>
+                                <a href="#!/estados/{{ estado._id }}/edit" style="top: 5px; margin-left: 10px; position: relative;" class="btn btn-sm btn-white pull-right"><i class="fa fa-pencil"></i></a>
+                            </div>
+                        </div>
+
+                        <h3>{{ estado.sigla_estado }} - {{ estado.pais_estado.nome_pais }}</h3>
+                        <br/>
+                        <br/>
+
+                    </div>
+                </div>
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>???</h5>
+
+                        <div ibox-tools></div>
+                    </div>
+                    <div class="ibox-content">
+
+                        <table class="table table-hover">
+                            <thead>
+                            <tr>
+                                <th>Cidade</th>
+                                <th>Estado</th>
+                                <th>País</th>
+                                <th>Opções</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr data-ng-repeat="cidade in estado._cidadeId">
+                                <td>{{ cidade.nome_cidade }}</td>
+                                <td>{{ estado.sigla_estado }}</td>
+                                <td><img style="height: 25px;" ng-src="{{ estado.pais_estado.flag_url }}" alt="{{ estado.pais_estado.nome_pais }}"></td>
+                                <td>
+                                    <a href="#!/cidades/{{ cidade._id }}"><i style="color: dimgray; font-size: 1.1em; margin-left: 10px;" class="fa fa-pencil pull-left"></i></a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 m-b-lg">
+                <div id="vertical-timeline" class="vertical-container light-timeline no-margins">
+                    <div class="vertical-timeline-block">
+                        <div data-ng-repeat="prod in ncm._produtoId | limitTo: 2" class="vertical-timeline-block">
+                            <div class="vertical-timeline-icon navy-bg">
+                                <img alt="image" class="img-circle" ng-src="{{ prod.img_url }}" style="width: 34px;">
+                            </div>
+
+                            <div class="vertical-timeline-content">
+                                <h2>{{ prod.nome }}</h2>
+                                <h3>{{ prod.modelo }}</h3>
+                                <p>{{ prod.descricao }}</p>
+                                <a href="#!/produtos/{{ prod._id }}" class="btn btn-sm btn-primary">Detalhes</a>
+                                <span class="vertical-date">
+                                        Preço<br>
+                                        <small>{{ prod.custo_usd | currency: 'U$ ' }}</small>
+                                    </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

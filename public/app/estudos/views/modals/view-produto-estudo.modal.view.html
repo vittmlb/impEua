@@ -1,0 +1,79 @@
+<div class="inmodal">
+    <div class="modal-header">
+        <h4 class="modal-title">{{ currentProdutoView.nome }}</h4>
+        <small class="font-bold">Informe os dados para que o estudo possa ser salvo.</small>
+    </div>
+    <div class="modal-body">
+        <div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <table class="table small striped-table">
+                        <thead>
+                        <tr>
+                            <th>Fob</th>
+                            <th style="text-align: center;">Valor U$</th>
+                            <th style="text-align: center;">Valor R$</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td><small>Paypal</small></td>
+                            <td>{{ currentProdutoView.estudo_do_produto.fob.paypal.usd | currency: 'U$ ' }}</td>
+                            <td>{{ currentProdutoView.estudo_do_produto.fob.paypal.brl | currency: 'U$ ' }}</td>
+                        </tr>
+                        <tr>
+                            <td><small>Declarado</small></td>
+                            <td>{{ currentProdutoView.estudo_do_produto.fob.declarado.usd | currency: 'U$ ' }}</td>
+                            <td>{{ currentProdutoView.estudo_do_produto.fob.declarado.brl | currency: 'R$ ' }}</td>
+                        </tr>
+                        <tr>
+                            <td><small>Cheio</small></td>
+                            <td>{{ currentProdutoView.estudo_do_produto.fob.cheio.usd | currency: 'U$ ' }}</td>
+                            <td>{{ currentProdutoView.estudo_do_produto.fob.cheio.brl | currency: 'R$ ' }}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <br>
+                    <table class="table small striped-table">
+                        <thead>
+                        <tr>
+                            <th>Despesas Ind</th>
+                            <th style="text-align: center;">Valor U$</th>
+                            <th style="text-align: center;">Valor R$</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr data-ng-repeat="desp in currentProdutoView.estudo_do_produto.despesas.internacionais.individualizadas">
+                            <td><small>desp.desc</small></td>
+                            <td>{{ desp.usd | currency: 'U$ ' }}</td>
+                            <td>{{ desp.brl | currency: 'R$ ' }}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-sm-6">
+                    <table class="table small striped-table">
+                        <thead>
+                        <tr>
+                            <th>Despesas</th>
+                            <th style="text-align: center;">Valor U$</th>
+                            <th style="text-align: center;">Valor R$</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr data-ng-repeat="dsp in currentProdutoView.estudo_do_produto.despesas.internacionais.compartilhadas">
+                            <td><small>dsp.desc</small></td>
+                            <td>{{ dsp.usd | currency: 'U$ ' }}</td>
+                            <td>{{ dsp.brl | currency: 'R$ ' }}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-white" ng-click="cancel()">Close</button>
+    </div>
+</div>

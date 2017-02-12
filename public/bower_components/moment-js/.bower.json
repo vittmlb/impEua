@@ -1,0 +1,42 @@
+{
+  "name": "moment-js",
+  "version": "0.3.0",
+  "authors": [
+    "Saeid Zebardast <saeid.zebardast@gmail.com>"
+  ],
+  "description": "A Polymer element to parse, validate, manipulate, and display dates using Moment.js.",
+  "keywords": [
+    "web-component",
+    "web-components",
+    "polymer",
+    "moment",
+    "date"
+  ],
+  "main": "moment-js.html",
+  "license": "MIT",
+  "homepage": "https://github.com/saeidzebardast/moment-js/",
+  "ignore": [
+    "/.*",
+    "/test/"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.2.0",
+    "moment": "^2.2.1"
+  },
+  "devDependencies": {
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
+    "web-component-tester": "^3.4.0",
+    "github-fork-ribbon": "^0.2.0",
+    "demo-snippet": "^1.0.0"
+  },
+  "_release": "0.3.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.3.0",
+    "commit": "8b1f89f65bb2d89a60be819ebc96e74607c35f0e"
+  },
+  "_source": "https://github.com/saeidzebardast/moment-js.git",
+  "_target": "^0.3.0",
+  "_originalSource": "moment-js",
+  "_direct": true
+}

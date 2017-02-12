@@ -1,0 +1,71 @@
+<section data-ng-controller="ContatosController">
+    <div class="row wrapper border-bottom white-bg page-heading">
+        <div class="col-lg-10">
+            <h2>Contatos</h2>
+            <ol class="breadcrumb">
+                <li>
+                    <a href="index.html">Home</a>
+                </li>
+                <li class="active">
+                    <a>Cadastrar Cidade</a>
+                </li>
+            </ol>
+        </div>
+    </div>
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>Cadastramento de Contato</h5>
+                        <div ibox-tools></div>
+                    </div>
+                    <div class="ibox-content">
+                        <br/><br/>
+                        <form data-ng-submit="create()" class="form-horizontal">
+                            <div class="form-group"><label class="col-sm-2 control-label">Nome do Contato</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="inputNomeContato" data-ng-model="nome_contato" placeholder="Nome do Contato">
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group"><label for="selectTipoComunicacaoContato" class="col-sm-2 control-label">Email do Contato</label>
+                                <div class="col-sm-2">
+                                    <select class="form-control" name="fornecedor" id="selectTipoComunicacaoContato"
+                                            data-ng-model="comunicacao.tipo"
+                                            data-ng-options="item for item in tiposDeComunicacao"
+                                    ></select>
+                                    <!--data-ng-options="item as item for item in tiposDeComunicacao track by item.tipo"-->
+                                </div>
+                                <div class="col-sm-7">
+                                    <input type="text" class="form-control" id="inputComunicacaoContato" data-ng-model="comunicacao.info" placeholder="Comunicação do Contato">
+                                    <div style="margin-top: 8px;" ng-show="listaComunicacoes.length">
+                                        <span style="margin-left: 8px;" data-ng-repeat="com in listaComunicacoes">{{ com.info }}</span>
+                                    </div>
+                                </div>
+                                <div class="col-sm-1">
+                                    <span data-ng-click="addComunicacao()" style="cursor: pointer; margin-top: 10px;" class="fa fa-plus"></span>
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group"><label for="selectFornecedorContato" class="col-sm-2 control-label">Fornecedor</label>
+                                <div class="col-sm-10">
+                                    <select class="form-control" name="fornecedor" id="selectFornecedorContato"
+                                            data-ng-model="fornecedor"
+                                            data-ng-options="item as item.nome_fornecedor for item in listaFornecedores track by item._id"
+                                    ></select>
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <input style="margin-left: 15px;" type="submit" class="btn btn-primary pull-right" value="Cadastrar">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

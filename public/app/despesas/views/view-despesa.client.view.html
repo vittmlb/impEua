@@ -1,0 +1,12 @@
+<section data-ng-controller="DespesasController" data-ng-init="findOne()">
+    <div class="container">
+        <h2>Despesa</h2>
+        <a href="#!/despesas/{{despesa._id}}/edit" class="btn btn-warning btn-round btn-xs"><span class="glyphicon glyphicon-pencil"></span></a>&nbsp
+        <button class="btn btn-danger btn-round btn-xs" data-ng-click="delete()"><span class="glyphicon glyphicon-trash"></span></button>
+        <hr>
+        <h3 data-ng-bind="despesa.nome"></h3>
+        <h4 data-ng-bind="despesa.tipo"></h4>
+        <p class="text-primary" data-ng-bind="despesa.valor | currency: despesa.moeda + ' '" data-ng-show="despesa.valor"></p>
+        <p class="text-muted" data-ng-bind="despesa.aliquota | percentage:2" data-ng-show="despesa.aliquota"></p>
+    </div>
+</section>

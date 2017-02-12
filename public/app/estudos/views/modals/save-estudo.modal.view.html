@@ -1,0 +1,16 @@
+<div class="inmodal">
+    <div class="modal-header">
+        <h4 class="modal-title">Salvar Estudo</h4>
+        <small class="font-bold">Informe os dados para que o estudo possa ser salvo.</small>
+    </div>
+    <div class="modal-body">
+        <div class="form-group">
+            <label for="inputNomeEstudo">Nome do Estudo</label>
+            <input type="text" class="form-control" id="inputNomeEstudo" data-ng-model="estudo.nome_estudo">
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-white" ng-click="cancel()">Close</button>
+        <button type="button" class="btn btn-primary" ng-click="create()">Save changes</button>
+    </div>
+</div>
