@@ -89,7 +89,7 @@ angular.module('produtos').controller('ProdutosController', ['$scope', '$routePa
                 hs: $scope.parsed_hs._id,
                 usa_impostos_hs: this.usa_impostos_ncm,
                 // impostos: $scope.impostos,
-                duty: $scope.impostos,
+                duty: this.duty,
                 medidas: {
                     cbm: this.medidas.cbm,
                     peso: this.medidas.peso
