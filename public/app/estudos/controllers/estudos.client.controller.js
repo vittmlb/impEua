@@ -4,6 +4,8 @@
 angular.module('estudos').controller('EstudosController', ['$scope', '$uibModal', '$routeParams', '$location', 'Produtos', 'Despesas', 'Estudos', '$http', '$stateParams', 'toaster',
     function($scope, $uibModal, $routeParams, $location, Produtos, Despesas, Estudos, $http, $stateParams, toaster) {
 
+        $scope.piePoints = [{"Frete": 0}, {"Fob": 0}, {"Despesas": 0}, {"Taxas": 0}];
+        $scope.pieColumns = [{"id": "Frete", "type": "pie"}, {"id": "Fob", "type": "pie"}, {"id": "Despesas", "type": "pie"}, {"id": "Taxas", "type": "pie"}];
         $scope.erros = {
             produto: {
                 fob: []
@@ -598,6 +600,10 @@ angular.module('estudos').controller('EstudosController', ['$scope', '$uibModal'
 
         }
 
+        function zeraDadosGrafico() {
+            $scope.piePoints = [{"Frete": 0}, {"Fob": 0}, {"Despesas": 0}, {"Taxas": 0}];
+        }
+
         // 2
         /**
          * Carrega o objeto <$scope.estudo> com os dados do <$scope.config>
@@ -735,6 +741,8 @@ angular.module('estudos').controller('EstudosController', ['$scope', '$uibModal'
                     // Update (soma) dos lucros dos produtos para formar o Lucro Total do Estudo.
                     $scope.estudo.resultados.lucro += estProd.resultados.lucro;
 
+                    $scope.estudo.resultados.roi = $scope.estudo.resultados.lucro / $scope.estudo.resultados.investimento;
+
                     totalizaComparacoesEstudo(produto);
 
                 }
@@ -797,6 +805,9 @@ angular.module('estudos').controller('EstudosController', ['$scope', '$uibModal'
             // Calcula o resultado unitário e total de cada um dos produtos.
             estProd.resultados.lucro = ((estProd.resultados.precos.venda * (1 - $scope.estudo.config.comissao_amazon)) - estProd.resultados.precos.custo) * estProd.qtd;
 
+            // Calcula o roi do produto.
+            estProd.resultados.roi = estProd.resultados.lucro / estProd.resultados.investimento;
+
             // Calcula os percentuais de comparação entre os componentes do preço final do produto;
             estProd.resultados.comparacao.percentual_frete = estProd.frete_maritimo.valor / estProd.resultados.investimento;
             estProd.resultados.comparacao.percentual_despesas = estProd.despesas.total / estProd.resultados.investimento;
@@ -825,22 +836,29 @@ angular.module('estudos').controller('EstudosController', ['$scope', '$uibModal'
 
         }
 
-        function totalizaComparacoesEstudo(produto) {
+        function totalizaComparacoesEstudo() {
 
-            let estProduto = produto.estudo_do_produto;
 
-            $scope.estudo.resultados.comparacao.percentual_frete += estProduto.resultados.comparacao.percentual_frete;
-            $scope.estudo.resultados.comparacao.percentual_hmf += estProduto.resultados.comparacao.percentual_hmf;
-            $scope.estudo.resultados.comparacao.percentual_despesas += estProduto.resultados.comparacao.percentual_despesas;
-            $scope.estudo.resultados.comparacao.percentual_duties += estProduto.resultados.comparacao.percentual_duties;
-            $scope.estudo.resultados.comparacao.percentual_fob += estProduto.resultados.comparacao.percentual_fob;
-            $scope.estudo.resultados.comparacao.percentual_mpf += estProduto.resultados.comparacao.percentual_mpf;
-            $scope.estudo.resultados.comparacao.percentual_taxas += estProduto.resultados.comparacao.percentual_taxas;
+            $scope.estudo.resultados.comparacao.percentual_frete = $scope.estudo.frete_maritimo.valor / $scope.estudo.resultados.investimento;
+            $scope.estudo.resultados.comparacao.percentual_hmf = $scope.estudo.taxas.hmf / $scope.estudo.resultados.investimento;
+            $scope.estudo.resultados.comparacao.percentual_despesas = $scope.estudo.despesas.total / $scope.estudo.resultados.investimento;
+            $scope.estudo.resultados.comparacao.percentual_duties = $scope.estudo.taxas.duty / $scope.estudo.resultados.investimento;
+            $scope.estudo.resultados.comparacao.percentual_fob = $scope.estudo.fob / $scope.estudo.resultados.investimento;
+            $scope.estudo.resultados.comparacao.percentual_mpf = $scope.estudo.taxas.mpf / $scope.estudo.resultados.investimento;
+            $scope.estudo.resultados.comparacao.percentual_taxas = $scope.estudo.taxas.total / $scope.estudo.resultados.investimento;
+
+            $scope.piePoints = [
+                {"Frete": $scope.estudo.resultados.comparacao.percentual_frete},
+                {"Fob": $scope.estudo.resultados.comparacao.percentual_fob},
+                {"Despesas": $scope.estudo.resultados.comparacao.percentual_despesas},
+                {"Taxas": $scope.estudo.resultados.comparacao.percentual_taxas}
+            ];
 
         }
 
         $scope.iniImport = function() {
             zeraDadosEstudo();
+            zeraDadosGrafico();
             loadEstudoComDadosConfig();
             if($scope.produtosDoEstudo.length > 0)
             {

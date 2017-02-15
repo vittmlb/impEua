@@ -83,7 +83,7 @@
                                     <div data-ng-repeat="desp in itemEstudo.estudo_do_produto.despesas.internacionais.individualizadas">
                                         <small style="display: block;">{{ desp.desc }}: {{ desp.usd | currency: 'usd ' }}</small>
                                     </div>
-                                    <small>{{ itemEstudo.modelo }}</small><br>
+                                    <small style="margin-left: 18px; margin-top: 4px;">{{ itemEstudo.modelo }}</small><br>
                                     <!--<small>Cheio USD:{{ itemEstudo.estudo_do_produto.custo_unitario.cheio.usd }}</small><br/>-->
                                     <!--<small>Paypal USD: {{ itemEstudo.estudo_do_produto.custo_unitario.paypal.usd }}</small><br/>-->
                                     <!--<small>Declarado USD: {{ itemEstudo.estudo_do_produto.custo_unitario.declarado.usd }}</small><br/>-->
@@ -93,10 +93,7 @@
                                 <td class="project-title">
                                     <a>{{itemEstudo.estudo_do_produto.custo_unitario | currency: 'U$ '}}</a>
                                     <br>
-                                    <small>II:</small><small class="text-info"> {{ ncm.impostos.ii | percentage: 2}}</small>
-                                    <small>IPI: {{ ncm.impostos.ipi | percentage: 2 }}</small>
-                                    <small>Pis: {{ ncm.impostos.pis | percentage: 2 }}</small>
-                                    <small>Cofins: {{ ncm.impostos.cofins | percentage: 2 }}</small>
+                                    <small>Investimento:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.resultados.investimento | currency: 'U$ '}}</small>
                                 </td>
                                 <td class="project-title">
                                     <input style="text-align: center;" type="number" class="form-control input-transparente" placeholder="qtd" data-ng-model="itemEstudo.estudo_do_produto.qtd" ng-change="processaMudancas(itemEstudo, 'qtd')">
@@ -127,7 +124,9 @@
                         </div>
                         <div class="ibox-content">
                             <h1 class="no-margins">{{estudo.resultados.lucro | currency: 'U$ '}}</h1>
-                            <div class="stat-percent font-bold text-success">{{(estudo.resultados.lucro/estudo.resultados.investimento) * 100 | percent: 2}} <i class="fa fa-bolt"></i></div>
+                            <!--<div class="stat-percent font-bold text-success">{{(estudo.resultados.lucro/estudo.resultados.investimento) * 100 | percent: 2}} <i class="fa fa-bolt"></i></div>-->
+                            <small class="pull-right" style="margin-left: 3px;" style="margin-top: 2px;"> roi</small>
+                            <div class="stat-percent font-bold text-success">{{(estudo.resultados.roi) * 100 | percent: 2}} <i class="fa fa-bolt"></i></div>
                             <small>Investimento: {{estudo.resultados.investimento | currency: 'U$ '}}</small>
                         </div>
                     </div>
@@ -180,8 +179,8 @@
                         <thead>
                         <tr>
                             <th>Modelo</th>
-                            <th>User</th>
-                            <th>Value</th>
+                            <th>Lucro</th>
+                            <th>R.O.I</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -189,8 +188,8 @@
                             <td>
                                 <small>{{item.modelo}}</small>
                             </td>
-                            <td>{{item.estudo_do_produto.resultados.lucro.unitario.brl | currency: 'R$ '}}</td>
-                            <td class="text-navy"><i class="fa fa-level-up"></i> 24%</td>
+                            <td>{{item.estudo_do_produto.resultados.lucro | currency: 'U$ '}}</td>
+                            <td class="text-navy"><i class="fa fa-level-up"></i> {{ item.estudo_do_produto.resultados.roi | percentage: 2}}</td>
                         </tr>
 
                         </tbody>
@@ -203,6 +202,8 @@
                     <div ibox-tools></div>
                 </div>
                 <div class="ibox-content">
+                    <c3chart bindto-id="pie-plot1-chart" chart-data="piePoints" chart-columns="pieColumns">
+                    </c3chart>
                 </div>
             </div>
             <div class="col">
@@ -243,11 +244,19 @@
                     <table class="table table-striped small m-t-sm">
                         <thead>
                         <tr>
-                            <th>Despesas</th>
+                            <th>Principal</th>
                             <th></th>
                         </tr>
                         </thead>
                         <tbody>
+                        <tr>
+                            <td>Investimento</td>
+                            <td data-ng-bind="estudo.resultados.investimento | currency: 'U$ '"></td>
+                        </tr>
+                        <tr>
+                            <td>Lucro</td>
+                            <td data-ng-bind="estudo.resultados.lucro| currency: 'U$ '"></td>
+                        </tr>
                         <tr>
                             <td>Fob</td>
                             <td data-ng-bind="estudo.fob | currency: 'U$ '"></td>
@@ -272,14 +281,6 @@
                             <td>Despesas</td>
                             <td data-ng-bind="estudo.despesas.total | currency: 'U$ '"></td>
                         </tr>
-                        <tr>
-                            <td>ICMS</td>
-                            <td data-ng-bind="estudo.tributos.declarado.icms.brl | currency: 'R$ '"></td>
-                        </tr>
-                        <tr>
-                            <td>Total Imp.</td>
-                            <td data-ng-bind="estudo.tributos.declarado.total.brl | currency: 'R$ '"></td>
-                        </tr>
                         </tbody>
                     </table>
                     <table class="table table-striped small m-t-sm">
@@ -296,49 +297,49 @@
                         </tr>
                         </tbody>
                     </table>
-                    <table class="table table-striped small m-t-sm" data-show-toggle="false" id="tblDadosEstudo">
-                    <!--<table class="table table-striped">-->
-                        <thead>
-                        <tr>
-                            <th>Principal</th>
-                            <th></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td>Lucro Operação</td>
-                            <td data-ng-bind="estudo.resultados.lucro.final.brl | currency: 'R$ '"></td>
-                        </tr>
-                        <tr>
-                            <td>Investimento</td>
-                            <td data-ng-bind="estudo.resultados.investimento.final.brl | currency: 'R$ '"></td>
-                        </tr>
-                        <tr>
-                            <td>Invest. Integral</td>
-                            <td data-ng-bind="estudo.resultados.investimento.cheio.brl | currency: 'R$ '"></td>
-                        </tr>
-                        <tr>
-                            <td>Fob</td>
-                            <td data-ng-bind="estudo.fob | currency: 'U$ '"></td>
-                        </tr>
-                        <tr>
-                            <td>CIF</td>
-                            <td data-ng-bind="estudo.cif | currency: 'U$ '"></td>
-                        </tr>
-                        <tr>
-                            <td>Peso Total:</td>
-                            <td data-ng-bind="estudo.medidas.peso.ocupado"></td>
-                        </tr>
-                        <tr>
-                            <td>AFRMM</td>
-                            <td data-ng-bind="estudo.despesas.afrmm.brl | currency: 'R$ '"></td>
-                        </tr>
-                        <tr>
-                            <td>Despesas</td>
-                            <td data-ng-bind="estudo.despesas.total.brl | currency: 'R$ '"></td>
-                        </tr>
-                        </tbody>
-                    </table>
+                    <!--<table class="table table-striped small m-t-sm" data-show-toggle="false" id="tblDadosEstudo">-->
+                    <!--&lt;!&ndash;<table class="table table-striped">&ndash;&gt;-->
+                        <!--<thead>-->
+                        <!--<tr>-->
+                            <!--<th>Principal</th>-->
+                            <!--<th></th>-->
+                        <!--</tr>-->
+                        <!--</thead>-->
+                        <!--<tbody>-->
+                        <!--<tr>-->
+                            <!--<td>Lucro Operação</td>-->
+                            <!--<td data-ng-bind="estudo.resultados.lucro.final.brl | currency: 'R$ '"></td>-->
+                        <!--</tr>-->
+                        <!--<tr>-->
+                            <!--<td>Investimento</td>-->
+                            <!--<td data-ng-bind="estudo.resultados.investimento.final.brl | currency: 'R$ '"></td>-->
+                        <!--</tr>-->
+                        <!--<tr>-->
+                            <!--<td>Invest. Integral</td>-->
+                            <!--<td data-ng-bind="estudo.resultados.investimento.cheio.brl | currency: 'R$ '"></td>-->
+                        <!--</tr>-->
+                        <!--<tr>-->
+                            <!--<td>Fob</td>-->
+                            <!--<td data-ng-bind="estudo.fob | currency: 'U$ '"></td>-->
+                        <!--</tr>-->
+                        <!--<tr>-->
+                            <!--<td>CIF</td>-->
+                            <!--<td data-ng-bind="estudo.cif | currency: 'U$ '"></td>-->
+                        <!--</tr>-->
+                        <!--<tr>-->
+                            <!--<td>Peso Total:</td>-->
+                            <!--<td data-ng-bind="estudo.medidas.peso.ocupado"></td>-->
+                        <!--</tr>-->
+                        <!--<tr>-->
+                            <!--<td>AFRMM</td>-->
+                            <!--<td data-ng-bind="estudo.despesas.afrmm.brl | currency: 'R$ '"></td>-->
+                        <!--</tr>-->
+                        <!--<tr>-->
+                            <!--<td>Despesas</td>-->
+                            <!--<td data-ng-bind="estudo.despesas.total.brl | currency: 'R$ '"></td>-->
+                        <!--</tr>-->
+                        <!--</tbody>-->
+                    <!--</table>-->
                 </div>
             </div>
         </div> <!-- Dados do Estudo -->

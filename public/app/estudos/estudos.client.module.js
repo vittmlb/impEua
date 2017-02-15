@@ -1,4 +1,4 @@
 /**
  * Created by Vittorio on 31/05/2016.
  */
-angular.module('estudos', ['ui.router']);
+angular.module('estudos', ['ui.router', 'gridshore.c3js.chart']);
