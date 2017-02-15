@@ -3,7 +3,7 @@
  */
 angular.module('contatos').controller('ContatosController', ['$scope', '$stateParams', '$location', 'Contatos', 'Fornecedores', 'toaster', 'SweetAlert',
     function($scope, $stateParams, $location, Contatos, Fornecedores, toaster, SweetAlert) {
-        var SweetAlertOptions = {
+        let SweetAlertOptions = {
             removerContato: {
                 title: "Deseja remover o Contato?",
                 text: "Você não poderá mais recuperá-lo!",

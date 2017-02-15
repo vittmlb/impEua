@@ -1,10 +1,10 @@
 /**
  * Created by Vittorio on 14/08/2016.
  */
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
+let mongoose = require('mongoose');
+let Schema = mongoose.Schema;
 
-var CidadeSchema = new Schema({
+let CidadeSchema = new Schema({
     nome_cidade: {
         type: String,
         trim: true,

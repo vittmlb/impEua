@@ -1,11 +1,11 @@
 /**
  * Created by Vittorio on 30/05/2016.
  */
-var mongoose = require('mongoose');
-var config = require('./config');
+let mongoose = require('mongoose');
+let config = require('./config');
 
 module.exports = function() {
-    var db = mongoose.connect(config.db);
+    let db = mongoose.connect(config.db);
 
     mongoose.connection.on('connected', function () {
         console.log(`Mongoose connected at ${config.db}`);
@@ -36,6 +36,7 @@ module.exports = function() {
     require('../app/models/estudos.server.model');
     require('../app/models/contatos.server.model');
     require('../app/models/categorias.server.model');
+    require('../app/models/embalagens.server.model');
 
     return db;
 };

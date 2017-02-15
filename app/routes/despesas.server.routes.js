@@ -1,7 +1,7 @@
 /**
  * Created by Vittorio on 01/06/2016.
  */
-var despesas = require('../controllers/despesas.server.controller');
+let despesas = require('../controllers/despesas.server.controller');
 
 module.exports = function(app) {
 

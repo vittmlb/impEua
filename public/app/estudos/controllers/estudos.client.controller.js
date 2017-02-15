@@ -60,7 +60,7 @@ angular.module('estudos').controller('EstudosController', ['$scope', '$uibModal'
                 total: 0
             },
             despesas: {
-                aduaneiras: 0,
+                aduaneiras: [],
                 internacionais: { // Despesas originadas no exterior.
                     compartilhadas: [],
                     // compartilhadas: [{ // Despesas a serem compartilhadas por todos os produtos (como viagem da Conny para acompanhar o carregamento do contêiner).
@@ -341,7 +341,7 @@ angular.module('estudos').controller('EstudosController', ['$scope', '$uibModal'
                         total: 0
                     },
                     despesas: {
-                        aduaneiras: 0,
+                        aduaneiras: [],
                         internacionais: { // Despesas originadas no exterior.
                             compartilhadas: [
                             //     { // Despesas a serem compartilhadas por todos os produtos (como viagem da Conny para acompanhar o carregamento do contêiner).
@@ -552,6 +552,7 @@ angular.module('estudos').controller('EstudosController', ['$scope', '$uibModal'
             $scope.estudo.volume_ocupado = 0; // todo: Descobrir para que serve
 
             $scope.estudo.despesas.total = 0;
+            $scope.estudo.despesas.aduaneiras = [];
 
             $scope.estudo.medidas.peso = {contratado: 0, ocupado: 0, ocupado_percentual: 0};
             $scope.estudo.medidas.volume = {contratado: 0, ocupado: 0, ocupado_percentual: 0};
@@ -623,7 +624,7 @@ angular.module('estudos').controller('EstudosController', ['$scope', '$uibModal'
                 else
                 {
 
-                    $scope.estudo.fob += produto.estudo_do_produto.custo_unitario * produto.estudo_do_produto.qtd * (1 + $scope.config.percentual_comissao_conny); // Calcula Fob
+                    $scope.estudo.fob += ((produto.estudo_do_produto.custo_unitario * produto.estudo_do_produto.qtd) * (1 + $scope.config.percentual_comissao_conny)); // Calcula Fob
 
                     $scope.estudo.medidas.peso.ocupado += produto.medidas.peso * produto.estudo_do_produto.qtd; // Calcula peso total
                     $scope.estudo.medidas.volume.ocupado += produto.medidas.cbm * produto.estudo_do_produto.qtd; // Calcula volume ocupado no contêiner
@@ -654,6 +655,10 @@ angular.module('estudos').controller('EstudosController', ['$scope', '$uibModal'
 
             $scope.despesas.forEach(function (item) {
                 if(item.tipo === 'Valor' && item.ativa === true) {
+                    desp.aduaneiras.push({
+                        nome: item.nome,
+                        valor: item.valor
+                    });
                     desp.total += item.valor;
                 }
             });
@@ -721,22 +726,6 @@ angular.module('estudos').controller('EstudosController', ['$scope', '$uibModal'
 
                     // Update (soma) dos lucros dos produtos para formar o Lucro Total do Estudo.
                     $scope.estudo.resultados.lucro += estProd.resultados.lucro;
-
-                    // Totaliza os valores gastos com a taxa da Conny, obtidos à partir do estudo_do_produto.fob.paypal
-                    // $scope.estudo.resultados.investimento.paypal.taxa_conny.usd += estProd.fob.paypal.taxa_conny.usd;
-                    // $scope.estudo.resultados.investimento.paypal.taxa_conny.brl += estProd.fob.paypal.taxa_conny.brl;
-
-                    // Totaliza os valores gastos com a taxa do Paypal, obtidos à partir do estudo_do_produto.fob.paypal
-                    // $scope.estudo.resultados.investimento.paypal.taxa_paypal.usd += estProd.fob.paypal.taxa_paypal.usd;
-                    // $scope.estudo.resultados.investimento.paypal.taxa_paypal.brl += estProd.fob.paypal.taxa_paypal.brl;
-
-                    // Totaliza os valores gastos com IOF, obtidos à partir do estudo_do_produto.fob.paypal
-                    // $scope.estudo.resultados.investimento.paypal.taxa_iof.usd += estProd.fob.paypal.taxa_iof.usd;
-                    // $scope.estudo.resultados.investimento.paypal.taxa_iof.brl += estProd.fob.paypal.taxa_iof.brl;
-
-                    // $scope.estudo.resultados.investimento.declarado.usd += estProd.resultados.investimento.declarado.usd;
-                    // $scope.estudo.resultados.investimento.declarado.brl += estProd.resultados.investimento.declarado.brl;
-
 
                 }
 

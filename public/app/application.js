@@ -8,6 +8,7 @@ let mainAppModule = angular.module('admin_panel', [
     'ngRoute',
     'produtos',
     'despesas',
+    'embalagens',
     'estudos',
     'despesas',
     'hs',

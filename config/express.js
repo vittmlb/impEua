@@ -2,20 +2,20 @@
  * Created by Vittorio on 30/05/2016.
  */
 
-var config = require('./config');
-var express = require('express');
-var methodOverride = require('method-override');
-var cors = require('cors');
-var flash = require('connect-flash');
-var path = require('path');
-var morgan = require('morgan');
-var compress = require('compression');
-var bodyParser = require('body-parser');
-var session = require('express-session');
+let config = require('./config');
+let express = require('express');
+let methodOverride = require('method-override');
+let cors = require('cors');
+let flash = require('connect-flash');
+let path = require('path');
+let morgan = require('morgan');
+let compress = require('compression');
+let bodyParser = require('body-parser');
+let session = require('express-session');
 
 module.exports = function() {
 
-    var app = express();
+    let app = express();
 
     if(process.env.NODE_env === 'development') {
         app.use(morgan('dev'));
@@ -49,6 +49,7 @@ module.exports = function() {
     require('../app/routes/estudos.server.routes')(app);
     require('../app/routes/contatos.server.routes')(app);
     require('../app/routes/categorias.server.routes')(app);
+    require('../app/routes/embalagens.server.routes')(app);
     
     return app;
 

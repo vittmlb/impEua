@@ -231,6 +231,54 @@
                     <div ibox-tools></div>
                 </div>
                 <div class="ibox-content">
+                    <table class="table table-striped small m-t-sm">
+                        <thead>
+                        <tr>
+                            <th>Despesas</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>Duties</td>
+                            <td data-ng-bind="estudo.taxas.duty | currency: 'U$ '"></td>
+                        </tr>
+                        <tr>
+                            <td>MPF</td>
+                            <td data-ng-bind="estudo.taxas.mpf | currency: 'U$ '"></td>
+                        </tr>
+                        <tr>
+                            <td>HMF</td>
+                            <td data-ng-bind="estudo.taxas.hmf | currency: 'U$ '"></td>
+                        </tr>
+                        <tr>
+                            <td>Despesas</td>
+                            <td data-ng-bind="estudo.despesas.total | currency: 'U$ '"></td>
+                        </tr>
+                        <tr>
+                            <td>ICMS</td>
+                            <td data-ng-bind="estudo.tributos.declarado.icms.brl | currency: 'R$ '"></td>
+                        </tr>
+                        <tr>
+                            <td>Total Imp.</td>
+                            <td data-ng-bind="estudo.tributos.declarado.total.brl | currency: 'R$ '"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-striped small m-t-sm">
+                        <thead>
+                        <tr>
+                            <th>Despesas</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr data-ng-repeat="despesa in estudo.despesas.aduaneiras">
+                            <td>{{ despesa.nome }}</td>
+                            <td>{{ despesa.valor | currency: 'U$ ' }}</td>
+                        </tr>
+                        </tbody>
+                    </table>
                     <table class="table table-striped small m-t-sm" data-show-toggle="false" id="tblDadosEstudo">
                     <!--<table class="table table-striped">-->
                         <thead>
@@ -254,11 +302,11 @@
                         </tr>
                         <tr>
                             <td>Fob</td>
-                            <td data-ng-bind="estudo.fob.declarado.usd | currency: 'U$ '"></td>
+                            <td data-ng-bind="estudo.fob | currency: 'U$ '"></td>
                         </tr>
                         <tr>
                             <td>CIF</td>
-                            <td data-ng-bind="estudo.cif.declarado.brl | currency: 'R$ '"></td>
+                            <td data-ng-bind="estudo.cif | currency: 'U$ '"></td>
                         </tr>
                         <tr>
                             <td>Peso Total:</td>
@@ -274,41 +322,6 @@
                         </tr>
                         </tbody>
                     </table>
-                    <table class="table table-striped small m-t-sm">
-                        <thead>
-                        <tr>
-                            <th>Impostos</th>
-                            <th></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td>II</td>
-                            <td data-ng-bind="estudo.tributos.declarado.ii.brl | currency: 'R$ '"></td>
-                        </tr>
-                        <tr>
-                            <td>IPI</td>
-                            <td data-ng-bind="estudo.tributos.declarado.ipi.brl | currency: 'R$ '"></td>
-                        </tr>
-                        <tr>
-                            <td>PIS</td>
-                            <td data-ng-bind="estudo.tributos.declarado.pis.brl | currency: 'R$ '"></td>
-                        </tr>
-                        <tr>
-                            <td>Cofins</td>
-                            <td data-ng-bind="estudo.tributos.declarado.cofins.brl | currency: 'R$ '"></td>
-                        </tr>
-                        <tr>
-                            <td>ICMS</td>
-                            <td data-ng-bind="estudo.tributos.declarado.icms.brl | currency: 'R$ '"></td>
-                        </tr>
-                        <tr>
-                            <td>Total Imp.</td>
-                            <td data-ng-bind="estudo.tributos.declarado.total.brl | currency: 'R$ '"></td>
-                        </tr>
-                        </tbody>
-                    </table>
-
                 </div>
             </div>
         </div> <!-- Dados do Estudo -->
