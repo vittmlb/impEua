@@ -40,7 +40,7 @@ let AmazonfeesSchema = new Schema({
     criterios_size: {
         nome_size: {
             type: String,
-            required: `O campo 'regra_size' é obrigatório`,
+            required: `O campo 'nome_size' é obrigatório`,
             enum: ['Small stantard-size', 'Large stantard-size', 'Small oversize', 'Medium oversize', 'Large oversize', 'Special oversize' ]
         },
         regras: [{

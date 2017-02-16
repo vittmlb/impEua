@@ -15,12 +15,12 @@ angular.module('amazonfees').config(['$stateProvider', function ($stateProvider)
         })
         .state('amazonfee_view', {
             url: '/amazonfees/:amazonfeeId',
-            templateUrl: 'app/amazonfees/views/view-amazonfees.client.view.html',
+            templateUrl: 'app/amazonfees/views/view-amazonfee.client.view.html',
             controller: 'AmazonfeesController'
         })
         .state('amazonfee_edit', {
             url: '/amazonfees/:amazonfeeId/edit',
-            templateUrl: 'app/amazonfees/views/edit-amazonfees.client.view.html',
+            templateUrl: 'app/amazonfees/views/edit-amazonfee.client.view.html',
             controller: 'AmazonfeesController'
         });
 }]);

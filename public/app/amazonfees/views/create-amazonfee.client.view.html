@@ -14,15 +14,15 @@
     </div>
     <div class="wrapper wrapper-content animated fadeInRight">
         <div class="row">
-            <div class="col-lg-12">
-                <div class="ibox float-e-margins">
+            <form data-ng-submit="create()" class="form-horizontal">
+                <div class="col-lg-12">
+                    <div class="ibox float-e-margins">
                     <div class="ibox-title">
                         <h5>Cadastramento de Amazon Fee</h5>
                         <div ibox-tools></div>
                     </div>
                     <div class="ibox-content">
                         <br/><br/>
-                        <form data-ng-submit="create()" class="form-horizontal">
                             <div class="form-group"><label class="col-sm-2 control-label">Nome da Amazon Fee</label>
                                 <div class="col-sm-10">
                                     <input type="text" class="form-control" id="inputNomeFee" name="nome_fee" data-ng-model="nome_fee" placeholder="Nome da Amazon Fee">
@@ -39,6 +39,15 @@
                                 </div>
                             </div>
                             <div class="hr-line-dashed"></div>
+
+                    </div>
+                </div>
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-title">
+                            <h5>Regras para determinar o tamanho</h5>
+                        </div>
+                        <div class="ibox-content">
+                            <br/><br/>
                             <div class="form-group">
                                 <label for="selectTipoAmazonFee" class="col-sm-2 control-label">Regra Size</label>
                                 <div class="col-sm-5">
@@ -57,19 +66,25 @@
                                             data-ng-options="item for item in tiposDimensao">
                                     </select>
                                 </div>
-                                <div class="col-sm-2">
-                                    <select class="form-control" id="selectCriteriosSizeOperador"
-                                            data-ng-model="objCriterioSize.operador"
-                                            data-ng-options="item for item in tiposOperador">
-                                    </select>
-                                </div>
-                                <div class="col-sm-2">
+                                <div class="col-sm-1">
                                     <input type="number" class="form-control" id="inputCriteriosSizeDadosValor" data-ng-model="objCriterioSize.dados.valor" placeholder="Valor">
                                 </div>
                                 <div class="col-sm-2">
                                     <select class="form-control" name="tipo_unidade" id="selectCriteriosSizeDadosUnidade"
                                             data-ng-model="objCriterioSize.dados.unidade"
                                             data-ng-options="item for item in tiposUnidade">
+                                    </select>
+                                </div>
+                                <div class="col-sm-2">
+                                    <select class="form-control" id="selectCriteriosSizeOperador"
+                                            data-ng-model="objCriterioSize.operador"
+                                            data-ng-options="item for item in tiposOperador">
+                                    </select>
+                                </div>
+                                <div class="col-sm-2" ng-show="objCriterioSize.tipo_dimensao === 'medida'">
+                                    <select class="form-control" id="selectCriteriosSizeDadosLados"
+                                            data-ng-model="objCriterioSize.dados.lados"
+                                            data-ng-options="item for item in tiposLadosCriteriosSize">
                                     </select>
                                 </div>
                                 <div class="col-sm-1">
@@ -89,10 +104,10 @@
                                     <input style="margin-left: 15px;" type="submit" class="btn btn-primary pull-right" value="Cadastrar">
                                 </div>
                             </div>
-                        </form>
+                        </div>
                     </div>
-                </div>
             </div>
+            </form>
         </div>
     </div>
 </section>

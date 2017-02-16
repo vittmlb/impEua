@@ -51,11 +51,20 @@ angular.module('amazonfees').controller('AmazonfeesController', ['$scope', '$sta
             $scope.amazonfees = Amazonfees.query();
         };
         $scope.findOne = function() {
-            $scope.amazonfee = Amazonfees.get({
+            Amazonfees.get({
                 amazonfeeId: $stateParams.amazonfeeId
+            }).$promise.then(function (data) {
+                $scope.amazonfee = data;
+                $scope.amazonfee.criterios_size.regras.forEach(function (regra) {
+                    $scope.arrayCriteriosSize.push(regra);
+                });
             });
         };
         $scope.update = function() {
+            // $scope.amazonfee.criterios_size = {
+            //     nome_size: this.nome_size,
+            //     regras: $scope.arrayCriteriosSize
+            // };
             $scope.amazonfee.$update(function (response) {
                 $location.path('/amazonfees/' + response._id);
             }, function(errorResponse) {
