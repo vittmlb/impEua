@@ -19,16 +19,21 @@ angular.module('amazonfees').controller('AmazonfeesController', ['$scope', '$sta
         $scope.tiposDimensao = ['volume', 'medida', 'peso', 'data'];
         $scope.tiposOperador = [`igual`, 'maior', 'menor', 'maior ou igual', 'menor ou igual', '>='];
         $scope.tiposUnidade = ['oz', 'lb', 'polegadas'];
+        $scope.tiposCriteriosSize = ['Small stantard-size', 'Large stantard-size', 'Small oversize', 'Medium oversize', 'Large oversize', 'Special oversize' ];
+        $scope.tiposLadosCriteriosSize = ['shortest', 'median', 'longest', 'longest plus girth'];
 
-        $scope.arrayRegras = [];
-        $scope.objRegra = {};
+        $scope.arrayCriteriosSize = [];
+        $scope.objCriterioSize = {};
 
 
         $scope.create = function() {
             let amazonfee = new Amazonfees({
                 nome_fee: this.nome_fee,
                 tipo_fee: this.tipo_fee,
-                regras: $scope.arrayRegras
+                criterios_size: {
+                    nome_size: this.nome_size,
+                    regras: $scope.arrayCriteriosSize
+                }
             });
             amazonfee.$save(function (response) {
                 $location.path('/amazonfees/' + response._id);
@@ -108,8 +113,8 @@ angular.module('amazonfees').controller('AmazonfeesController', ['$scope', '$sta
         };
 
         $scope.addRegras = function() {
-            $scope.arrayRegras.push($scope.objRegra);
-            $scope.objRegra = {};
+            $scope.arrayCriteriosSize.push($scope.objCriterioSize);
+            $scope.objCriterioSize = {};
         };
 
     }

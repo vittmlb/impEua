@@ -45,7 +45,7 @@ exports.update = function(req, res) {
     let amazonfee = req.amazonfee;
     amazonfee.nome_fee = req.body.nome_fee;
     amazonfee.tipo_fee = req.body.tipo_fee;
-    amazonfee.regras = req.body.regras;
+    amazonfee.criterios_size = req.body.criterios_size;
     amazonfee.save(function (err) {
         if(err) {
             return res.status(400).send({

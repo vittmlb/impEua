@@ -37,27 +37,38 @@ let AmazonfeesSchema = new Schema({
         enum: ['FBA Fulfillment Fees', 'Monthly Inventory Storage Fees', 'Inventory Placement Service Fees'],
         required: `O campo 'tipo_fee' é obrigatório`
     },
-    regras: [{
-        tipo_dimensao: {
+    criterios_size: {
+        nome_size: {
             type: String,
-            enum: ['volume', 'medida', 'peso', 'data'],
+            required: `O campo 'regra_size' é obrigatório`,
+            enum: ['Small stantard-size', 'Large stantard-size', 'Small oversize', 'Medium oversize', 'Large oversize', 'Special oversize' ]
         },
-        operador: {
-            type: String,
-            enum: [`igual`, 'maior', 'menor', 'maior ou igual', 'menor ou igual', '>=']
-        },
-        dados: {
-            valor: {
-                type: Number,
-                required: `O Campo 'AmazonRegras > Dados > Valor' é obrigatório`
-            },
-            unidade: {
+        regras: [{
+            tipo_dimensao: {
                 type: String,
-                enum: ['oz', 'lb', 'polegadas'],
-                required: `O Campo 'AmazonRegras > Dados > Unidade' é obrigatório`
+                enum: ['volume', 'medida', 'peso', 'data'],
+            },
+            operador: {
+                type: String,
+                enum: [`igual`, 'maior', 'menor', 'maior ou igual', 'menor ou igual', '>=']
+            },
+            dados: {
+                valor: {
+                    type: Number,
+                    required: `O Campo 'AmazonRegras > Dados > Valor' é obrigatório`
+                },
+                unidade: {
+                    type: String,
+                    enum: ['oz', 'lb', 'polegadas'],
+                    required: `O Campo 'AmazonRegras > Dados > Unidade' é obrigatório`
+                },
+                lados: {
+                    type: String,
+                    enum: ['shortest', 'median', 'longest', 'longest plus girth']
+                }
             }
-        }
-    }]
+        }]
+    }
 });
 
 mongoose.model('AmazonFee', AmazonfeesSchema);
