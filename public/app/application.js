@@ -18,6 +18,7 @@ let mainAppModule = angular.module('admin_panel', [
     'cidades',
     'contatos',
     'categorias',
+    'amazonfees',
     'toaster',
     'ui.router',
     'ngAnimate',

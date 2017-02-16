@@ -37,6 +37,7 @@ module.exports = function() {
     require('../app/models/contatos.server.model');
     require('../app/models/categorias.server.model');
     require('../app/models/embalagens.server.model');
+    require('../app/models/amazonfees.server.model.js');
 
     return db;
 };
