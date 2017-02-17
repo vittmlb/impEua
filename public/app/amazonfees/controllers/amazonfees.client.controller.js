@@ -61,10 +61,6 @@ angular.module('amazonfees').controller('AmazonfeesController', ['$scope', '$sta
             });
         };
         $scope.update = function() {
-            // $scope.amazonfee.criterios_size = {
-            //     nome_size: this.nome_size,
-            //     regras: $scope.arrayCriteriosSize
-            // };
             $scope.amazonfee.$update(function (response) {
                 $location.path('/amazonfees/' + response._id);
             }, function(errorResponse) {
@@ -122,8 +118,21 @@ angular.module('amazonfees').controller('AmazonfeesController', ['$scope', '$sta
         };
 
         $scope.addRegras = function() {
-            $scope.arrayCriteriosSize.push($scope.objCriterioSize);
+            if($scope.amazonfee) {
+                $scope.amazonfee.criterios_size.regras.push($scope.objCriterioSize);
+            } else {
+                $scope.arrayCriteriosSize.push($scope.objCriterioSize);
+            }
             $scope.objCriterioSize = {};
+        };
+        $scope.removeRegras = function(regra) {
+            if($scope.amazonfee) {
+                let index = $scope.amazonfee.criterios_size.regras.indexOf(regra);
+                $scope.amazonfee.criterios_size.regras.splice(index, 1);
+            } else {
+                let index = $scope.arrayCriteriosSize.indexOf(regra);
+                $scope.arrayCriteriosSize.splice(index, 1);
+            }
         };
 
     }

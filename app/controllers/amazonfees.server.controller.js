@@ -42,13 +42,10 @@ exports.findById = function(req, res, next, id) {
 };
 
 exports.update = function(req, res) {
-    let amazonfee = req.amazonfee;
+   let amazonfee = req.amazonfee;
     amazonfee.nome_fee = req.body.nome_fee;
     amazonfee.tipo_fee = req.body.tipo_fee;
-    amazonfee.criterios_size = {
-        nome_size: req.body.criterios_size.nome_size,
-        regras: req.body.criterios_size.regras
-    };
+    amazonfee.criterios_size = req.body.criterios_size;
     amazonfee.save(function (err) {
         if(err) {
             return res.status(400).send({

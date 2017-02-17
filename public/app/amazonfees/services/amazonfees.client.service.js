@@ -13,25 +13,26 @@ angular.module('amazonfees').factory('Amazonfees', ['$resource', function ($reso
 
 angular.module('amazonfees').factory('Amazonrules', ['Amazonfees',
     function(Amazonfees) {
-        let fees = Amazonfees.query();
         let reg = Amazonfees.get({
-            amazonfeeId: '58a586eec341f3b43708ce74'
+            amazonfeeId: '58a63e2c9f4c66905ca471e8'
         });
-        let teste = 'Caralho';
 
         function analisaRegra(produto) {
-            let a = evaluate(produto.medidas.peso, reg.regras[0].dados.valor, reg.regras[0].operador);
-            if(a) {
-                return 999;
-            } else {
-                return 2;
+            let valor = 0;
+            let regras = reg.criterios_size.regras;
+            for(let i = 0; i < regras.length; i++) {
+                let flag = evaluate_tipo(regras[i], produto);
+                if(!flag) {
+                    valor = 0;
+                    break;
+                } else {
+                    valor = 999;
+                }
             }
+            return valor;
         }
 
         return {
-            resp: teste,
-            fee: 'alow',
-            saco: reg,
             testaRegra: function(produto) {
                 return analisaRegra(produto);
             }
@@ -40,8 +41,27 @@ angular.module('amazonfees').factory('Amazonrules', ['Amazonfees',
     }
 ]);
 
+function evaluate_tipo(regra, produto) {
+    switch (regra.tipo_dimensao) {
+        case 'peso':
+            return evaluate(produto.medidas.peso, regra.dados.valor, regra.operador);
+        case 'medida':
+            return evaluate(4, regra.dados.valor, regra.operador);
+        default:
+            return false;
+    }
+}
+
 function evaluate(param_1, param_2, operator) {
     switch (operator) {
+        case 'igual':
+            return (param_1 === param_2);
+        case 'maior':
+            return (param_1 > param_2);
+        case 'menor':
+            return (param_1 < param_2);
+        case 'maior ou igual':
+            return (param_1 >= param_2);
         case 'menor ou igual':
             return (param_1 <= param_2);
     }

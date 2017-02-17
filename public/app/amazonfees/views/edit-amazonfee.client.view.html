@@ -25,7 +25,7 @@
                             <br/><br/>
                             <div class="form-group"><label class="col-sm-2 control-label">Nome da Amazon Fee</label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control" id="inputNomeFee" name="nome_feee" data-ng-model="amazonfee.nome_fee" placeholder="Nome da Amazon Fee">
+                                    <input type="text" class="form-control" id="inputNomeFee" name="nome_fee" data-ng-model="amazonfee.nome_fee" placeholder="Nome da Amazon Fee">
                                 </div>
                             </div>
                             <div class="hr-line-dashed"></div>
@@ -90,13 +90,6 @@
                                 <div class="col-sm-1">
                                     <span data-ng-click="addRegras()" style="cursor: pointer; margin-top: 10px;" class="fa fa-plus"></span>
                                 </div>
-                                <div class="row">
-                                    <div class="col-sm-offset-2 col-sm-10">
-                                        <div style="margin-top: 10px; margin-left: 10px;" data-ng-repeat="reg in arrayCriteriosSize">
-                                            <small>{{ reg.tipo_dimensao }}</small>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
 
 
@@ -104,7 +97,7 @@
                             <div class="form-group">
                                 <!--<label class="col-sm-2 control-label">Regras</label>-->
                                 <div>
-                                    <div class="row" data-ng-repeat="reg in arrayCriteriosSize" style="margin-bottom: 13px;">
+                                    <div class="row" data-ng-repeat="reg in amazonfee.criterios_size.regras" style="margin-bottom: 13px;">
                                         <div class="col-sm-offset-2 col-sm-2">
                                             <select class="form-control"
                                                     data-ng-model="reg.tipo_dimensao"
@@ -133,7 +126,7 @@
                                             </select>
                                         </div>
                                         <div class="col-sm-1">
-                                            <span data-ng-click="addRegras()" style="cursor: pointer; margin-top: 10px;" class="fa fa-plus"></span>
+                                            <span data-ng-click="removeRegras(reg)" style="cursor: pointer; margin-top: 10px;" class="fa fa-minus"></span>
                                         </div>
                                     </div>
                                 </div>
