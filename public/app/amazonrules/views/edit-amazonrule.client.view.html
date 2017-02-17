@@ -1,0 +1,137 @@
+<section data-ng-controller="AmazonrulesController" data-ng-init="findOne()">
+    <div class="row wrapper border-bottom white-bg page-heading">
+        <div class="col-lg-10">
+            <h2>Amazon Rules</h2>
+            <ol class="breadcrumb">
+                <li>
+                    <a href="index.html">Home</a>
+                </li>
+                <li class="active">
+                    <a>Editar Amazon Rules</a>
+                </li>
+            </ol>
+        </div>
+    </div>
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <form data-ng-submit="update()" class="form-horizontal">
+                <div class="col-lg-12">
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-title">
+                            <h5>Update de Amazon Rule</h5>
+                            <div ibox-tools></div>
+                        </div>
+                        <div class="ibox-content">
+                            <br/><br/>
+                            <div class="form-group"><label class="col-sm-2 control-label">Nome do Rule Set</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="inputNomeSet" name="nome_set" data-ng-model="amazonrule.nome_set" placeholder="Nome do Rule Set">
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <label for="selectTipoRuleSet" class="col-sm-2 control-label">Tipo Rule Set</label>
+                                <div class="col-sm-5">
+                                    <select class="form-control" name="tipo_fee" id="selectTipoRuleSet"
+                                            data-ng-model="amazonrule.tipo_set"
+                                            data-ng-options="item for item in tiposSet">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+
+                        </div>
+                    </div>
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-title">
+                            <h5>Regras para determinar o tamanho</h5>
+                        </div>
+                        <div class="ibox-content">
+                            <br/><br/>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">Rules</label>
+                                <div class="col-sm-2">
+                                    <select class="form-control" id="selectTipoRule"
+                                            data-ng-model="objRule.tipo_rule"
+                                            data-ng-options="item for item in tiposRule">
+                                    </select>
+                                </div>
+                                <div class="col-sm-1">
+                                    <input type="number" class="form-control" id="inputRulesDadosValor" data-ng-model="objRule.dados_rule.valor" placeholder="Valor">
+                                </div>
+                                <div class="col-sm-2">
+                                    <select class="form-control" name="unidade" id="selectRulesDadosUnidade"
+                                            data-ng-model="objRule.dados_rule.unidade"
+                                            data-ng-options="item for item in tiposUnidade">
+                                    </select>
+                                </div>
+                                <div class="col-sm-2">
+                                    <select class="form-control" id="selectRulesOperador"
+                                            data-ng-model="objRule.operador_rule"
+                                            data-ng-options="item for item in tiposOperador">
+                                    </select>
+                                </div>
+                                <div class="col-sm-2" ng-show="objRule.tipo_rule === 'medida'">
+                                    <select class="form-control" id="selectRulesParamsLados"
+                                            data-ng-model="objRule.params_rule.lados"
+                                            data-ng-options="item for item in tiposLados">
+                                    </select>
+                                </div>
+                                <div class="col-sm-1">
+                                    <span data-ng-click="addRegras()" style="cursor: pointer; margin-top: 10px;" class="fa fa-plus"></span>
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+
+
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <!--<label class="col-sm-2 control-label">Regras</label>-->
+                                <div>
+                                    <div class="row" data-ng-repeat="rule in amazonrule.rule_set" style="margin-bottom: 13px;">
+                                        <div class="col-sm-offset-2 col-sm-2">
+                                            <select class="form-control"
+                                                    data-ng-model="rule.tipo_rule"
+                                                    data-ng-options="item for item in tiposRule">
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-1">
+                                            <input type="number" class="form-control" data-ng-model="rule.dados_rule.valor" placeholder="Valor">
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <select class="form-control" name="tipo_unidade"
+                                                    data-ng-model="rule.dados_rule.unidade"
+                                                    data-ng-options="item for item in tiposUnidade">
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <select class="form-control"
+                                                    data-ng-model="rule.operador_rule"
+                                                    data-ng-options="item for item in tiposOperador">
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-2" ng-show="rule.tipo_rule === 'medida'">
+                                            <select class="form-control"
+                                                    data-ng-model="rule.params_rule.lados"
+                                                    data-ng-options="item for item in tiposLados">
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-1">
+                                            <span data-ng-click="removeRegras(reg)" style="cursor: pointer; margin-top: 10px;" class="fa fa-minus"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <input style="margin-left: 15px;" type="submit" class="btn btn-primary pull-right" value="Update">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>

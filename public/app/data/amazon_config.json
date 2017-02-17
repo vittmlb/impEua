@@ -1,0 +1,7 @@
+{
+  "amazonrule.tipo_set": ["Vigência", "Intervalo Data", "Dimensionamento", "Pesagem"],
+  "amazonrule.tipo_rule": ["volume", "medida", "peso", "data"],
+  "amazonrule.operador_rule": ["igual", "maior", "menor", "maior ou igual", "menor ou igual"],
+  "amazonrule.dados_rule.unidade": ["oz", "lb", "polegadas"],
+  "amazonrule.params_rule.lados": ["shortest side", "median side", "longest side", "longest plus girth"]
+}

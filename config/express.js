@@ -51,6 +51,7 @@ module.exports = function() {
     require('../app/routes/categorias.server.routes')(app);
     require('../app/routes/embalagens.server.routes')(app);
     require('../app/routes/amazonfees.server.routes.js')(app);
+    require('../app/routes/amazonrules.server.routes')(app);
     
     return app;
 

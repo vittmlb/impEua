@@ -19,6 +19,7 @@ let mainAppModule = angular.module('admin_panel', [
     'contatos',
     'categorias',
     'amazonfees',
+    'amazonrules',
     'toaster',
     'ui.router',
     'ngAnimate',

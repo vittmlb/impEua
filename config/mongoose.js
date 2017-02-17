@@ -38,6 +38,7 @@ module.exports = function() {
     require('../app/models/categorias.server.model');
     require('../app/models/embalagens.server.model');
     require('../app/models/amazonfees.server.model.js');
+    require('../app/models/amazonrules.server.model');
 
     return db;
 };
