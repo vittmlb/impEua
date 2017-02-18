@@ -11,6 +11,16 @@ angular.module('amazonfees').factory('Amazonfees', ['$resource', function ($reso
     });
 }]);
 
+// angular.module('amazonfees').factory('Amazonfees', ['$resource', function ($resource) {
+//     return $resource('/api/amazonfees/:amazonfeeId', {
+//         amazonfeeId: '@_id'
+//     }, {
+//         update: {
+//             method: 'PUT'
+//         }
+//     });
+// }]);
+
 angular.module('amazonfees').factory('Amazonrules', ['Amazonfees',
     function(Amazonfees) {
         let reg = Amazonfees.get({

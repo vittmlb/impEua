@@ -1,4 +1,4 @@
-<section data-ng-controller="AmazonfeesController" data-ng-init="findOne()">
+<section data-ng-controller="AmazonrulesController" data-ng-init="findOne()">
     <div class="row wrapper border-bottom white-bg page-heading">
         <div class="col-lg-10">
             <h2>Amazon Fees</h2>
@@ -7,7 +7,7 @@
                     <a href="index.html">Home</a>
                 </li>
                 <li class="active">
-                    <strong>View Amazon Fees</strong>
+                    <strong>View Amazon Rules</strong>
                 </li>
             </ol>
         </div>
@@ -27,8 +27,8 @@
                 <div class="profile-info" style="margin-left: 0;">
                     <div class="">
                         <div>
-                            <h2 class="no-margins">{{ amazonfee.nome_fee }}</h2>
-                            <h4 style="margin-left: 2px; margin-top: 8px;">{{ amazonfee.tipo_fee }}</h4>
+                            <h2 class="no-margins">{{ amazonrule.nome_set }}</h2>
+                            <h4 style="margin-left: 2px; margin-top: 8px;">{{ amazonrule.tipo_set }}</h4>
                             <small>
                                 There are many variations of passages of Lorem Ipsum available, but the majority
                                 have suffered alteration in some form Ipsum available.
@@ -69,8 +69,8 @@
                 </table>
             </div>
             <div class="col-lg-3 m-b-lg">
-                <button ng-click="deleteAlert(amazonfee)" style="top: 5px; margin-right: 44px; position: relative;" class="btn btn-sm btn-white pull-right"><i class="fa fa-times"></i></button>
-                <a ng-href="#!/amazonfees/{{ amazonfee._id }}/edit" style="top: 5px; margin-right: 10px; position: relative;" class="btn btn-sm btn-white pull-right"><i class="fa fa-pencil"></i></a>
+                <button ng-click="deleteAlert(amazonrule)" style="top: 5px; margin-right: 44px; position: relative;" class="btn btn-sm btn-white pull-right"><i class="fa fa-times"></i></button>
+                <a ng-href="#!/amazonrules/{{ amazonrule._id }}/edit" style="top: 5px; margin-right: 10px; position: relative;" class="btn btn-sm btn-white pull-right"><i class="fa fa-pencil"></i></a>
             </div>
 
 
@@ -82,8 +82,13 @@
                     <div class="social-avatar">
                         <div class="media-body">
                             <a href="#">Regras
-                            </a>
-                            <span class="text-muted">{{ amazonfee.criterios_size.nome_size }}</span>
+                            </a><br/>
+                            <span class="text-muted"></span>
+                            <p style="font-size: 1.2em;" data-ng-repeat="rule in amazonrule.rule_set">
+                            {{ rule.tipo_rule }}
+                            {{ rule.operador_rule }}
+                            {{ rule.dados_rule.valor }} {{ rule.dados_rule.unidade }}
+                            </p>
                         </div>
                     </div>
                     <div class="social-body">

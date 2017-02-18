@@ -14,7 +14,7 @@
     </div>
     <div class="wrapper wrapper-content animated fadeInRight">
         <div class="row">
-            <div class="col-lg-3" data-ng-repeat="amazonrule in amazonrules">
+            <div class="col-lg-3" data-ng-repeat="amazonrule in amazonrules | orderBy: amazonrule.tipo_set">
                 <div class="contact-box center-version">
 
                     <a ng-href="#!/amazonrules/{{ amazonrule._id }}">
@@ -23,20 +23,22 @@
 
 
                         <h3 class="m-b-xs"><strong>{{ amazonrule.nome_set }}</strong></h3>
-                        <div class="font-bold">Graphics designer</div>
-                        <address class="m-t-md">
-                            <strong>Twitter, Inc.</strong><br>
-                            795 Folsom Ave, Suite 600<br>
-                            San Francisco, CA 94107<br>
-                            <abbr title="Phone">P:</abbr> (123) 456-7890
-                        </address>
+                        <div class="font-bold">{{ amazonrule.tipo_set }}</div>
+                        <!--<address class="m-t-md">-->
+                            <!--<strong>Regras</strong><br><br/>-->
+                            <!--<div data-ng-repeat="rule in amazonrule.rule_set">-->
+                                <!--{{ rule.tipo_rule }}-->
+                                <!--{{ rule.operador_rule }}-->
+                                <!--{{ rule.dados_rule.valor }} {{ rule.dados_rule.unidade }}-->
+                            <!--</div>-->
+                        <!--</address>-->
 
                     </a>
                     <div class="contact-box-footer">
                         <div class="m-t-xs btn-group">
                             <a ng-href="#!/amazonrules/{{ amazonrule._id }}" class="btn btn-xs btn-white"><i class="fa fa-eye"></i> View</a>
                             <a ng-href="#!/amazonrules/{{ amazonrule._id }}/edit" class="btn btn-xs btn-white"><i class="fa fa-pencil"></i> Edit</a>
-                            <a class="btn btn-xs btn-white"><i class="fa fa-remove"></i> Remove</a>
+                            <a ng-click="remove(amazonrule)" class="btn btn-xs btn-white"><i class="fa fa-remove"></i> Remove</a>
                         </div>
                     </div>
 

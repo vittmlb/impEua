@@ -1,8 +1,8 @@
 /**
  * Created by Vittorio on 15/02/2017.
  */
-angular.module('amazonfees').controller('AmazonfeesController', ['$scope', '$stateParams', '$location', 'Amazonfees', 'toaster', 'SweetAlert', 'Amazonrules',
-    function($scope, $stateParams, $location, Amazonfees, toaster, SweetAlert, Amazonrules) {
+angular.module('amazonfees').controller('AmazonfeesController', ['$scope', '$stateParams', '$location', 'Amazonfees', 'toaster', 'SweetAlert', 'AmazonrulesQueries',
+    function($scope, $stateParams, $location, Amazonfees, toaster, SweetAlert, AmazonrulesQueries) {
         let SweetAlertOptions = {
             removerAmazonfee: {
                 title: "Deseja remover a Amazon Fee?",
@@ -19,16 +19,16 @@ angular.module('amazonfees').controller('AmazonfeesController', ['$scope', '$sta
         $scope.tiposMedia = ['media', 'non-media'];
 
 
-        $scope.arrayCriteriosSize = [];
-        $scope.objCriterioSize = {};
-
         $scope.setRules = [];
 
-        $scope.iniTeste = function() {
-            Amazonrules.query().$promise.then(function (data) {
-                $scope.listaRules = data
+        loadListas();
+        function loadListas() {
+            AmazonrulesQueries.query({
+                tiposetId: 'Merda'
+            }).$promise.then(function (data) {
+                $scope.listaRules = data;
             });
-        };
+        }
 
         $scope.create = function() {
             let amazonfee = new Amazonfees({
@@ -59,9 +59,6 @@ angular.module('amazonfees').controller('AmazonfeesController', ['$scope', '$sta
             }).$promise.then(function (data) {
                 $scope.amazonfee = data;
                 $scope.setRules = $scope.amazonfee.rules_fee;
-                // $scope.amazonfee.criterios_size.regras.forEach(function (regra) {
-                //     $scope.arrayCriteriosSize.push(regra);
-                // });
             });
         };
         $scope.update = function() {

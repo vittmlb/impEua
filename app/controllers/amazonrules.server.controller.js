@@ -17,7 +17,7 @@ exports.create = function(req, res) {
 };
 
 exports.list = function(req, res) {
-    AmazonRules.find().exec(function (err, amazonRules) {
+    AmazonRules.find().populate('rule_set').exec(function (err, amazonRules) {
         if(err) {
             return res.status(400).send({
                 message: err
@@ -41,11 +41,13 @@ exports.findById = function(req, res, next, id) {
     });
 };
 
-exports.findByTipoSet = function(req, res, next, tipo_set) {
-    AmazonRules.find({"tipo_set": tipo_set}).exec(function (err, amazonrule) {
+exports.groupByTipoSet = function(req, res, next, tipo_set) {
+    AmazonRules.aggregate([
+        {$group: {_id: "$tipo_set", tipos: {$push: "$$ROOT"}}}
+    ]).exec(function (err, amazonRule) {
         if(err) return next(err);
-        if(!amazonrule) return next(new Error(`Failed to find amazonrule with tipo_set: ${tipo_set}`));
-        req.amazonrule = amazonrule;
+        if(!amazonRule) return next(new Error(`Failed to Group By TipoSet: ${tipo_set}`)); // todo: Usar uma mensagem de erro decente.
+        req.amazonRule = auxGroupByTipoSet(amazonRule);
         next();
     });
 };
@@ -78,3 +80,24 @@ exports.delete = function(req, res) {
         }
     });
 };
+
+function auxGroupByTipoSet(data) {
+    let listas = {};
+    data.forEach(function (lista) {
+        switch (lista._id) {
+            case 'Vigência':
+                listas.vigencia = lista.tipos;
+                break;
+            case 'Intervalo Data':
+                listas.intervalo_data = lista.tipos;
+                break;
+            case 'Dimensionamento':
+                listas.dimensionamento = lista.tipos;
+                break;
+            case 'Pesagem':
+                listas.pesagem = lista.tipos;
+                break;
+        }
+    });
+    return listas;
+}

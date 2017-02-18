@@ -27,7 +27,7 @@
                 <div class="profile-info" style="margin-left: 0;">
                     <div class="">
                         <div>
-                            <h2 class="no-margins">{{ amazonfee.nome_fee }}</h2>
+                            <h2 class="no-margins">{{ amazonfee.nome_fee }} - {{ amazonfee.dados_fee.valor | currency: 'U$' }}</h2>
                             <h4 style="margin-left: 2px; margin-top: 8px;">{{ amazonfee.tipo_fee }}</h4>
                             <small>
                                 There are many variations of passages of Lorem Ipsum available, but the majority
@@ -83,6 +83,11 @@
                         <div class="media-body">
                             <a href="#">Regras
                             </a>
+                            <br/>
+                            <p>{{ amazonfee.rules_fee.vigencia.nome_set }}</p>
+                            <p>{{ amazonfee.rules_fee.intervalo_data.nome_set }}</p>
+                            <p>{{ amazonfee.rules_fee.dimensionamento.nome_set }}</p>
+                            <p>{{ amazonfee.rules_fee.pesagem.nome_set }}</p>
                             <span class="text-muted">{{ amazonfee.criterios_size.nome_size }}</span>
                         </div>
                     </div>

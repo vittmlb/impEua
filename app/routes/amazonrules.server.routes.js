@@ -14,10 +14,10 @@ module.exports = function(app) {
         .put(amazonRules.update)
         .delete(amazonRules.delete);
 
-    app.route('/api/amazonrules/:tiposetId')
+    app.route('/api/amazonrules/query/:tiposetId')
         .get(amazonRules.read);
 
     app.param('amazonruleId', amazonRules.findById);
-    app.param('tiposetId', amazonRules.findByTipoSet);
+    app.param('tiposetId', amazonRules.groupByTipoSet);
 
 };

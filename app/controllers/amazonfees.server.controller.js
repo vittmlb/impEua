@@ -33,7 +33,12 @@ exports.read = function(req, res) {
 };
 
 exports.findById = function(req, res, next, id) {
-    AmazonFee.findById(id).exec(function (err, amazonfee) {
+    AmazonFee.findById(id)
+        .populate('rules_fee.vigencia')
+        .populate('rules_fee.intervalo_data')
+        .populate('rules_fee.dimensionamento')
+        .populate('rules_fee.pesagem')
+        .exec(function (err, amazonfee) {
         if(err) return next(err);
         if(!amazonfee) return next(new Error(`Failed to load amazonfee id: ${id}`));
         req.amazonfee = amazonfee;
