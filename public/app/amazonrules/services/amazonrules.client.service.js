@@ -3,11 +3,12 @@
  */
 angular.module('amazonrules').factory('Amazonrules', ['$resource', function ($resource) {
     return $resource('/api/amazonrules/:amazonruleId', {
-        amazonfeeId: '@_id'
+        amazonruleId: '@_id'
     }, {
         update: {
             method: 'PUT'
         }
     });
 }]);
+
 

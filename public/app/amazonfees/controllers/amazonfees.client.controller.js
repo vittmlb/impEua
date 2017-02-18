@@ -1,8 +1,8 @@
 /**
  * Created by Vittorio on 15/02/2017.
  */
-angular.module('amazonfees').controller('AmazonfeesController', ['$scope', '$stateParams', '$location', 'Amazonfees', 'toaster', 'SweetAlert',
-    function($scope, $stateParams, $location, Amazonfees, toaster, SweetAlert) {
+angular.module('amazonfees').controller('AmazonfeesController', ['$scope', '$stateParams', '$location', 'Amazonfees', 'toaster', 'SweetAlert', 'Amazonrules',
+    function($scope, $stateParams, $location, Amazonfees, toaster, SweetAlert, Amazonrules) {
         let SweetAlertOptions = {
             removerAmazonfee: {
                 title: "Deseja remover a Amazon Fee?",
@@ -16,24 +16,27 @@ angular.module('amazonfees').controller('AmazonfeesController', ['$scope', '$sta
         };
 
         $scope.tiposFee = ['FBA Fulfillment Fees', 'Monthly Inventory Storage Fees', 'Inventory Placement Service Fees'];
-        $scope.tiposDimensao = ['volume', 'medida', 'peso', 'data'];
-        $scope.tiposOperador = [`igual`, 'maior', 'menor', 'maior ou igual', 'menor ou igual', '>='];
-        $scope.tiposUnidade = ['oz', 'lb', 'polegadas'];
-        $scope.tiposCriteriosSize = ['Small stantard-size', 'Large stantard-size', 'Small oversize', 'Medium oversize', 'Large oversize', 'Special oversize' ];
-        $scope.tiposLadosCriteriosSize = ['shortest', 'median', 'longest', 'longest plus girth'];
+        $scope.tiposMedia = ['media', 'non-media'];
+
 
         $scope.arrayCriteriosSize = [];
         $scope.objCriterioSize = {};
 
+        $scope.setRules = [];
+
+        $scope.iniTeste = function() {
+            Amazonrules.query().$promise.then(function (data) {
+                $scope.listaRules = data
+            });
+        };
 
         $scope.create = function() {
             let amazonfee = new Amazonfees({
                 nome_fee: this.nome_fee,
                 tipo_fee: this.tipo_fee,
-                criterios_size: {
-                    nome_size: this.nome_size,
-                    regras: $scope.arrayCriteriosSize
-                }
+                media_fee: this.media_fee,
+                rules_fee: this.rules_fee,
+                dados_fee: this.dados_fee
             });
             amazonfee.$save(function (response) {
                 $location.path('/amazonfees/' + response._id);
@@ -55,9 +58,10 @@ angular.module('amazonfees').controller('AmazonfeesController', ['$scope', '$sta
                 amazonfeeId: $stateParams.amazonfeeId
             }).$promise.then(function (data) {
                 $scope.amazonfee = data;
-                $scope.amazonfee.criterios_size.regras.forEach(function (regra) {
-                    $scope.arrayCriteriosSize.push(regra);
-                });
+                $scope.setRules = $scope.amazonfee.rules_fee;
+                // $scope.amazonfee.criterios_size.regras.forEach(function (regra) {
+                //     $scope.arrayCriteriosSize.push(regra);
+                // });
             });
         };
         $scope.update = function() {
@@ -119,7 +123,7 @@ angular.module('amazonfees').controller('AmazonfeesController', ['$scope', '$sta
 
         $scope.addRegras = function() {
             if($scope.amazonfee) {
-                $scope.amazonfee.criterios_size.regras.push($scope.objCriterioSize);
+                // $scope.amazonfee.criterios_size.regras.push($scope.objCriterioSize);
             } else {
                 $scope.arrayCriteriosSize.push($scope.objCriterioSize);
             }

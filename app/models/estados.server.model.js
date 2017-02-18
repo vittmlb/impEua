@@ -1,10 +1,10 @@
 /**
  * Created by Vittorio on 14/08/2016.
  */
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
+let mongoose = require('mongoose');
+let Schema = mongoose.Schema;
 
-var EstadoSchema = new Schema({
+let EstadoSchema = new Schema({
     nome_estado: {
         type: String,
         trim: true,

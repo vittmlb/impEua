@@ -33,10 +33,19 @@ exports.read = function(req, res) {
 };
 
 exports.findById = function(req, res, next, id) {
-    AmazonRules.findById(id).exec(function (err, amazonRule) {
+    AmazonRules.findById(id).populate('rule_set').exec(function (err, amazonRule) {
         if(err) return next(err);
         if(!amazonRule) return next(new Error(`Failed to load amazonRule id: ${id}`));
         req.amazonRule = amazonRule;
+        next();
+    });
+};
+
+exports.findByTipoSet = function(req, res, next, tipo_set) {
+    AmazonRules.find({"tipo_set": tipo_set}).exec(function (err, amazonrule) {
+        if(err) return next(err);
+        if(!amazonrule) return next(new Error(`Failed to find amazonrule with tipo_set: ${tipo_set}`));
+        req.amazonrule = amazonrule;
         next();
     });
 };

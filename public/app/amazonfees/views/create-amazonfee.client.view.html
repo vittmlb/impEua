@@ -1,4 +1,4 @@
-<section data-ng-controller="AmazonfeesController">
+<section data-ng-controller="AmazonfeesController" data-ng-init="iniTeste()">
     <div class="row wrapper border-bottom white-bg page-heading">
         <div class="col-lg-10">
             <h2>Amazon Fees</h2>
@@ -30,15 +30,25 @@
                             </div>
                             <div class="hr-line-dashed"></div>
                             <div class="form-group">
-                                <label for="selectTipoAmazonFee" class="col-sm-2 control-label">Tipo Amazon Fee</label>
+                                <label for="selectTipoAmazonFee" class="col-sm-2 control-label">Teste</label>
                                 <div class="col-sm-5">
-                                    <select class="form-control" name="tipo_fee" id="selectTipoAmazonFee"
-                                            data-ng-model="tipo_fee"
-                                            data-ng-options="item for item in tiposFee">
+                                    <select class="form-control" name="nome_set"
+                                            data-ng-model="nome_set"
+                                            data-ng-options="item as item.nome_set for item in listaRules track by item._id">
                                     </select>
                                 </div>
                             </div>
-                            <div class="hr-line-dashed"></div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label for="selectTipoAmazonFee" class="col-sm-2 control-label">Tipo Amazon Fee</label>
+                            <div class="col-sm-5">
+                                <select class="form-control" name="tipo_fee" id="selectTipoAmazonFee"
+                                        data-ng-model="tipo_fee"
+                                        data-ng-options="item for item in tiposFee">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
 
                     </div>
                 </div>
