@@ -6,6 +6,42 @@
     <div class="modal-body">
         <div>
             <div class="row">
+                <div class="col-sm-8">
+                <div data-ng-repeat="elem in currentProdutoView.estudo_do_produto.modulo_amazon.inspectedRules">
+                    <div style="margin-bottom: 8px;" data-ng-show="elem.rule_set.params_rule.lados === 'longest side'">
+                        longest side:
+                        {{ elem.params.dimensoes.longest | number: 2 }} é <span>{{ elem.rule_set.operador_rule }}</span> a {{ elem.rule_set.dados_rule.valor }} {{ elem.rule_set.dados_rule.unidade }}
+                        <br/>
+                    </div>
+                    <div style="margin-bottom: 8px;" data-ng-show="elem.rule_set.params_rule.lados === 'median side'">
+                        median side:
+                        {{ elem.params.dimensoes.median | number: 2 }} é <span>{{ elem.rule_set.operador_rule }}</span> a {{ elem.rule_set.dados_rule.valor }} {{ elem.rule_set.dados_rule.unidade }}
+                        <br/>
+                    </div>
+                    <div style="margin-bottom: 8px;" data-ng-show="elem.rule_set.params_rule.lados === 'shortest side'">
+                        shortest side:
+                        {{ elem.params.dimensoes.shortest | number: 2 }} é <span>{{ elem.rule_set.operador_rule }}</span> a {{ elem.rule_set.dados_rule.valor }} {{ elem.rule_set.dados_rule.unidade }}
+                        <br/>
+                    </div>
+                    <div style="margin-bottom: 8px;" data-ng-show="elem.rule_set.params_rule.lados === 'girth'">
+                        girth:
+                        {{ elem.params.dimensoes.girth | number: 2 }} é <span>{{ elem.rule_set.operador_rule }}</span> a {{ elem.rule_set.dados_rule.valor }} {{ elem.rule_set.dados_rule.unidade }}
+                        <br/>
+                    </div>
+                    <div style="margin-bottom: 8px;" data-ng-show="elem.rule_set.dados_rule.unidade === 'lb'">
+                        peso:
+                        {{ elem.params.peso.lb | number: 2 }} é <span>{{ elem.rule_set.operador_rule }}</span> a {{ elem.rule_set.dados_rule.valor }} {{ elem.rule_set.dados_rule.unidade }}
+                        <br/>
+                    </div>
+                    <div style="margin-bottom: 8px;" data-ng-show="elem.rule_set.dados_rule.unidade === 'oz'">
+                        peso:
+                        {{ elem.params.peso.oz | number: 2 }} é <span>{{ elem.rule_set.operador_rule }}</span> a {{ elem.rule_set.dados_rule.valor }} {{ elem.rule_set.dados_rule.unidade }}
+                        <br/>
+                    </div>
+                </div>
+                </div>
+            </div>
+            <div class="row">
                 <div class="col-sm-6">
                     <table class="table small striped-table">
                         <thead>

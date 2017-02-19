@@ -93,7 +93,8 @@
                                 <td class="project-title">
                                     <a>{{itemEstudo.estudo_do_produto.custo_unitario | currency: 'U$ '}}</a>
                                     <br>
-                                    <small>Investimento:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.resultados.investimento | currency: 'U$ '}}</small>
+                                    <small>Investimento:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.resultados.investimento | currency: 'U$ '}}</small><br/>
+                                    <small>{{ itemEstudo.estudo_do_produto.modulo_amazon.categoria }}</small>
                                 </td>
                                 <td class="project-title">
                                     <input style="text-align: center;" type="number" class="form-control input-transparente" placeholder="qtd" data-ng-model="itemEstudo.estudo_do_produto.qtd" ng-change="processaMudancas(itemEstudo, 'qtd')">

@@ -48,7 +48,6 @@ angular.module('produtos').controller('ProdutosController', ['$scope', '$routePa
             notas: 'Aloha'
         });
         $scope.ListaHsCodes = hscodes.query();
-        $scope.ncm = {};
         $scope.hs = {};
         $scope.parsed_ncm = {};
         $scope.parsed_hs = {};
@@ -87,7 +86,7 @@ angular.module('produtos').controller('ProdutosController', ['$scope', '$routePa
                 // ncm: parsed_ncm._id,
                 // ncm: $scope.parsed_ncm._id,
                 hs: $scope.parsed_hs._id,
-                usa_impostos_hs: this.usa_impostos_ncm,
+                usa_duty_hs: this.usa_duty_hs,
                 // impostos: $scope.impostos,
                 duty: this.duty,
                 medidas: {
@@ -165,18 +164,16 @@ angular.module('produtos').controller('ProdutosController', ['$scope', '$routePa
         };
 
         $scope.atualizaImpostos = function() {
-            if($scope.usa_impostos_ncm) {
-                $scope.parsed_ncm = JSON.parse($scope.hs);
+            if($scope.usa_duty_hs) {
                 $scope.parsed_hs = JSON.parse($scope.hs);
-                if($scope.usa_impostos_ncm) {
-                    $scope.impostos = $scope.parsed_ncm.impostos;
+                if($scope.usa_duty_hs) {
                     $scope.duty = $scope.parsed_hs.duty
                 }
             }
         };
         $scope.atualizaImpostosEdit = function() {
-            if($scope.produto.usa_impostos_ncm) {
-                $scope.produto.impostos = $scope.produto.ncm.impostos;
+            if($scope.produto.usa_duty_hs) {
+                $scope.produto.duty = $scope.produto.hs.duty;
             }
         };
 
