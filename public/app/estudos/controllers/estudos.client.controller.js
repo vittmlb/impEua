@@ -1,8 +1,8 @@
 /**
  * Created by Vittorio on 30/05/2016.
  */
-angular.module('estudos').controller('EstudosController', ['$scope', '$uibModal', '$routeParams', '$location', 'Produtos', 'Despesas', 'Estudos', '$http', '$stateParams', 'toaster', 'Amazonrules',
-    function($scope, $uibModal, $routeParams, $location, Produtos, Despesas, Estudos, $http, $stateParams, toaster, Amazonrules) {
+angular.module('estudos').controller('EstudosController', ['$scope', '$uibModal', '$routeParams', '$location', 'Produtos', 'Despesas', 'Estudos', '$http', '$stateParams', 'toaster', 'AmazonMod',
+    function($scope, $uibModal, $routeParams, $location, Produtos, Despesas, Estudos, $http, $stateParams, toaster, AmazonMod) {
 
         $scope.piePoints = [{"Frete": 0}, {"Fob": 0}, {"Despesas": 0}, {"Taxas": 0}];
         $scope.pieColumns = [{"id": "Frete", "type": "pie"}, {"id": "Fob", "type": "pie"}, {"id": "Despesas", "type": "pie"}, {"id": "Taxas", "type": "pie"}];
@@ -14,8 +14,6 @@ angular.module('estudos').controller('EstudosController', ['$scope', '$uibModal'
 
             }
         };
-
-        $scope.amazon = Amazonrules.saco;
 
         $scope.testeErros = function() {
             let modalInstance = $uibModal.open({
@@ -926,7 +924,7 @@ angular.module('estudos').controller('EstudosController', ['$scope', '$uibModal'
         }
 
         function testeFees(produto) {
-            produto.estudo_do_produto.resultados.precos.custo = Amazonrules.testaRegra(produto);
+            produto.estudo_do_produto.resultados.precos.custo += AmazonMod.calculo(produto);
         }
 
     }

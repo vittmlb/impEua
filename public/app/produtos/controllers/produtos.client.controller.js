@@ -52,7 +52,7 @@ angular.module('produtos').controller('ProdutosController', ['$scope', '$routePa
         $scope.hs = {};
         $scope.parsed_ncm = {};
         $scope.parsed_hs = {};
-        $scope.usa_impostos_ncm = true;
+        $scope.usa_duty_hs = true;
         $scope.impostosDoProduto = {};
         
         $scope.calculaCBM = function(item) {
@@ -94,6 +94,7 @@ angular.module('produtos').controller('ProdutosController', ['$scope', '$routePa
                     cbm: this.medidas.cbm,
                     peso: this.medidas.peso
                 },
+                embalagem: this.embalagem,
                 website: this.website,
                 notas: this.notas,
                 fornecedor: this.fornecedor
@@ -120,8 +121,10 @@ angular.module('produtos').controller('ProdutosController', ['$scope', '$routePa
             $scope.produtos = Produtos.query();
         };
         $scope.findOne = function() {
-            $scope.produto = Produtos.get({
+            Produtos.get({
                 produtoId: $stateParams.produtoId
+            }).$promise.then(function (data) {
+                $scope.produto = data;
             });
         };
         $scope.delete = function(produto) {

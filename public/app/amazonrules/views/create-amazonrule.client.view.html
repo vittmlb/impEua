@@ -48,7 +48,7 @@
                                 </select>
                             </div>
                             <div class="col-sm-1" data-ng-hide="objRule.tipo_rule === 'data'">
-                                <input type="number" class="form-control" id="inputRulesDadosValor" data-ng-model="objRule.dados_rule.valor" placeholder="Valor">
+                                <input type="number" step="any" class="form-control" id="inputRulesDadosValor" data-ng-model="objRule.dados_rule.valor" placeholder="Valor">
                             </div>
                             <div class="col-sm-2" data-ng-show="objRule.tipo_rule === 'data'">
                                 <input type="date" class="form-control" id="inputRulesDadosData" data-ng-model="objRule.dados_rule.data" placeholder="Data">

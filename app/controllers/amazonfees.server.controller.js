@@ -17,7 +17,12 @@ exports.create = function(req, res) {
 };
 
 exports.list = function(req, res) {
-    AmazonFee.find().exec(function (err, amazonfees) {
+    AmazonFee.find()
+        .populate('rules_fee.vigencia')
+        .populate('rules_fee.intervalo_data')
+        .populate('rules_fee.dimensionamento')
+        .populate('rules_fee.pesagem')
+        .exec(function (err, amazonfees) {
         if(err) {
             return res.status(400).send({
                 message: err

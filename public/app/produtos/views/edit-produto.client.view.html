@@ -8,6 +8,7 @@
                     <li class="active"><a data-toggle="tab" href="#principal">Principal</a></li>
                     <li><a data-toggle="tab" href="#impostos">Impostos</a></li>
                     <li><a data-toggle="tab" href="#medidas">Medidas</a></li>
+                    <li><a data-toggle="tab" href="#embalagem">Embalagem</a></li>
                     <li><a data-toggle="tab" href="#notas">Notas</a></li>
                 </ul>
 
@@ -95,35 +96,24 @@
                             <div class="row">
                                 <div class="col-sm-6">
                                     <div class="form-group">
-                                        <label for="selectNcm">NCM: </label>
-                                        <select class="form-control" name="produto.ncm" id="selectNcm"
-                                                data-ng-model="produto.ncm"
+                                        <label for="selectHs">HS: </label>
+                                        <select class="form-control" name="produto.hs" id="selectHs"
+                                                data-ng-model="produto.hs"
                                                 ng-change="atualizaImpostosEdit()"
-                                                data-ng-options="item as item.cod_com_descricao for item in ListaNcms track by item._id"></select>
+                                                data-ng-options="item as item.cod_com_descricao for item in ListaHsCodes track by item._id">
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="col-sm-6">
                                     <div class="form-group form-group-sm">
-                                        <label style="margin-top: 30px;"> <input icheck type="checkbox" ng-model="produto.usa_impostos_ncm"> Impostos NCM </label>
+                                        <label style="margin-top: 30px;"> <input icheck type="checkbox" ng-model="produto.usa_duty_hs"> Duty HS </label>
                                     </div>
                                 </div>
 
                             </div>
-                            <label for="inputIi">Imposto de Importação:</label>
                             <div class="form-group">
-                                <input type="number" class="form-control" id="inputIi" data-ng-model="produto.impostos.ii">
-                            </div>
-                            <label for="inputImpostoIpi">IPI:</label>
-                            <div class="form-group">
-                                <input type="text" class="form-control" id="inputImpostoIpi" data-ng-model="produto.impostos.ipi">
-                            </div>
-                            <label for="inputImpostoPis">Pis:</label>
-                            <div class="form-group">
-                                <input type="text" class="form-control" id="inputImpostoPis" data-ng-model="produto.impostos.pis">
-                            </div>
-                            <label for="inputImpostoCofins">Cofins:</label>
-                            <div class="form-group">
-                                <input type="text" class="form-control" id="inputImpostoCofins" data-ng-model="produto.impostos.cofins">
+                                <label for="inputDuty">Duty Tax: </label>
+                                <input type="text" class="form-control" id="inputDuty" data-ng-model="produto.duty">
                             </div>
                         </div>
                     </div>
@@ -136,6 +126,39 @@
                         <label for="inputPeso">Peso</label>
                         <div class="form-group">
                             <input type="text" class="form-control" id="inputPeso" data-ng-model="produto.medidas.peso">
+                        </div>
+                    </div>
+                    <div id="embalagem" class="tab-pane fade">
+                        <h3>Embalagem</h3><br/>
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-xs-4">
+                                            <div class="form-group">
+                                                <label for="inputLarguraEmbalagem">Largura (Metros)</label>
+                                                <input type="text" class="form-control" id="inputLarguraEmbalagem" placeholder="L (m)" ng-model="produto.embalagem.dimensoes.largura">
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-4">
+                                            <div class="form-group">
+                                                <label for="inputAlturaEmbalagem">Altura (Metros)</label>
+                                                <input type="text" class="form-control" id="inputAlturaEmbalagem" placeholder="H (m)" ng-model="produto.embalagem.dimensoes.altura">
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-4">
+                                            <div class="form-group">
+                                                <label for="inputComprimentoEmbalagem">Comprimento (Metros)</label>
+                                                <input type="text" class="form-control" id="inputComprimentoEmbalagem" placeholder="C (m)" ng-model="produto.embalagem.dimensoes.comprimento">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="inputPesoEmbalagem">Peso</label>
+                                    <input type="text" class="form-control" id="inputPesoEmbalagem" data-ng-model="produto.embalagem.peso.bruto">
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="tab-pane fade" id="notas">

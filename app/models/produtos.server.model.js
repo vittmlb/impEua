@@ -39,7 +39,18 @@ let ProdutoSchema = new Schema({
     },
     medidas: {
         cbm: Number,
-        peso: Number
+        peso: Number,
+    },
+    embalagem: {
+        dimensoes: {
+            altura: Number,
+            largura: Number,
+            comprimento: Number
+        },
+        peso: {
+            bruto: Number,
+            liquido: Number
+        }
     },
     website: {
         type: String,

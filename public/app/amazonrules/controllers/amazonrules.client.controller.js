@@ -84,7 +84,7 @@ angular.module('amazonrules').controller('AmazonrulesController', ['$scope', '$s
                 amazonrule.$remove(function () {
                     for(let i in $scope.amazonrules) {
                         if($scope.amazonrules[i] === amazonrule) {
-                            $scope.amazonrules[i].splice(i, 1);
+                            $scope.amazonrules.splice(i, 1);
                         }
                     }
                 }, function(errorResponse) {

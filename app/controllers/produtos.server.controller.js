@@ -27,7 +27,7 @@ exports.create = function(req, res) {
 };
 
 exports.list = function(req, res) {
-    Produtos.find().populate('ncm').populate('fornecedor').exec(function (err, produtos) {
+    Produtos.find().populate('hs').populate('fornecedor').exec(function (err, produtos) {
         if(err) {
             return res.status(400).send({
                 message: err
@@ -70,10 +70,11 @@ exports.update = function(req, res) {
     produto.descricao = req.body.descricao;
     produto.custo_usd = req.body.custo_usd;
     produto.moq = req.body.moq;
-    produto.ncm = req.body.ncm._id;
+    produto.hs = req.body.hs._id;
     produto.usa_impostos_ncm = req.body.usa_impostos_ncm;
     produto.impostos = req.body.impostos;
     produto.medidas = req.body.medidas;
+    produto.embalagem = req.body.embalagem;
     produto.website = req.body.website;
     produto.notas = req.body.notas;
     produto.img_url = req.body.img_url;
@@ -95,7 +96,7 @@ exports.update = function(req, res) {
 };
 
 exports.findById = function(req, res, next, id) {
-    Produtos.findById(id).populate('_estudoId').populate('ncm').populate({
+    Produtos.findById(id).populate('_estudoId').populate('hs').populate({
         path: 'fornecedor',
         populate: {path: 'cidade_fornecedor', populate: {path: 'estado_cidade'}}
     }).exec(function (err, produto) {

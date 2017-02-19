@@ -14,7 +14,7 @@
     </div>
     <div class="wrapper wrapper-content animated fadeInRight">
         <div class="row">
-            <div class="col-lg-3" data-ng-repeat="amazonrule in amazonrules | orderBy: amazonrule.tipo_set">
+            <div class="col-lg-3" data-ng-repeat="amazonrule in amazonrules | orderBy: 'tipo_set'">
                 <div class="contact-box center-version">
 
                     <a ng-href="#!/amazonrules/{{ amazonrule._id }}">

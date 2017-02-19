@@ -17,6 +17,7 @@
                             <li class="active"><a data-toggle="tab" href="#principal">Principal</a></li>
                             <li><a data-toggle="tab" href="#impostos">Impostos</a></li>
                             <li><a data-toggle="tab" href="#medidas">Medidas</a></li>
+                            <li><a data-toggle="tab" href="#embalagem">Embalagem</a></li>
                             <li><a data-toggle="tab" href="#notas">Notas</a></li>
                         </ul>
 
@@ -103,23 +104,15 @@
                                     <div class="row">
                                         <div class="col-sm-6">
                                             <div class="form-group">
-                                                <label for="selectHs">NCM</label>
+                                                <label for="selectHs">HS: </label>
                                                 <select name="hs" id="selectHs" class="form-control" data-ng-model="hs" ng-change="atualizaImpostos()">
                                                     <option data-ng-repeat="hs in ListaHsCodes" value="{{ hs }}">{{ hs.cod_com_descricao }}</option>
                                                 </select>
-                                                <!--<select name="ncm"-->
-                                                <!--id="selectNcm"-->
-                                                <!--class="form-control"-->
-                                                <!--ng-model="ncm"-->
-                                                <!--ng-options="item.cod_com_descricao for item in ListaNcms"-->
-                                                <!--ng-init="ncm.cod_com_descricao"-->
-                                                <!--&gt;-->
-                                                <!--</select>-->
                                             </div>
                                         </div>
                                         <div class="col-sm-6">
                                             <div class="form-group form-group-sm">
-                                                <label style="margin-top: 30px;"> <input icheck type="checkbox" ng-model="usa_impostos_ncm"> Impostos NCM </label>
+                                                <label style="margin-top: 30px;"> <input icheck type="checkbox" ng-model="usa_duty_hs"> Duty HS </label>
                                             </div>
                                         </div>
                                     </div>
@@ -194,6 +187,39 @@
                                                     <input type="text" class="form-control" id="inputComprimento" placeholder="C (cm)" ng-model="comprimento" ng-change="calculaCBM('medidas')">
                                                 </div>
                                             </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="embalagem" class="tab-pane fade">
+                                <h3>Embalagem</h3><br/>
+                                <div class="row">
+                                    <div class="col-xs-6">
+                                        <div class="form-group">
+                                            <div class="row">
+                                                <div class="col-xs-4">
+                                                    <div class="form-group">
+                                                        <label for="inputLargura">Largura (Metros)</label>
+                                                        <input type="text" class="form-control" id="inputLarguraEmbalagem" placeholder="L (m)" ng-model="embalagem.dimensoes.largura">
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-4">
+                                                    <div class="form-group">
+                                                        <label for="inputAltura">Altura (Metros)</label>
+                                                        <input type="text" class="form-control" id="inputAlturaEmbalagem" placeholder="H (m)" ng-model="embalagem.dimensoes.altura">
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-4">
+                                                    <div class="form-group">
+                                                        <label for="inputComprimento">Comprimento (Metros)</label>
+                                                        <input type="text" class="form-control" id="inputComprimentoEmbalagem" placeholder="C (m)" ng-model="embalagem.dimensoes.comprimento">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="inputPeso">Peso</label>
+                                            <input type="text" class="form-control" id="inputPesoEmbalagem" data-ng-model="embalagem.peso.bruto">
                                         </div>
                                     </div>
                                 </div>
