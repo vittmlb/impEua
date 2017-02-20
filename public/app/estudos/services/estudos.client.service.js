@@ -11,6 +11,98 @@ angular.module('estudos').factory('Estudos', ['$resource', function ($resource) 
     });
 }]);
 
+let estudo_do_produto = {
+    qtd: 0,
+    proporcionalidade: { // exibe a proporcionalidade do produto no estudo, de acordo com cada uma das letiáveis em questão.
+        fob: 0,
+        peso: 0,
+    },
+    custo_unitario: 0, // Não lembro o como funciona isso aqui.
+    fob: 0,
+    cif: 0,
+    frete_maritimo: {
+        valor: 0,
+        seguro: 0
+    },
+    medidas: {
+        peso: {
+            contratado: 0, // Por enquanto não vou usar esse valor > Só será usado quando importar um produto muito pesado.
+            ocupado: 0,
+            ocupado_percentual: 0 // Por enquanto não vou usar esse valor > Só será usado quando importar um produto muito pesado.
+        },
+        volume: {
+            contratado: 0, // todo: Volume do Cntr escolhido para fazer o transporte da carga. Encontrar uma solução melhor para quando for trabalhar com outros volumes.
+            ocupado: 0,
+            ocupado_percentual: 0
+        }
+    },
+    taxas: {
+        duty: 0,
+        mpf: 0,
+        hmf: 0,
+        total: 0
+    },
+    despesas: {
+        aduaneiras: [],
+        internacionais: { // Despesas originadas no exterior.
+            compartilhadas: [
+                //     { // Despesas a serem compartilhadas por todos os produtos (como viagem da Conny para acompanhar o carregamento do contêiner).
+                //     desc: '',
+                //     usd: 0,
+                //     brl: 0
+                // }
+            ],
+            individualizadas: [
+                // diluídas no PREÇO DO PRODUTO - Array com as despesas inerentes à cada produto.
+                // { // Despesas internacionais que dizem respeito a um único produto (viagem Conny para um fabricante, ou frete do produto para o porto.
+                //     desc: '',
+                //     usd: 0,
+                //     brl: 0
+                // }
+            ],
+            totais: 0 // Somatório das despesas compartilhadas e individualizadas.
+        },
+        nacionais: { // Despesas originadas no exterior.
+            compartilhadas: 0, // Despesas a serem compartilhadas por todos os produtos (como viagem da Conny para acompanhar o carregamento do contêiner).
+            individualizadas: 0, // Despesas internacionais que dizem respeito a um único produto (viagem Conny para um fabricante, ou frete do produto para o porto.
+            totais: 0 // Somatório das despesas compartilhadas e individualizadas.
+        },
+        fba: {
+            fulfillment: 0,
+            inventory: 0,
+            placement: 0
+        },
+        total: 0
+    },
+    resultados: {
+        investimento: 0,
+        lucro: 0,
+        roi: 0, // ROI: Retorno Sobre Investimento > Lucro BRL / Investimento BRL
+        comparacao: {
+            percentual_frete: 0,
+            percentual_fob: 0,
+            percentual_duties: 0,
+            percentual_mpf: 0,
+            percentual_hmf: 0,
+            percentual_despesas: 0,
+            percentual_taxas: 0
+        },
+        precos: {
+            custo: 0,
+            venda: 0
+        }
+    },
+    modulo_amazon: {
+        categoria: '',
+        inspectedRules: []
+    },
+    return: {
+        setCustoUnitario: function(valor) {
+            this.custo_unitario = valor;
+        }
+    }
+};
+
 angular.module('estudos').factory('EstudosMod', ['Estudos', function (Estudos) {
 
     function auxZeraEstudo(estudo) {
@@ -43,7 +135,6 @@ angular.module('estudos').factory('EstudosMod', ['Estudos', function (Estudos) {
         estudo.resultados.comparacao.percentual_despesas = 0;
         estudo.resultados.comparacao.percentual_taxas = 0;
 
-        return 10;
     }
 
     function auxZeraDadosEstudoProduto(produto) {
@@ -124,6 +215,9 @@ angular.module('estudos').factory('EstudosMod', ['Estudos', function (Estudos) {
         },
         zeraDadosEstudoProduto: function(produto) {
             auxZeraDadosEstudoProduto(produto);
+        },
+        criaEstudoDoProduto: function(produto) {
+            
         }
     }
 

@@ -249,22 +249,7 @@ function evaluate(params, regra, tipo_rule) {
             return false;
     }
 }
-// function evaluate_op(param_1, param_2, operator) {
-//     switch (operator) {
-//         case 'igual':
-//             return (param_1 === param_2);
-//         case 'maior':
-//             return (param_1 > param_2);
-//         case 'menor':
-//             return (param_1 < param_2);
-//         case 'maior ou igual':
-//             return (param_1 >= param_2);
-//         case 'menor ou igual':
-//             return (param_1 <= param_2);
-//         default:
-//             return 0;
-//     }
-// }
+
 
 
 // function auxInspectRules (params, rule_set) {
@@ -294,8 +279,5 @@ function checkFlags() {
     return flags.dimensionamento == true && flags.intervalo_data == true && flags.pesagem == true && flags.vigencia == true;
 }
 
-function determinaSize() {
-
-}
 
 
