@@ -20,14 +20,15 @@
 
         <div class="row m-b-lg m-t-lg">
             <div class="col-md-6">
-
-                <!--<div class="profile-image">-->
-                    <!--<img src="img/a4.jpg" class="img-circle circle-border m-b-md" alt="profile">-->
-                <!--</div>-->
                 <div class="profile-info" style="margin-left: 0;">
                     <div class="">
                         <div>
-                            <h2 class="no-margins">{{ amazonfee.nome_fee }} - {{ amazonfee.dados_fee.valor | currency: 'U$' }}</h2>
+                            <h2 class="no-margins"><span data-ng-show="amazonfee.dados_fee.valor">{{ amazonfee.nome_fee }} - {{ amazonfee.dados_fee.valor | currency: 'U$' }}</span>
+                            <span class="text-success" style="margin-left: 3px; font-size: .9em;" data-ng-show="amazonfee.dados_fee.valor && amazonfee.tem_valor_calculado"> + </span>
+                            <span class="text-success" style="margin-left: 3px; font-size: .9em;" data-ng-show="amazonfee.tem_valor_calculado">
+                                {{ amazonfee.dados_fee.calculado.multiplicador | currency: 'u$ ' }}/{{ amazonfee.dados_fee.calculado.unidade_franquia }}
+                            </span>
+                            </h2>
                             <h4 style="margin-left: 2px; margin-top: 8px;">{{ amazonfee.tipo_fee }}</h4>
                             <small>
                                 There are many variations of passages of Lorem Ipsum available, but the majority

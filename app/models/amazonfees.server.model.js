@@ -19,6 +19,10 @@ let AmazonfeesSchema = new Schema({
         type: String,
         enum: ['media', 'non-media']
     },
+    precedencia: {
+        type: Number,
+        required: `O campo 'precedencia' é obrigatório`
+    },
     rules_fee: {
         vigencia: {
             type: mongoose.Schema.Types.ObjectId, ref: 'AmazonRule'

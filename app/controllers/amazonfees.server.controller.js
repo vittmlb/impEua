@@ -55,6 +55,7 @@ exports.update = function(req, res) {
    let amazonfee = req.amazonfee;
     amazonfee.nome_fee = req.body.nome_fee;
     amazonfee.tipo_fee = req.body.tipo_fee;
+    amazonfee.precedencia = req.body.precedencia;
     amazonfee.media_fee = req.body.media_fee;
     amazonfee.rules_fee = req.body.rules_fee;
     amazonfee.dados_fee = req.body.dados_fee;

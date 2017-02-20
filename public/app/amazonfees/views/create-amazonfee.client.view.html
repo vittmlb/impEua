@@ -32,7 +32,7 @@
                         <div class="hr-line-dashed"></div>
                         <div class="form-group">
                             <label for="selectTipoAmazonFee" class="col-sm-2 control-label">Tipo Amazon Fee</label>
-                            <div class="col-sm-6">
+                            <div class="col-sm-3">
                                 <select class="form-control" name="tipo_fee" id="selectTipoAmazonFee"
                                         data-ng-model="tipo_fee"
                                         data-ng-options="item for item in tiposFee">
@@ -41,6 +41,13 @@
                         </div>
                         <div class="hr-line-dashed"></div>
                         <div class="form-group">
+                            <label class="col-sm-2 control-label" >Precedência</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" id="inputPrecedencia" name="precedencia" data-ng-model="precedencia" placeholder="precedencia">
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group" data-ng-show="tipo_fee !== 'Monthly Inventory Storage Fees'">
                             <label for="selectTipoAmazonFee" class="col-sm-2 control-label">Media</label>
                             <div class="col-sm-6">
                                 <select class="form-control" name="media_fee" id="selectMedia"
@@ -71,7 +78,7 @@
                                 <input type="number" step="any" class="form-control" id="inputFranquia" data-ng-model="dados_fee.calculado.franquia" placeholder="Franquia (Un)">
                             </div>
                             <div class="col-sm-2">
-                                <select class="form-control" name="media_fee" id="selectTiposUnidade"
+                                <select class="form-control" id="selectTiposUnidade"
                                         data-ng-model="dados_fee.calculado.unidade_franquia"
                                         data-ng-options="item for item in listaTiposUnidade">
                                 </select>

@@ -37,6 +37,7 @@ angular.module('amazonfees').controller('AmazonfeesController', ['$scope', '$sta
                 tipo_fee: this.tipo_fee,
                 media_fee: this.media_fee,
                 rules_fee: this.rules_fee,
+                precedencia: this.precedencia,
                 tem_valor_calculado: this.tem_valor_calculado,
                 dados_fee: this.dados_fee
             });

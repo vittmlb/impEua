@@ -22,7 +22,13 @@
                         <!--<img alt="image" class="img-circle" src="img/a2.jpg">-->
 
 
-                        <h3 class="m-b-xs"><strong>{{ amazonfee.nome_fee }}</strong> <span class="text-success" style="margin-left: 3px; font-size: .9em;">{{ amazonfee.dados_fee.valor | currency: 'U$' }}</span></h3>
+                        <h3 class="m-b-xs"><small style="font-size: .8em; margin-right: 5px;">{{ amazonfee.precedencia }}</small><strong>{{ amazonfee.nome_fee }}</strong>
+                            <span class="text-success" style="margin-left: 3px; font-size: .9em;" data-ng-show="amazonfee.dados_fee.valor">{{ amazonfee.dados_fee.valor | currency: 'U$ ' }}</span>
+                            <span class="text-success" style="margin-left: 3px; font-size: .9em;" data-ng-show="amazonfee.dados_fee.valor && amazonfee.tem_valor_calculado"> + </span>
+                            <span class="text-success" style="margin-left: 3px; font-size: .9em;" data-ng-show="amazonfee.tem_valor_calculado">
+                                {{ amazonfee.dados_fee.calculado.multiplicador | currency: 'u$ ' }}/{{ amazonfee.dados_fee.calculado.unidade_franquia }}
+                            </span>
+                        </h3>
                         <div class="font-bold">{{ amazonfee.tipo_fee }} ( <span class="text-info">{{ amazonfee.media_fee }}</span> )</div>
                         <address class="m-t-md">
                             <!--<strong>Valor</strong><br>-->
