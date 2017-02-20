@@ -17,6 +17,7 @@ angular.module('amazonfees').controller('AmazonfeesController', ['$scope', '$sta
 
         $scope.tiposFee = ['FBA Fulfillment Fees', 'Monthly Inventory Storage Fees', 'Inventory Placement Service Fees'];
         $scope.tiposMedia = ['media', 'non-media'];
+        $scope.listaTiposUnidade = ['oz', 'lb', 'polegadas', 'metro', 'm3'];
 
 
         $scope.setRules = [];
@@ -36,6 +37,7 @@ angular.module('amazonfees').controller('AmazonfeesController', ['$scope', '$sta
                 tipo_fee: this.tipo_fee,
                 media_fee: this.media_fee,
                 rules_fee: this.rules_fee,
+                tem_valor_calculado: this.tem_valor_calculado,
                 dados_fee: this.dados_fee
             });
             amazonfee.$save(function (response) {
@@ -79,7 +81,7 @@ angular.module('amazonfees').controller('AmazonfeesController', ['$scope', '$sta
                 amazonfee.$remove(function () {
                     for(let i in $scope.amazonfees) {
                         if($scope.amazonfees[i] === amazonfee) {
-                            $scope.amazonfees[i].splice(i, 1);
+                            $scope.amazonfees.splice(i, 1);
                         }
                     }
                 }, function(errorResponse) {

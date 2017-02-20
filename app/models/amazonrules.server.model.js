@@ -30,7 +30,7 @@ let AmazonrulesSchema = new Schema({
             },
             unidade: {
                 type: String,
-                enum: ['oz', 'lb', 'polegadas']
+                enum: ['oz', 'lb', 'polegadas', 'metro', 'm3']
             },
             data: {
                 type: Date

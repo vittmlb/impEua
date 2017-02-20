@@ -33,8 +33,20 @@ let AmazonfeesSchema = new Schema({
             type: mongoose.Schema.Types.ObjectId, ref: 'AmazonRule'
         }
     },
+    tem_valor_calculado: {
+        type: Boolean
+    },
     dados_fee: {
-        valor: Number
+        valor: Number,
+        calculado: {
+            multiplicador: Number, // Valor monetário que precifica a unidade
+            franquia: Number, // "franquia" - é o número de unidades da medida que está isento de cobrança.
+            unidade_franquia: {
+                type: String,
+                enum: ['oz', 'lb', 'polegadas', 'metro', 'm3']
+            }, // tipo de unidade utilizada para referenciar a cobrança.
+            resultado: Number
+        },
     }
 });
 

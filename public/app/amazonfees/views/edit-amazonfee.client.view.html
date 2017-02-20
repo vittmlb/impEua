@@ -34,7 +34,7 @@
                                 <div class="hr-line-dashed"></div>
                                 <div class="form-group">
                                     <label for="selectTipoAmazonFee" class="col-sm-2 control-label">Tipo Amazon Fee</label>
-                                    <div class="col-sm-5">
+                                    <div class="col-sm-6">
                                         <select class="form-control" name="tipo_fee" id="selectTipoAmazonFee"
                                                 data-ng-model="amazonfee.tipo_fee"
                                                 data-ng-options="item for item in tiposFee">
@@ -44,7 +44,7 @@
                                 <div class="hr-line-dashed"></div>
                                 <div class="form-group">
                                     <label for="selectTipoAmazonFee" class="col-sm-2 control-label">Media</label>
-                                    <div class="col-sm-5">
+                                    <div class="col-sm-6">
                                         <select class="form-control" name="media_fee" id="selectMedia"
                                                 data-ng-model="amazonfee.media_fee"
                                                 data-ng-options="item for item in tiposMedia">
@@ -54,11 +54,31 @@
                                 <div class="hr-line-dashed"></div>
                                 <div class="form-group">
                                     <label class="col-sm-2 control-label">Valor</label>
-                                    <div class="col-sm-5">
+                                    <div class="col-sm-6">
                                         <input type="text" class="form-control" id="inputValorFee" name="valor_fee" data-ng-model="amazonfee.dados_fee.valor" placeholder="Valor">
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <div class="form-group form-group-sm">
+                                            <label style="margin-left: 5px;"> <input style="margin-top: 10px;" icheck type="checkbox" ng-model="amazonfee.tem_valor_calculado"> <span style="font-size: 1em;">Valor Calculado</span> </label>
+                                        </div>
                                     </div>
                                 </div> <!-- Form-Group Valor da Amazon Fee -->
                                 <div class="hr-line-dashed"></div>
+                                <div class="form-group" data-ng-show="amazonfee.tem_valor_calculado">
+                                    <label class="col-sm-2 control-label">Valor Calculado</label>
+                                    <div class="col-sm-2">
+                                        <input type="number" step="any" class="form-control" id="inputMultiplicador" data-ng-model="amazonfee.dados_fee.calculado.multiplicador" placeholder="Multiplicador ($)">
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <input type="number" step="any" class="form-control" id="inputFranquia" data-ng-model="amazonfee.dados_fee.calculado.franquia" placeholder="Franquia (Un)">
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <select class="form-control" name="media_fee" id="selectTiposUnidade"
+                                                data-ng-model="amazonfee.dados_fee.calculado.unidade_franquia"
+                                                data-ng-options="item for item in listaTiposUnidade">
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
 
                         </div>

@@ -58,6 +58,7 @@ exports.update = function(req, res) {
     amazonfee.media_fee = req.body.media_fee;
     amazonfee.rules_fee = req.body.rules_fee;
     amazonfee.dados_fee = req.body.dados_fee;
+    amazonfee.tem_valor_calculado = req.body.tem_valor_calculado;
     amazonfee.save(function (err) {
         if(err) {
             return res.status(400).send({
