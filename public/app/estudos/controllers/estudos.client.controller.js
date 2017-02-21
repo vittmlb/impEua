@@ -1,8 +1,8 @@
 /**
  * Created by Vittorio on 30/05/2016.
  */
-angular.module('estudos').controller('EstudosController', ['$scope', '$uibModal', '$routeParams', '$location', 'Produtos', 'Despesas', 'Estudos', '$http', '$stateParams', 'toaster', 'AmazonMod', 'EstudosMod', 'CompDespesas',
-    function($scope, $uibModal, $routeParams, $location, Produtos, Despesas, Estudos, $http, $stateParams, toaster, AmazonMod, EstudosMod, CompDespesas) {
+angular.module('estudos').controller('EstudosController', ['$scope', '$uibModal', '$routeParams', '$location', 'Produtos', 'Despesas', 'Estudos', '$http', '$stateParams', 'toaster', 'CompAmazon', 'CompEstudos',
+    function($scope, $uibModal, $routeParams, $location, Produtos, Despesas, Estudos, $http, $stateParams, toaster, CompAmazon, CompEstudos) {
 
         $scope.piePoints = [{"Frete": 0}, {"Fob": 0}, {"Despesas": 0}, {"Taxas": 0}];
         $scope.pieColumns = [{"id": "Frete", "type": "pie"}, {"id": "Fob", "type": "pie"}, {"id": "Despesas", "type": "pie"}, {"id": "Taxas", "type": "pie"}];
@@ -26,80 +26,7 @@ angular.module('estudos').controller('EstudosController', ['$scope', '$uibModal'
 
         $scope.quantidades = [];
         $scope.produtosDoEstudo = [];
-        $scope.estudo = {
-            nome_estudo: '',
-            config: {
-                volume_cntr_20: 0,
-                frete_maritimo: 0,
-                seguro_frete_maritimo: 0,
-                comissao_amazon: 0,
-                percentual_comissao_conny: 0,
-                mpf: 0,
-                hmf: 0,
-            },
-            total_comissao_conny: 0, // todo: Implementar comissão Conny
-            fob: 0,
-            cif: 0,
-            frete_maritimo: {
-                valor: 0,
-                seguro: 0
-            },
-            medidas: {
-                peso: {
-                    contratado: 0, // Por enquanto não vou usar esse valor > Só será usado quando importar um produto muito pesado.
-                    ocupado: 0,
-                    ocupado_percentual: 0 // Por enquanto não vou usar esse valor > Só será usado quando importar um produto muito pesado.
-                },
-                volume: {
-                    contratado: 0, // todo: Volume do Cntr escolhido para fazer o transporte da carga. Encontrar uma solução melhor para quando for trabalhar com outros volumes.
-                    ocupado: 0,
-                    ocupado_percentual: 0
-                }
-            },
-            taxas: {
-                duty: 0,
-                mpf: 0,
-                hmf: 0,
-                total: 0
-            },
-            despesas: {
-                aduaneiras: [],
-                internacionais: { // Despesas originadas no exterior.
-                    compartilhadas: [],
-                    // compartilhadas: [{ // Despesas a serem compartilhadas por todos os produtos (como viagem da Conny para acompanhar o carregamento do contêiner).
-                    //     desc: '',
-                    //     usd: 0,
-                    //     brl: 0
-                    // }],
-                    individualizadas: 0,  // Despesas internacionais que dizem respeito a um único produto (viagem Conny para um fabricante, ou frete do produto para o porto.
-                    totais: 0 // Despesas internacionais totais - Somatório das despesas compartilhadas com as individualizadas
-                },
-                nacionais: {
-                    compartilhadas: 0,
-                    individualizadas: 0
-                },
-                fba: {
-                    fulfillment: 0,
-                    inventory: 0,
-                    placement: 0
-                },
-                total: 0
-            },
-            resultados: {
-                investimento: 0,
-                lucro: 0,
-                roi: 0, // ROI: Retorno Sobre Investimento > Lucro BRL / Investimento BRL
-                comparacao: {
-                    percentual_frete: 0,
-                    percentual_fob: 0,
-                    percentual_duties: 0,
-                    percentual_mpf: 0,
-                    percentual_hmf: 0,
-                    percentual_despesas: 0,
-                    percentual_taxas: 0
-                }
-            }
-        };
+        $scope.estudo = CompEstudos.criaEstudo();
         $scope.config = {
             volume_cntr_20: 0,
             frete_maritimo: 0,
@@ -254,6 +181,7 @@ angular.module('estudos').controller('EstudosController', ['$scope', '$uibModal'
             $http.get('/app/data/config.json').success(function (data) {
                 $scope.config = data;
             });
+            CompEstudos.setProdutosDoEstudo($scope.produtosDoEstudo);
         };
 
         $scope.testeModal = function() {
@@ -326,92 +254,7 @@ angular.module('estudos').controller('EstudosController', ['$scope', '$uibModal'
          */
         $scope.adicionaProdutoEstudo = function(produto) { // todo: Renomear > Este nome não faz o menor sentido !!!!
             if ($scope.produtosDoEstudo.indexOf(produto) === -1){
-                produto.estudo_do_produto = {
-                    qtd: 0,
-                    proporcionalidade: { // exibe a proporcionalidade do produto no estudo, de acordo com cada uma das letiáveis em questão.
-                        fob: 0,
-                        peso: 0,
-                    },
-                    custo_unitario: produto.custo_usd, // Não lembro o como funciona isso aqui.
-                    fob: 0,
-                    cif: 0,
-                    frete_maritimo: {
-                        valor: 0,
-                        seguro: 0
-                    },
-                    medidas: {
-                        peso: {
-                            contratado: 0, // Por enquanto não vou usar esse valor > Só será usado quando importar um produto muito pesado.
-                            ocupado: 0,
-                            ocupado_percentual: 0 // Por enquanto não vou usar esse valor > Só será usado quando importar um produto muito pesado.
-                        },
-                        volume: {
-                            contratado: 0, // todo: Volume do Cntr escolhido para fazer o transporte da carga. Encontrar uma solução melhor para quando for trabalhar com outros volumes.
-                            ocupado: 0,
-                            ocupado_percentual: 0
-                        }
-                    },
-                    taxas: {
-                        duty: 0,
-                        mpf: 0,
-                        hmf: 0,
-                        total: 0
-                    },
-                    despesas: {
-                        aduaneiras: [],
-                        internacionais: { // Despesas originadas no exterior.
-                            compartilhadas: [
-                            //     { // Despesas a serem compartilhadas por todos os produtos (como viagem da Conny para acompanhar o carregamento do contêiner).
-                            //     desc: '',
-                            //     usd: 0,
-                            //     brl: 0
-                            // }
-                            ],
-                            individualizadas: [
-                                // diluídas no PREÇO DO PRODUTO - Array com as despesas inerentes à cada produto.
-                                // { // Despesas internacionais que dizem respeito a um único produto (viagem Conny para um fabricante, ou frete do produto para o porto.
-                                //     desc: '',
-                                //     usd: 0,
-                                //     brl: 0
-                                // }
-                            ],
-                            totais: 0 // Somatório das despesas compartilhadas e individualizadas.
-                        },
-                        nacionais: { // Despesas originadas no exterior.
-                            compartilhadas: 0, // Despesas a serem compartilhadas por todos os produtos (como viagem da Conny para acompanhar o carregamento do contêiner).
-                            individualizadas: 0, // Despesas internacionais que dizem respeito a um único produto (viagem Conny para um fabricante, ou frete do produto para o porto.
-                            totais: 0 // Somatório das despesas compartilhadas e individualizadas.
-                        },
-                        fba: {
-                            fulfillment: 0,
-                            inventory: 0,
-                            placement: 0
-                        },
-                        total: 0
-                    },
-                    resultados: {
-                        investimento: 0,
-                        lucro: 0,
-                        roi: 0, // ROI: Retorno Sobre Investimento > Lucro BRL / Investimento BRL
-                        comparacao: {
-                            percentual_frete: 0,
-                            percentual_fob: 0,
-                            percentual_duties: 0,
-                            percentual_mpf: 0,
-                            percentual_hmf: 0,
-                            percentual_despesas: 0,
-                            percentual_taxas: 0
-                        },
-                        precos: {
-                            custo: 0,
-                            venda: 0
-                        }
-                    },
-                    modulo_amazon: {
-                        categoria: '',
-                        inspectedRules: []
-                    }
-                };
+                produto.estudo_do_produto = CompEstudos.criaEstudoDoProduto(produto);
                 $scope.produtosDoEstudo.push(produto);
             }
         };
@@ -493,46 +336,14 @@ angular.module('estudos').controller('EstudosController', ['$scope', '$uibModal'
             $scope.piePoints = [{"Frete": 0}, {"Fob": 0}, {"Despesas": 0}, {"Taxas": 0}];
         }
 
-        // 2
-        /**
-         * Carrega o objeto <$scope.estudo> com os dados do <$scope.config>
-         */
-        function loadEstudoComDadosConfig() {
-
-            $scope.estudo.frete_maritimo.valor = Number($scope.config.frete_maritimo);
-            $scope.estudo.frete_maritimo.seguro = Number($scope.config.seguro_frete_maritimo);
-            $scope.estudo.config.comissao_amazon = Number($scope.config.comissao_amazon);
-
-            $scope.estudo.medidas.volume.contratado = Number($scope.config.volume_cntr_20);
-            $scope.estudo.config.percentual_comissao_conny = Number($scope.config.percentual_comissao_conny);
-
-            $scope.estudo.config.mpf = Number($scope.config.mpf);
-            $scope.estudo.config.hmf = Number($scope.config.hmf);
-
-        }
-
         // 3
         /**
          * Itera por cada produto e seta os valores FOB (e letiáveis usd/brl/paypal/integral) <produto.estudo_do_produto.fob...>
          */
         function setFobProdutos() {
-
             $scope.produtosDoEstudo.forEach(function (produto) {
-
-                let custUnit = produto.estudo_do_produto.custo_unitario;
-                let tx_conny = $scope.estudo.config.percentual_comissao_conny;
-                let qtd = produto.estudo_do_produto.qtd;
-
-                if (produto.estudo_do_produto.qtd <= 0) {
-                    EstudosMod.zeraDadosEstudoProduto(produto);
-                }
-                else
-                {
-                    produto.estudo_do_produto.fob = ((custUnit * (1 + tx_conny)) * qtd);
-                }
-
+                CompEstudos.calculaFobEstudoDoProduto(produto);
             });
-
         }
 
         // 4
@@ -541,23 +352,14 @@ angular.module('estudos').controller('EstudosController', ['$scope', '$uibModal'
          */
         function totalizaDadosBasicosDoEstudo() {
 
-            $scope.estudo.fob = 0;
-            $scope.estudo.medidas.peso.ocupado = 0;
-            $scope.estudo.medidas.volume.ocupado = 0;
-            $scope.estudo.medidas.volume.ocupado_percentual = 0;
-
             $scope.produtosDoEstudo.forEach(function (produto) {
 
                 if(produto.estudo_do_produto.qtd <= 0) {
-                    zeraDadosEstudoDoProduto(produto);
+                    CompEstudos.zeraDadosEstudoDoProduto(produto);
                 }
                 else
                 {
-                    $scope.estudo.fob += ((produto.estudo_do_produto.custo_unitario * produto.estudo_do_produto.qtd) * (1 + $scope.config.percentual_comissao_conny)); // Calcula Fob
-                    $scope.estudo.cif = $scope.estudo.fob + $scope.estudo.frete_maritimo.valor + $scope.estudo.frete_maritimo.seguro;
-                    $scope.estudo.medidas.peso.ocupado += produto.medidas.peso * produto.estudo_do_produto.qtd; // Calcula peso total
-                    $scope.estudo.medidas.volume.ocupado += produto.medidas.cbm * produto.estudo_do_produto.qtd; // Calcula volume ocupado no contêiner
-                    $scope.estudo.medidas.volume.ocupado_percentual = ($scope.estudo.medidas.volume.ocupado / $scope.estudo.medidas.volume.contratado) * 100; // todo: Ajustar o controle para exibir o percentual correto pois aqui estou tendo que multiplicar por 100.
+                    CompEstudos.totalizaDadosBasicosDoEstudo(produto, $scope.config);
                 }
 
             });
@@ -569,9 +371,7 @@ angular.module('estudos').controller('EstudosController', ['$scope', '$uibModal'
          */
         function totalizaDespesasDoEstudo() {
 
-            let desp = CompDespesas.ModuloEstudo();
-            $scope.estudo.despesas.aduaneiras = desp.aduaneiras;
-            $scope.estudo.despesas.total = desp.total;
+            CompEstudos.totalizaDespesasAduaneiras();
 
         }
 
@@ -593,43 +393,32 @@ angular.module('estudos').controller('EstudosController', ['$scope', '$uibModal'
 
                 // Garante que o estudo somente seja realizado caso o produto iterado tenha quantidade maior que zero (problema de divisão por zero)
                 if(produto.estudo_do_produto.qtd <= 0) {
-                    zeraDadosEstudoDoProduto(produto);
+                    CompEstudos.zeraDadosEstudoDoProduto(produto);
                 }
                 else
                 {
-                    auxCalculaMedidasDeCadaProduto(produto);
-
-                    let estProd = produto.estudo_do_produto; // Simplificando a letiável para reduzir o espaço e facilitar a leitura.
+                    CompEstudos.calculaMedidasDoEstudoDoProduto(produto);
 
                     // Cálculos de Proporcionalidade
-                    estProd.frete_maritimo.valor = estProd.medidas.peso.ocupado_percentual * $scope.estudo.frete_maritimo.valor; // Cálculo de Frete Marítimo proporcional.
-                    estProd.frete_maritimo.seguro = estProd.medidas.peso.ocupado_percentual * $scope.estudo.frete_maritimo.seguro; // Cálculo de SEGURO de Frete Marítimo proporcional.
-                    estProd.cif = estProd.fob + estProd.frete_maritimo.valor + estProd.frete_maritimo.seguro; // Cálculo CIFs (que é o mesmo que Valor Aduaneiro).
+                    CompEstudos.calculaProporcionalidadeDoEstudoDoProduto(produto);
 
-                    calculaTaxasProduto(produto);
+                    // Cálculos das Taxas: Duty, MPF, HMF e Total.
+                    CompEstudos.calculaTaxasDoEstudoDoProduto(produto);
 
                     // Cálculo dos custos FBA
-                    estProd.despesas.fba.fulfillment = (AmazonMod.calculo(produto) * produto.estudo_do_produto.qtd);
+                    CompEstudos.calculaDespesasAmazonDoEstudoDoProduto(produto);
 
                     // Cálculo do total de despesas proporcional do produto.
-                    estProd.despesas.total = (estProd.cif / $scope.estudo.cif) * $scope.estudo.despesas.total; // Usar CIF ou FOB?
-
-                    estProd.despesas.total += estProd.despesas.fba.fulfillment;
-
-                    totalizaImpostosEstudo(produto);
+                    CompEstudos.totalizaDespesasDoEstudoDoProduto(produto);
 
 
-                    calculaResultadosProduto(produto);
+                    CompEstudos.totalizaImpostosDoEstudo(produto);
+
+                    // calculaResultadosProduto(produto);
+                    CompEstudos.calculaResultadosEstudoDoProduto(produto);
 
                     // Região para acumular os dados do Estudo
-                    $scope.estudo.resultados.investimento += estProd.resultados.investimento;
-
-                    // Update (soma) dos lucros dos produtos para formar o Lucro Total do Estudo.
-                    $scope.estudo.resultados.lucro += estProd.resultados.lucro;
-
-                    $scope.estudo.resultados.roi = $scope.estudo.resultados.lucro / $scope.estudo.resultados.investimento;
-
-                    totalizaComparacoesEstudo(produto);
+                    CompEstudos.calculaResultadosDoEstudo(produto);
 
 
                 }
@@ -638,104 +427,8 @@ angular.module('estudos').controller('EstudosController', ['$scope', '$uibModal'
 
         }
 
-        function auxCalculaMedidasDeCadaProduto(produto) {
 
-            if(produto.estudo_do_produto <= 0) {
-                zeraDadosEstudoDoProduto(produto);
-            }
-            else
-            {
-                // Cálculo das medidas > Peso e Volume totais do produto.
-                produto.estudo_do_produto.medidas.peso.ocupado = produto.medidas.peso * produto.estudo_do_produto.qtd;
-                produto.estudo_do_produto.medidas.volume.ocupado = produto.medidas.cbm * produto.estudo_do_produto.qtd;
-
-                // Cálculo dos percentuais > Peso e Volume proporcionais do produto
-                produto.estudo_do_produto.medidas.peso.ocupado_percentual = produto.estudo_do_produto.medidas.peso.ocupado / $scope.estudo.medidas.peso.ocupado;
-                produto.estudo_do_produto.medidas.volume.ocupado_percentual = produto.estudo_do_produto.medidas.volume.ocupado / $scope.estudo.medidas.volume.ocupado;
-            }
-
-        }
-
-        function calculaTaxasProduto(produto) {
-
-            let estProd = produto.estudo_do_produto;
-
-            // Cálculo de Taxas e Impostos
-            estProd.taxas.duty = produto.duty * estProd.fob; // Cálculo Duty Tax
-
-            estProd.taxas.mpf = $scope.estudo.config.mpf * estProd.fob; // Cálculo MPF
-            if(estProd.taxas.mpf < 35) {
-                estProd.taxas.mpf = 35;
-            } else if(estProd.taxas.mpf > 485) {
-                estProd.taxas.mpf = 485;
-            }
-
-
-            estProd.taxas.hmf = $scope.estudo.config.hmf * estProd.fob; // Cálculo HMF
-            estProd.taxas.total = estProd.taxas.duty + estProd.taxas.mpf + estProd.taxas.hmf; // Totaliza
-
-        }
-
-        function calculaResultadosProduto(produto) {
-
-            let estProd = produto.estudo_do_produto; // Simplificando a letiável para reduzir o espaço e facilitar a leitura.
-
-
-
-            estProd.resultados.investimento = (
-                estProd.cif +
-                estProd.taxas.total +
-                estProd.despesas.total
-            );
-
-            // Cálculo do preço de Custo final do produto.
-            estProd.resultados.precos.custo = estProd.resultados.investimento / estProd.qtd;
-
-            // Calcula o resultado unitário e total de cada um dos produtos.
-            estProd.resultados.lucro = ((estProd.resultados.precos.venda * (1 - $scope.estudo.config.comissao_amazon)) - estProd.resultados.precos.custo) * estProd.qtd;
-
-            // Calcula o roi do produto.
-            estProd.resultados.roi = estProd.resultados.lucro / estProd.resultados.investimento;
-
-            // Calcula os percentuais de comparação entre os componentes do preço final do produto;
-            estProd.resultados.comparacao.percentual_frete = estProd.frete_maritimo.valor / estProd.resultados.investimento;
-            estProd.resultados.comparacao.percentual_despesas = estProd.despesas.total / estProd.resultados.investimento;
-            estProd.resultados.comparacao.percentual_duties = estProd.taxas.duty / estProd.resultados.investimento;
-            estProd.resultados.comparacao.percentual_fob = estProd.cif / estProd.resultados.investimento;
-            estProd.resultados.comparacao.percentual_hmf = estProd.taxas.hmf / estProd.resultados.investimento;
-            estProd.resultados.comparacao.percentual_mpf = estProd.taxas.mpf / estProd.resultados.investimento;
-            estProd.resultados.comparacao.percentual_taxas = estProd.taxas.total / estProd.resultados.investimento;
-
-
-        }
-
-        /**
-         * Incrementa os totais dos tributos do estudo "geral" com base nos valores de cada produto passado como argumento.
-         * @param produto
-         */
-        function totalizaImpostosEstudo(produto) {
-
-            let estProduto = produto.estudo_do_produto;
-
-            // Update (soma) dos valores dos impostos ao Estudo Geral.
-
-            $scope.estudo.taxas.duty += estProduto.taxas.duty;
-            $scope.estudo.taxas.mpf += estProduto.taxas.mpf;
-            $scope.estudo.taxas.hmf += estProduto.taxas.hmf;
-            $scope.estudo.taxas.total += estProduto.taxas.total
-
-        }
-
-        function totalizaComparacoesEstudo() {
-
-
-            $scope.estudo.resultados.comparacao.percentual_frete = $scope.estudo.frete_maritimo.valor / $scope.estudo.resultados.investimento;
-            $scope.estudo.resultados.comparacao.percentual_hmf = $scope.estudo.taxas.hmf / $scope.estudo.resultados.investimento;
-            $scope.estudo.resultados.comparacao.percentual_despesas = $scope.estudo.despesas.total / $scope.estudo.resultados.investimento;
-            $scope.estudo.resultados.comparacao.percentual_duties = $scope.estudo.taxas.duty / $scope.estudo.resultados.investimento;
-            $scope.estudo.resultados.comparacao.percentual_fob = $scope.estudo.fob / $scope.estudo.resultados.investimento;
-            $scope.estudo.resultados.comparacao.percentual_mpf = $scope.estudo.taxas.mpf / $scope.estudo.resultados.investimento;
-            $scope.estudo.resultados.comparacao.percentual_taxas = $scope.estudo.taxas.total / $scope.estudo.resultados.investimento;
+        function criaGraficos() {
 
             $scope.piePoints = [
                 {"Frete": $scope.estudo.resultados.comparacao.percentual_frete},
@@ -747,16 +440,16 @@ angular.module('estudos').controller('EstudosController', ['$scope', '$uibModal'
         }
 
         $scope.iniImport = function() {
-            EstudosMod.zeraEstudo($scope.estudo);
+            CompEstudos.zeraDadosDoEstudo();
             zeraDadosGrafico();
-            loadEstudoComDadosConfig();
+            CompEstudos.loadEstudoComDadosConfig($scope.config);
             if($scope.produtosDoEstudo.length > 0)
             {
                 setFobProdutos(); // Itera por cada produto e seta os valores FOB (e letiáveis usd/brl/paypal/integral) <produto.estudo_do_produto.fob...>
                 totalizaDadosBasicosDoEstudo(); // Itera produtos para totalizar dados do <$scope.estudo> como FOBs, Peso e Volume.
                 totalizaDespesasDoEstudo(); // Itera pelo objeto <$scope.despesas> e faz o somatório para adicionar ao <$scope.estudo>
                 geraEstudoDeCadaProduto(); // Itera por cada produto de <$scope.ProdutosDoEstudo> para gerar um <estudo_do_produto> com os custos de importação individualizados e totalizar <$scope.estudo>.
-                // $scope.comparaDados();
+                criaGraficos();
             }
         };
 

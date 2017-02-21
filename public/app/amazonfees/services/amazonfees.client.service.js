@@ -162,7 +162,7 @@ let avaliador = {
     }
 };
 
-angular.module('amazonfees').factory('AmazonMod', ['Amazonfees', function(Amazonfees) {
+angular.module('amazonfees').factory('CompAmazon', ['Amazonfees', function(Amazonfees) {
 
     listaFees = Amazonfees.query();
 
