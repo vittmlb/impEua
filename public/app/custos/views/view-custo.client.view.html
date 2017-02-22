@@ -1,0 +1,12 @@
+<section data-ng-controller="CustosController" data-ng-init="findOne()">
+    <div class="container">
+        <h2>Custo</h2>
+        <a ng-href="#!/custos/{{custo._id}}/edit" class="btn btn-warning btn-round btn-xs"><span class="glyphicon glyphicon-pencil"></span></a>&nbsp
+        <button class="btn btn-danger btn-round btn-xs" data-ng-click="delete()"><span class="glyphicon glyphicon-trash"></span></button>
+        <hr>
+        <h3 data-ng-bind="custo.nome"></h3>
+        <h4 data-ng-bind="custo.tipo"></h4>
+        <p class="text-primary" data-ng-bind="custo.valor | currency: custo.moeda + ' '" data-ng-show="custo.valor"></p>
+        <p class="text-muted" data-ng-bind="custo.aliquota | percentage:2" data-ng-show="custo.aliquota"></p>
+    </div>
+</section>

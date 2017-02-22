@@ -39,7 +39,7 @@ module.exports = function() {
 
 
     require('../app/routes/produtos.server.routes.js')(app);
-    require('../app/routes/despesas.server.routes.js')(app);
+    require('../app/routes/custos.server.routes.js')(app);
     require('../app/routes/upload-files.server.routes')(app);
     require('../app/routes/hscode.server.routes.js')(app);
     require('../app/routes/fornecedores.server.routes')(app);

@@ -8,26 +8,26 @@ angular.module('estudos').config(['$stateProvider', '$urlRouterProvider',
         });
         $stateProvider
 
-            // Despesas
-            .state('despesas_create', {
-                url: '/despesas/create',
-                templateUrl: 'app/despesas/views/create-despesa.client.view.html',
-                controller: 'DespesasController'
+            // Custos
+            .state('custos_create', {
+                url: '/custos/create',
+                templateUrl: 'app/custos/views/create-custo.client.view.html',
+                controller: 'CustosController'
             })
-            .state('despesas_list', {
-                url: '/despesas',
-                templateUrl: 'app/despesas/views/list-despesas.client.view.html',
-                controller: 'DespesasController'
+            .state('custos_list', {
+                url: '/custos',
+                templateUrl: 'app/custos/views/list-custos.client.view.html',
+                controller: 'CustosController'
             })
-            .state('despesas_view', {
-                url: '/despesas/:despesaId',
-                templateUrl: 'app/despesas/views/view-despesa.client.view.html',
-                controller: 'DespesasController'
+            .state('custos_view', {
+                url: '/custos/:custoId',
+                templateUrl: 'app/custos/views/view-custo.client.view.html',
+                controller: 'CustosController'
             })
-            .state('despesas_edit', {
-                url: '/despesas/:despesaId/edit',
-                templateUrl: 'app/despesas/views/edit-despesa.client.view.html',
-                controller: 'DespesasController'
+            .state('custos_edit', {
+                url: '/custos/:custoId/edit',
+                templateUrl: 'app/custos/views/edit-custo.client.view.html',
+                controller: 'CustosController'
             })
 
             // Produtos

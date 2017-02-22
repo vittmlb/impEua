@@ -27,7 +27,7 @@ module.exports = function() {
     });
 
     require('../app/models/produtos.server.model.js');
-    require('../app/models/despesas.server.model.js');
+    require('../app/models/custos.server.model.js');
     require('../app/models/hscode.server.model.js');
     require('../app/models/fornecedores.server.model');
     require('../app/models/paises.server.model');

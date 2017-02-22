@@ -1,6 +1,6 @@
-<section data-ng-controller="DespesasController" data-ng-init="find()">
+<section data-ng-controller="CustosController" data-ng-init="find()">
     <div class="container">
-        <h2>Despesas</h2>
+        <h2>Custos</h2>
         <hr>
         <div class="row">
             <div class="col-xs-10">
@@ -14,13 +14,13 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr data-ng-repeat="item in despesas">
-                        <td><a href="#!/despesas/{{item._id}}">{{item.nome}}</a></td>
+                    <tr data-ng-repeat="item in custos">
+                        <td><a ng-href="#!/custos/{{item._id}}">{{item.nome}}</a></td>
                         <td data-ng-bind="item.tipo"></td>
                         <td data-ng-bind="item.valor | currency: item.moeda + ' '" data-ng-show="item.valor"></td>
                         <td data-ng-bind="item.aliquota | percentage: 2" data-ng-show="item.aliquota"></td>
-                        <td ng-show="item.ativa"><span class="glyphicon glyphicon-ok"></span></td>
-                        <td ng-show="!item.ativa"><span class="glyphicon glyphicon-remove"></span></td>
+                        <td ng-show="item.ativo"><span class="glyphicon glyphicon-ok"></span></td>
+                        <td ng-show="!item.ativo"><span class="glyphicon glyphicon-remove"></span></td>
                     </tr>
                     </tbody>
                 </table>

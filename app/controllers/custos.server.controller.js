@@ -1,73 +1,73 @@
 /**
  * Created by Vittorio on 01/06/2016.
  */
-let Despesas = require('mongoose').model('Despesa');
+let Custos = require('mongoose').model('Custo');
 
 exports.create = function(req, res) {
-    let despesa = new Despesas(req.body);
-    despesa.save(function (err) {
+    let custo = new Custos(req.body);
+    custo.save(function (err) {
         if(err) {
             return res.status(400).send({
                 message: err
             });
         } else {
-            res.json(despesa);
+            res.json(custo);
         }
     });
 };
 
 exports.list = function(req, res) {
-    Despesas.find().exec(function (err, despesas) {
+    Custos.find().exec(function (err, custos) {
         if(err) {
             return res.status(400).send({
                 message: err
             });
         } else {
-            res.json(despesas);
+            res.json(custos);
         }
     });
 };
 
 exports.update = function(req, res) {
-    let despesa = req.despesa;
-    despesa.nome = req.body.nome;
-    despesa.tipo = req.body.tipo;
-    despesa.valor = req.body.valor;
-    despesa.aliquota = req.body.aliquota;
-    despesa.ativa = req.body.ativa;
-    despesa.save(function (err, despesa) {
+    let custo = req.custo;
+    custo.nome = req.body.nome;
+    custo.tipo = req.body.tipo;
+    custo.valor = req.body.valor;
+    custo.aliquota = req.body.aliquota;
+    custo.ativo = req.body.ativo;
+    custo.save(function (err, custo) {
         if(err) {
             return res.status(400).send({
                 message: err
             });
         } else {
-            res.json(despesa);
+            res.json(custo);
         }
     });
 };
 
 exports.delete = function(req, res) {
-    let despesa = req.despesa;
-    despesa.remove(function (err) {
+    let custo = req.custo;
+    custo.remove(function (err) {
         if(err) {
             return res.status(400).send({
                 message: err
             });
         } else {
-            res.json(despesa);
+            res.json(custo);
         }
     });
 };
 
 exports.read = function(req, res) {
-    res.json(req.despesa);
+    res.json(req.custo);
 };
 
 exports.findById = function(req, res, next, id) {
-    Despesas.findById(id).exec(function (err, despesa) {
+    Custos.findById(id).exec(function (err, custo) {
         if(err) return next(err);
-        if(!despesa) return next(new Error(`Failed to load despesa: ${id}`));
-        req.despesa = despesa;
+        if(!custo) return next(new Error(`Failed to load custo: ${id}`));
+        req.custo = custo;
         next();
     });
 };

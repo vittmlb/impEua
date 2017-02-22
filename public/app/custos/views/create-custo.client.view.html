@@ -1,32 +1,32 @@
-<section data-ng-controller="DespesasController">
+<section data-ng-controller="CustosController">
     <div class="container">
-        <h2>Cadastro de Despesa</h2>
+        <h2>Cadastro de Custo</h2>
         <hr>
         <div class="col-xs-8">
             <form data-ng-submit="create()">
-                <label for="inputNomeDespesa">Nome da Despesa:</label>
+                <label for="inputNomeCusto">Nome do Custo:</label>
                 <div class="form-group">
-                    <input type="text" class="form-control" id="inputNomeDespesa" ng-model="nome">
+                    <input type="text" class="form-control" id="inputNomeCusto" ng-model="nome">
                 </div>
                 <div class="row">
                     <div class="col-xs-6">
-                        <label for="inputTipoDespesa">Tipo da Despesa:</label>
+                        <label for="inputTipoCusto">Tipo do Custo:</label>
                         <div class="form-group">
-                            <select class="form-control" name="inputTipoDespesa" id="inputTipoDespesa" ng-model="tipo">
-                                <option class="form-control" ng-repeat="tipoDespesa in enumTiposDespesas" value="{{tipoDespesa}}">{{tipoDespesa}}</option>
+                            <select class="form-control" name="inputTipoCusto" id="inputTipoCusto" ng-model="tipo">
+                                <option class="form-control" ng-repeat="tipoCusto in enumTiposCustos" value="{{tipoCusto}}">{{tipoCusto}}</option>
                             </select>
                         </div>
                     </div>
                     <div class="col-xs-6">
-                        <label for="inputAtiva" class="checkbox  checkbox-inline">
-                            <input type="checkbox" id="inputAtiva" class="checkbox" ng-model="ativa">Despesa Ativa?
+                        <label for="inputAtivo" class="checkbox  checkbox-inline">
+                            <input type="checkbox" id="inputAtivo" class="checkbox" ng-model="ativo">Custo Ativo?
                         </label>
                     </div>
                 </div>
                 <div ng-show="tipo == 'Valor'">
-                    <label for="inputValorDespesa">Valor:</label>
+                    <label for="inputValorCusto">Valor:</label>
                     <div class="form-group">
-                        <input type="text" class="form-control" id="inputValorDespesa" ng-model="valor">
+                        <input type="text" class="form-control" id="inputValorCusto" ng-model="valor">
                     </div>
                 </div>
                 <div ng-show="tipo == 'Alíquota'">

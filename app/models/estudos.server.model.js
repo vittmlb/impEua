@@ -163,7 +163,7 @@ var ObjetoEstudoSchema = new Schema({
                 usd: Number,
                 brl: Number
             },
-            totais: { // Despesas internacionais totais - Somatório das despesas compartilhadas com as individualizadas
+            totais: { // Despesas internacionais totais - Somatório das custos compartilhadas com as individualizadas
                 usd: Number,
                 brl: Number,
             }
@@ -372,7 +372,7 @@ var EstudoDoProduto = new Schema({
                 usd: Number,
                 brl: Number
             }],
-            totais: { // Somatório das despesas compartilhadas e individualizadas.
+            totais: { // Somatório das custos compartilhadas e individualizadas.
                 usd: Number,
                 brl: Number
             }
@@ -386,7 +386,7 @@ var EstudoDoProduto = new Schema({
                 usd: Number,
                 brl: Number
             },
-            totais: { // Somatório das despesas compartilhadas e individualizadas.
+            totais: { // Somatório das custos compartilhadas e individualizadas.
                 usd: Number,
                 brl: Number
             }

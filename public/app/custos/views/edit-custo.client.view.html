@@ -1,0 +1,42 @@
+<section data-ng-controller="CustosController" data-ng-init="findOne()">
+    <div class="container">
+        <form data-ng-submit="update()">
+            <div class="col-xs-8">
+                <h2>Editar Custo</h2>
+                <hr>
+                <label for="inputNomeCusto">Nome do Custo:</label>
+                <div class="form-group">
+                    <input type="text" class="form-control" id="inputNomeCusto" data-ng-model="custo.nome">
+                </div>
+                <div class="row">
+                    <div class="col-xs-6">
+                        <label for="inputTipoCusto">Tipo do Custo:</label>
+                        <div class="form-group">
+                            <select class="form-control" name="inputTipoCusto" id="inputTipoCusto" data-ng-model="custo.tipo">
+                                <option class="form-control" ng-repeat="tipoCusto in enumTiposCustos" value="{{tipoCusto}}">{{tipoCusto}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-xs-6">
+                        <label for="inputAtivo" class="checkbox  checkbox-inline">
+                            <input type="checkbox" id="inputAtivo" class="checkbox" data-ng-model="custo.ativo">Custo Ativo?
+                        </label>
+                    </div>
+                </div>
+                <div ng-show="custo.tipo == 'Valor'">
+                    <label for="inputValorCusto">Valor:</label>
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="inputValorCusto" data-ng-model="custo.valor">
+                    </div>
+                </div>
+                <div ng-show="custo.tipo === 'Alíquota'">
+                    <label for="inputAliquota">Alíquota:</label>
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="inputAliquota" data-ng-model="custo.aliquota">
+                    </div>
+                </div>
+                <input type="submit" class="btn btn-info" value="Update">
+            </div>
+        </form>
+    </div>
+</section>

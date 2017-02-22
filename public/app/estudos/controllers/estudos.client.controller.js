@@ -1,11 +1,11 @@
 /**
  * Created by Vittorio on 30/05/2016.
  */
-angular.module('estudos').controller('EstudosController', ['$scope', '$uibModal', '$routeParams', '$location', 'Produtos', 'Despesas', 'Estudos', '$http', '$stateParams', 'toaster', 'CompAmazon', 'CompEstudos',
-    function($scope, $uibModal, $routeParams, $location, Produtos, Despesas, Estudos, $http, $stateParams, toaster, CompAmazon, CompEstudos) {
+angular.module('estudos').controller('EstudosController', ['$scope', '$uibModal', '$routeParams', '$location', 'Produtos', 'Estudos', '$http', '$stateParams', 'toaster', 'CompAmazon', 'CompEstudos',
+    function($scope, $uibModal, $routeParams, $location, Produtos, Estudos, $http, $stateParams, toaster, CompAmazon, CompEstudos) {
 
-        $scope.piePoints = [{"Frete": 0}, {"Fob": 0}, {"Despesas": 0}, {"Taxas": 0}];
-        $scope.pieColumns = [{"id": "Frete", "type": "pie"}, {"id": "Fob", "type": "pie"}, {"id": "Despesas", "type": "pie"}, {"id": "Taxas", "type": "pie"}];
+        $scope.piePoints = [{"Frete": 0}, {"Fob": 0}, {"Custos": 0}, {"Taxas": 0}];
+        $scope.pieColumns = [{"id": "Frete", "type": "pie"}, {"id": "Fob", "type": "pie"}, {"id": "Custos", "type": "pie"}, {"id": "Taxas", "type": "pie"}];
         $scope.erros = {
             produto: {
                 fob: []
@@ -37,27 +37,27 @@ angular.module('estudos').controller('EstudosController', ['$scope', '$uibModal'
             hmf: 0,
         };
 
-        $scope.despesa_internacional = {
-            // Variável referenciada no formulário modal usada para inserir a despesa em <$scope.estudo> despesas[].
-            // Despesas a serem compartilhadas por todos os produtos (como viagem da Conny para acompanhar o carregamento do contêiner).
+        $scope.custo_internacional = {
+            // Variável referenciada no formulário modal usada para inserir a custo em <$scope.estudo> custos[].
+            // Custos a serem compartilhadas por todos os produtos (como viagem da Conny para acompanhar o carregamento do contêiner).
             // desc: '',
             // usd: 0,
             // brl: 0
         };
         $scope.currentProduto = {}; // Variável que armazena o produto selecionado para usar com ng-model e outras operações.
-        $scope.despesa_internacional_produto = {
-            // Variável referenciada no formulário modal usada para inserir a despesa internacional individualizada em <estudo_do_produto> despesas[].
-            // Despesas a serem diluídas no preço do produto.
+        $scope.custo_internacional_produto = {
+            // Variável referenciada no formulário modal usada para inserir a custo internacional individualizada em <estudo_do_produto> custos[].
+            // Custos a serem diluídas no preço do produto.
             // desc: '',
             // usd: 0,
             // brl: 0
         };
 
-        function totalizaDespesasInternacionais() {
+        function totalizaCustosInternacionais() {
             // Compartilhadas
-            processaDespesasInternacionaisIndividuais();
+            processaCustosInternacionaisIndividuais();
             determinaProporcionalidadeDosProdutos();
-            processaDespesasInternacionaisCompartilhadas();
+            processaCustosInternacionaisCompartilhadas();
 
         }
 
@@ -81,21 +81,21 @@ angular.module('estudos').controller('EstudosController', ['$scope', '$uibModal'
             });
         }
 
-        function processaDespesasInternacionaisCompartilhadas() {
+        function processaCustosInternacionaisCompartilhadas() {
 
-            // Totaliza as despesas internacionais compartilhadas.
+            // Totaliza as custos internacionais compartilhadas.
             let total = {usd: 0, brl: 0};
-            let despC = $scope.estudo.despesas.internacionais.compartilhadas;
-            for(let i = 0; i < despC.length; i++) { // totaliza as despesas no objeto estudo.
+            let despC = $scope.estudo.custos.internacionais.compartilhadas;
+            for(let i = 0; i < despC.length; i++) { // totaliza as custos no objeto estudo.
                 total.usd += despC[i].usd;
                 total.brl += despC[i].brl;
             }
-            $scope.estudo.despesas.internacionais.totais = total;
+            $scope.estudo.custos.internacionais.totais = total;
 
-            // Seta os valores proporcionais das despesas internacionais compartilhadas em cada um dos produtos.
+            // Seta os valores proporcionais das custos internacionais compartilhadas em cada um dos produtos.
             $scope.produtosDoEstudo.forEach(function (produto) {
                 if(produto.estudo_do_produto.qtd > 0) {
-                    let despProdInt = produto.estudo_do_produto.despesas.internacionais;
+                    let despProdInt = produto.estudo_do_produto.custos.internacionais;
                     let auxTotal = {usd: 0, brl: 0}; // objeto para ser jogado no array de int.compartilhadas.
                     despProdInt.compartilhadas = [];
                     for(let i = 0; i < despC.length; i++) {
@@ -109,15 +109,15 @@ angular.module('estudos').controller('EstudosController', ['$scope', '$uibModal'
                 }
             });
         }
-        function processaDespesasInternacionaisIndividuais() {
+        function processaCustosInternacionaisIndividuais() {
 
-            $scope.produtosDoEstudo.forEach(function (produto) {
-                produto.estudo_do_produto.despesas.internacionais.totais = {'usd': 0, 'brl': 0};
-                produto.estudo_do_produto.despesas.internacionais.individualizadas.forEach(function(desp) {
-                    produto.estudo_do_produto.despesas.internacionais.totais.usd += desp.usd;
-                    produto.estudo_do_produto.despesas.internacionais.totais.brl += desp.brl;
-                });
-            });
+            // $scope.produtosDoEstudo.forEach(function (produto) {
+            //     produto.estudo_do_produto.custos.internacionais.totais = {'usd': 0, 'brl': 0};
+            //     produto.estudo_do_produto.custos.internacionais.individualizadas.forEach(function(desp) {
+            //         produto.estudo_do_produto.custos.internacionais.totais.usd += desp.usd;
+            //         produto.estudo_do_produto.custos.internacionais.totais.brl += desp.brl;
+            //     });
+            // });
 
         }
 
@@ -173,7 +173,7 @@ angular.module('estudos').controller('EstudosController', ['$scope', '$uibModal'
         };
 
         /**
-         * Carrega os dados à partir do BD e arquivos para <$scope.produtos> / <$scope.despesas> / <$scope.config>
+         * Carrega os dados à partir do BD e arquivos para <$scope.produtos> / <$scope.custos> / <$scope.config>
          */
         $scope.loadData = function() {
             $scope.produtos = Produtos.query();
@@ -203,11 +203,11 @@ angular.module('estudos').controller('EstudosController', ['$scope', '$uibModal'
         }; // todo Mudar o nome da função
 
         /**
-         * Invoca o formulário modal em que o usuário vai informar o nome e o valor da despesa compartilhada.
+         * Invoca o formulário modal em que o usuário vai informar o nome e o valor da custo compartilhada.
          */
-        $scope.addDespesaInternacionalCompartilhadaModal = function() {
+        $scope.addCustoInternacionalCompartilhadaModal = function() {
             let modalInstance = $uibModal.open({
-                templateUrl: 'app/estudos/views/modals/adiciona-despesa-internacional-compartilhada.modal.view.html',
+                templateUrl: 'app/estudos/views/modals/adiciona-custo-internacional-compartilhado.modal.view.html',
                 controller: ModalInstanceCtrl,
                 scope: $scope,
                 windowClass: 'animated flipInY'
@@ -215,37 +215,37 @@ angular.module('estudos').controller('EstudosController', ['$scope', '$uibModal'
         };
 
         /**
-         * Evento invocado pelo formulário modal. Adiciona o "objeto" despesa internacional compartilhada ao array de respectivas despesas.
+         * Evento invocado pelo formulário modal. Adiciona o "objeto" custo internacional compartilhada ao array de respectivas custos.
          */
-        $scope.addDespesaInternacionalCompartilhada = function() {
-            $scope.despesa_internacional.brl = $scope.despesa_internacional.usd * $scope.config.cotacao_dolar; // Convertendo despesa internacional para brl.
-            $scope.estudo.despesas.internacionais.compartilhadas.push($scope.despesa_internacional); // todo: Ver como "zerar" o objeto.
-            $scope.despesa_internacional = {};
-            totalizaDespesasInternacionais();
-            processaMudancasTodosProdutos('despesas');
+        $scope.addCustoInternacionalCompartilhada = function() {
+            $scope.custo_internacional.brl = $scope.custo_internacional.usd * $scope.config.cotacao_dolar; // Convertendo custo internacional para brl.
+            $scope.estudo.custos.internacionais.compartilhadas.push($scope.custo_internacional); // todo: Ver como "zerar" o objeto.
+            $scope.custo_internacional = {};
+            totalizaCustosInternacionais();
+            processaMudancasTodosProdutos('custos');
         };
 
         /**
-         * Invoca o formulário modal em que o usuário vai informar o nome e o valor da despesa compartilhada.
+         * Invoca o formulário modal em que o usuário vai informar o nome e o valor da custo compartilhada.
          */
-        $scope.addDespesaInternacionalDoProdutoModal = function(produto) {
+        $scope.addCustoInternacionalDoProdutoModal = function(produto) {
             $scope.currentProduto = produto;
             let modalInstance = $uibModal.open({
-                templateUrl: 'app/estudos/views/modals/adiciona-despesa-internacional-individual.modal.view.html',
+                templateUrl: 'app/estudos/views/modals/adiciona-custo-internacional-individual.modal.view.html',
                 controller: ModalInstanceCtrl,
                 scope: $scope,
                 windowClass: 'animated flipInY'
             });
         };
 
-        $scope.addDespesaInternacionalDoProduto = function() {
+        $scope.addCustoInternacionalDoProduto = function() {
             let produto = $scope.currentProduto;
-            $scope.despesa_internacional_produto.brl = $scope.despesa_internacional_produto.usd * $scope.config.cotacao_dolar; // Convertendo despesa internacional para brl.
-            produto.estudo_do_produto.despesas.internacionais.individualizadas.push($scope.despesa_internacional_produto);
-            $scope.despesa_internacional_produto = {};
+            $scope.custo_internacional_produto.brl = $scope.custo_internacional_produto.usd * $scope.config.cotacao_dolar; // Convertendo custo internacional para brl.
+            produto.estudo_do_produto.custos.internacionais.individualizadas.push($scope.custo_internacional_produto);
+            $scope.custo_internacional_produto = {};
             $scope.currentProduto = {};
-            totalizaDespesasInternacionais();
-            processaMudancasTodosProdutos('despesas');
+            totalizaCustosInternacionais();
+            processaMudancasTodosProdutos('custos');
         };
 
         /**
@@ -266,13 +266,13 @@ angular.module('estudos').controller('EstudosController', ['$scope', '$uibModal'
 
         /**
          * Ajusta os valores digitados na tabela do produto da página main-estudos.client.view.html
-         * <custo_cheio> / <custo_paypal> / <custo_dentro> / <qtd> / <despesas>
+         * <custo_cheio> / <custo_paypal> / <custo_dentro> / <qtd> / <custos>
          * @param produto - objeto <produto> proveniente da iteração ng-repeat pelos produtos adicionados ao estudo.
          * @param campo - string utilizada para designar qual é o campo que está sendo modificado.
          */
         $scope.processaMudancas = function(produto, campo) {
 
-            totalizaDespesasInternacionais();
+            totalizaCustosInternacionais();
             auxProcessaMudancas(produto, campo);
             $scope.iniImport();
 
@@ -281,14 +281,14 @@ angular.module('estudos').controller('EstudosController', ['$scope', '$uibModal'
         function auxProcessaMudancas (produto, campo) {
             // As letiáveis abaixo servem apenas para reduzir o tamanho dos nomes.
             // let aux = produto.estudo_do_produto;
-            // let desp = aux.despesas.internacionais.totais;
+            // let desp = aux.custos.internacionais.totais;
             // let cUnit = produto.estudo_do_produto.custo_unitario;
             // let despUnit = 0;
             // if(aux.qtd > 0) {
             //     despUnit = desp.usd / aux.qtd;
             // }
             // let cCheio = produto.custo_usd + despUnit;
-            // cUnit.cheio.usd = cCheio; // Este objeto é inicializado com o valor custo_usd do produto. Aqui ele é alterado para refletir o total inicial + as despesas do produto.
+            // cUnit.cheio.usd = cCheio; // Este objeto é inicializado com o valor custo_usd do produto. Aqui ele é alterado para refletir o total inicial + as custos do produto.
             // switch (campo) {
             //     case 'custo_paypal':
             //         produto.estudo_do_produto.memoria_paypal = cUnit.paypal.usd;
@@ -301,7 +301,7 @@ angular.module('estudos').controller('EstudosController', ['$scope', '$uibModal'
             //         cUnit.paypal.usd = produto.estudo_do_produto.memoria_paypal + despUnit;
             //         cUnit.declarado.usd = cCheio - cUnit.paypal.usd;
             //         break;
-            //     case 'despesas':
+            //     case 'custos':
             //         cUnit.paypal.usd = produto.estudo_do_produto.memoria_paypal + despUnit;
             //         cUnit.declarado.usd = cCheio - cUnit.paypal.usd;
             //         break;
@@ -333,11 +333,11 @@ angular.module('estudos').controller('EstudosController', ['$scope', '$uibModal'
         //region Etapas para cálculo do estudo - iniImp()
 
         function zeraDadosGrafico() {
-            $scope.piePoints = [{"Frete": 0}, {"Fob": 0}, {"Despesas": 0}, {"Taxas": 0}];
+            $scope.piePoints = [{"Frete": 0}, {"Fob": 0}, {"Custos": 0}, {"Taxas": 0}];
         }
 
-        function totalizaDespesasInternacionaisDoProduto(produto) {
-            let desp = produto.estudo_do_produto.despesas.internacionais;
+        function totalizaCustosInternacionaisDoProduto(produto) {
+            let desp = produto.estudo_do_produto.custos.internacionais;
             desp.totais = {usd: 0, brl: 0};
             for(let i = 0; i < desp.individualizadas; i++) {
                 desp.totais += desp.individualizadas[i];
@@ -350,7 +350,7 @@ angular.module('estudos').controller('EstudosController', ['$scope', '$uibModal'
             $scope.piePoints = [
                 {"Frete": $scope.estudo.resultados.comparacao.percentual_frete},
                 {"Fob": $scope.estudo.resultados.comparacao.percentual_fob},
-                {"Despesas": $scope.estudo.resultados.comparacao.percentual_despesas},
+                {"Custos": $scope.estudo.resultados.comparacao.percentual_custos},
                 {"Taxas": $scope.estudo.resultados.comparacao.percentual_taxas}
             ];
 
@@ -363,7 +363,7 @@ angular.module('estudos').controller('EstudosController', ['$scope', '$uibModal'
             {
                 CompEstudos.setFobProdutos(); //Itera por cada produto e seta os valores FOB (e letiáveis usd/brl/paypal/integral) <produto.estudo_do_produto.fob...>
                 CompEstudos.totalizaDadosBasicosEstudo(); // Itera produtos para totalizar dados do <$scope.estudo> como FOBs, Peso e Volume.
-                CompEstudos.totalizaDespesasDoEstudo(); // Itera pelo objeto <$scope.despesas> e faz o somatório para adicionar ao <$scope.estudo>
+                CompEstudos.totalizaCustosDoEstudo(); // Itera pelo objeto <$scope.custos> e faz o somatório para adicionar ao <$scope.estudo>
                 CompEstudos.geraEstudoDeCadaProduto(); // Itera por cada produto de <$scope.ProdutosDoEstudo> para gerar um <estudo_do_produto> com os custos de importação individualizados e totalizar <$scope.estudo>.
                 criaGraficos();
             }

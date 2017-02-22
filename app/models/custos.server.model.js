@@ -4,7 +4,7 @@
 let mongoose = require('mongoose');
 let Schema = mongoose.Schema;
 
-let DespesasSchema = new Schema({
+let CustosSchema = new Schema({
     nome: {
         type: String,
         trim: true,
@@ -20,15 +20,15 @@ let DespesasSchema = new Schema({
     aliquota: {
         type: Number
     },
-    ativa: {
+    ativo: {
         type: Boolean,
         default: true
     }
 });
 
-DespesasSchema.set('toJSON', {
+CustosSchema.set('toJSON', {
     getters: true,
     virtuals: true
 });
 
-mongoose.model('Despesa', DespesasSchema);
+mongoose.model('Custo', CustosSchema);
