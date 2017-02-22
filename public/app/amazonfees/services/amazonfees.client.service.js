@@ -96,11 +96,11 @@ let amz = {
         }]
     },
     set_nome_fee: function(nome) {
-        this.produto.estudo_do_produto.modulo_amazon.categoria = nome;
+        this.produto.estudo_do_produto.modulos.amazon.categoria = nome;
         this.modulo.nome_fee = nome;
     },
     set_inspectedRules: function(inspectedRulesArray) {
-        this.produto.estudo_do_produto.modulo_amazon.inspectedRules = inspectedRulesArray;
+        this.produto.estudo_do_produto.modulos.amazon.inspectedRules = inspectedRulesArray;
         this.modulo.inspectedRules = inspectedRulesArray;
     },
     set_produto: function(produto) {

@@ -11,7 +11,7 @@ angular.module('estudos').factory('Estudos', ['$resource', function ($resource) 
     });
 }]);
 
-let config = {
+let parametros = {
     volume_cntr_20: 0,
     frete_maritimo: 0,
     seguro_frete_maritimo: 0,
@@ -23,7 +23,7 @@ let config = {
 
 let estudo = {
     nome_estudo: '',
-    config: {
+    parametros: {
         volume_cntr_20: 0,
         frete_maritimo: 0,
         seguro_frete_maritimo: 0,
@@ -32,13 +32,8 @@ let estudo = {
         mpf: 0,
         hmf: 0,
     },
-    total_comissao_conny: 0, // todo: Implementar comissão Conny
     fob: 0,
     cif: 0,
-    frete_maritimo: {
-        valor: 0,
-        seguro: 0
-    },
     medidas: {
         peso: {
             contratado: 0, // Por enquanto não vou usar esse valor > Só será usado quando importar um produto muito pesado.
@@ -51,47 +46,61 @@ let estudo = {
             ocupado_percentual: 0
         }
     },
-    taxas: {
-        duty: 0,
-        mpf: 0,
-        hmf: 0,
-        total: 0
-    },
     custos: {
-        aduaneiras: {
+        comissao_conny: {
+            total: 0
+        }, // todo: Implementar comissão Conny
+        aduaneiros: {
             lista: [],
             total: 0
         },
         internacionais: { // Custos originadas no exterior.
-            compartilhadas: {
+            compartilhados: {
                 lista: [],
                 total: 0
             },
-            individualizadas: {
+            individualizados: {
                 lista: [],
                 total: 0,
             },  // Custos internacionais que dizem respeito a um único produto (viagem Conny para um fabricante, ou frete do produto para o porto.
             total: 0 // Custos internacionais totais - Somatório das custos compartilhadas com as individualizadas
         },
         nacionais: {
-            compartilhadas: {
+            compartilhados: {
                 lista: [],
                 total: 0
             },
-            individualizadas: {
+            individualizados: {
                 lista: [],
                 total: 0
+            },
+            total: 0
+        },
+        frete_maritimo: {
+            valor: 0,
+            seguro: 0,
+            total: function() {
+                return this.valor + this.seguro;
             }
+        },
+        taxas: {
+            duty: 0,
+            mpf: 0,
+            hmf: 0,
+            total: 0
         },
         total: 0
     },
-    modulo_amazon: {
-        fba: {
-            fulfillment: 0,
-            inventory: 0,
-            placement: 0
-        },
-        comissoes: 0
+    despesas: {},
+    modulos: {
+        amazon: {
+            fba: {
+                fulfillment: 0,
+                inventory: 0,
+                placement: 0
+            },
+            comissoes: 0
+        }
     },
     resultados: {
         investimento: 0,
@@ -112,31 +121,32 @@ let estudo = {
         this.cif = 0;
         this.taxas = {duty: 0, mpf: 0, hmf: 0, total: 0};
 
-        this.custos = {aduaneiras: {lista: [], total: 0}, internacionais: { // Custos originadas no exterior.
-                compartilhadas: {
-                    lista: [],
-                    total: 0
-                },
-                individualizadas: {
-                    lista: [],
-                    total: 0,
-                },  // Custos internacionais que dizem respeito a um único produto (viagem Conny para um fabricante, ou frete do produto para o porto.
-                total: 0 // Custos internacionais totais - Somatório das custos compartilhadas com as individualizadas
-            }, nacionais: {
-                compartilhadas: {
-                    lista: [],
-                    total: 0
-                },
-                individualizadas: {
-                    lista: [],
-                    total: 0
-                }
-            }, total: 0};
+        this.custos.comissao_conny.total = 0;
 
-        this.modulo_amazon.fba.fulfillment = 0;
-        this.modulo_amazon.fba.inventory = 0;
-        this.modulo_amazon.fba.placement = 0;
-        this.modulo_amazon.comissoes = 0;
+        this.custos.aduaneiros.lista = [];
+        this.custos.aduaneiros.total = 0;
+
+        this.custos.internacionais.compartilhados.lista = [];
+        this.custos.internacionais.compartilhados.total = 0;
+        this.custos.internacionais.individualizados.lista = [];
+        this.custos.internacionais.individualizados.total = 0;
+        this.custos.internacionais.total = 0;
+
+        this.custos.nacionais.compartilhados.lista = [];
+        this.custos.nacionais.compartilhados.total = 0;
+        this.custos.nacionais.individualizados.lista = [];
+        this.custos.nacionais.individualizados.total = 0;
+        this.custos.nacionais.total = 0;
+
+        this.custos.taxas.duty = 0;
+        this.custos.taxas.mpf = 0;
+        this.custos.taxas.hmf = 0;
+        this.custos.taxas.total = 0;
+
+        this.modulos.amazon.fba.fulfillment = 0;
+        this.modulos.amazon.fba.inventory = 0;
+        this.modulos.amazon.fba.placement = 0;
+        this.modulos.amazon.comissoes = 0;
 
         this.medidas.peso.ocupado = 0;
         this.medidas.peso.ocupado_percentual = 0;
@@ -161,15 +171,15 @@ let estudo = {
      * Incrementa os totais dos tributos do estudo "geral" com base nos valores de cada produto passado como argumento.
      * @param produto
      */
-    totalizaImpostosEstudo: function(produto) {
+    totaliza_custos_taxas: function(produto) {
         let estProduto = produto.estudo_do_produto;
 
         // Update (soma) dos valores dos impostos ao Estudo Geral.
+        this.custos.taxas.duty += estProduto.custos.taxas.duty;
+        this.custos.taxas.mpf += estProduto.custos.taxas.mpf;
+        this.custos.taxas.hmf += estProduto.custos.taxas.hmf;
+        this.custos.taxas.total += estProduto.custos.taxas.total;
 
-        this.taxas.duty += estProduto.taxas.duty;
-        this.taxas.mpf += estProduto.taxas.mpf;
-        this.taxas.hmf += estProduto.taxas.hmf;
-        this.taxas.total += estProduto.taxas.total
     },
     calculaResultados: function(produto) {
         // Região para acumular os dados do Estudo
@@ -179,130 +189,161 @@ let estudo = {
         this.resultados.roi = estudo.resultados.lucro / estudo.resultados.investimento;
         this._totalizaComparacoes();
     },
-    totalizaDadosBasicosDoEstudo: function(produto, config) {
+    totalizaDadosBasicosDoEstudo: function(produto, ObjParametros) {
 
         this.fob = 0;
         this.medidas.peso.ocupado = 0;
         this.medidas.volume.ocupado = 0;
         this.medidas.volume.ocupado_percentual = 0;
 
-        this.fob += ((produto.estudo_do_produto.custo_unitario * produto.estudo_do_produto.qtd) * (1 + config.percentual_comissao_conny)); // Calcula Fob
-        this.cif = this.fob + this.frete_maritimo.valor + this.frete_maritimo.seguro;
+        this.fob += ((produto.estudo_do_produto.custo_unitario * produto.estudo_do_produto.qtd) * (1 + ObjParametros.percentual_comissao_conny)); // Calcula Fob
+        this.cif = this.fob + this.custos.frete_maritimo.total();
         this.medidas.peso.ocupado += produto.medidas.peso * produto.estudo_do_produto.qtd; // Calcula peso total
         this.medidas.volume.ocupado += produto.medidas.cbm * produto.estudo_do_produto.qtd; // Calcula volume ocupado no contêiner
         this.medidas.volume.ocupado_percentual = (this.medidas.volume.ocupado / this.medidas.volume.contratado) * 100;
     },
-    totalizaCustosAduaneiras: function(listaCustos) {
-        let aduaneiras = [];
+    totalizaCustosAduaneiros: function(listaCustos) {
+        let aduaneiros = [];
         let valor = 0;
         listaCustos.forEach(function (item) {
             if(item.tipo === 'Valor' && item.ativa === true) {
-                aduaneiras.push({
+                aduaneiros.push({
                     nome: item.nome,
                     valor: item.valor
                 });
                 valor += item.valor;
             }
         });
-        this.custos.aduaneiras.lista = aduaneiras;
-        this.custos.aduaneiras.total = valor;
+        this.custos.aduaneiros.lista = aduaneiros;
+        this.custos.aduaneiros.total = valor;
         this.custos.total = valor;
     },
     totalizaCustosDoEstudo: function() {
 
     },
-    setConfig: function(objConfig) {
-        this.config = objConfig;
-        this._loadEstudoComDadosConfig();
+    setParametros: function(objParametros) {
+        this.parametros = objParametros;
+        this._loadParametrosDoEstudo();
     },
-    _loadEstudoComDadosConfig: function() {
-        this.frete_maritimo.valor = Number(this.config.frete_maritimo);
-        this.frete_maritimo.seguro = Number(this.config.seguro_frete_maritimo);
-        this.config.comissao_amazon = Number(this.config.comissao_amazon);
+    _loadParametrosDoEstudo: function() {
+        this.custos.frete_maritimo.valor = Number(this.parametros.frete_maritimo);
+        this.custos.frete_maritimo.seguro = Number(this.parametros.seguro_frete_maritimo);
+        this.parametros.comissao_amazon = Number(this.parametros.comissao_amazon);
 
-        this.medidas.volume.contratado = Number(this.config.volume_cntr_20);
-        this.config.percentual_comissao_conny = Number(this.config.percentual_comissao_conny);
+        this.medidas.volume.contratado = Number(this.parametros.volume_cntr_20);
+        this.parametros.percentual_comissao_conny = Number(this.parametros.percentual_comissao_conny);
 
-        this.config.mpf = Number(this.config.mpf);
-        this.config.hmf = Number(this.config.hmf);
+        this.parametros.mpf = Number(this.parametros.mpf);
+        this.parametros.hmf = Number(this.parametros.hmf);
     },
     _totalizaComparacoes: function() {
-        this.resultados.comparacao.percentual_frete = this.frete_maritimo.valor / this.resultados.investimento;
-        this.resultados.comparacao.percentual_hmf = this.taxas.hmf / this.resultados.investimento;
-        this.resultados.comparacao.percentual_custos = this.custos.total / this.resultados.investimento;
-        this.resultados.comparacao.percentual_duties = this.taxas.duty / this.resultados.investimento;
+        this.resultados.comparacao.percentual_frete = this.custos.frete_maritimo.valor / this.resultados.investimento;
+        this.resultados.comparacao.percentual_hmf = this.custos.taxas.hmf / this.resultados.investimento;
+        this.resultados.comparacao.percentual_custos = this.custos.aduaneiros.total / this.resultados.investimento;
+        this.resultados.comparacao.percentual_duties = this.custos.taxas.duty / this.resultados.investimento;
         this.resultados.comparacao.percentual_fob = this.fob / this.resultados.investimento;
-        this.resultados.comparacao.percentual_mpf = this.taxas.mpf / this.resultados.investimento;
-        this.resultados.comparacao.percentual_taxas = this.taxas.total / this.resultados.investimento;
+        this.resultados.comparacao.percentual_mpf = this.custos.taxas.mpf / this.resultados.investimento;
+        this.resultados.comparacao.percentual_taxas = this.custos.taxas.total / this.resultados.investimento;
     },
 };
 
 let produtosDoEstudo = [];
 
 function EstudoDoProduto() {
+    let quantidade = 0;
     this.qtd = 0;
-    this.proporcionalidade = { // exibe a proporcionalidade do produto no estudo, de acordo com cada uma das letiáveis em questão.
-        fob: 0,
-            peso: 0,
+    this.parametros = {
+        volume_cntr_20: 0,
+        frete_maritimo: 0,
+        seguro_frete_maritimo: 0,
+        comissao_amazon: 0,
+        percentual_comissao_conny: 0,
+        mpf: 0,
+        hmf: 0,
     };
     this.custo_unitario = 0; // Não lembro o como funciona isso aqui.
-    this.fob = 0;
-    this.cif = 0;
-    this.frete_maritimo = {
-        valor: 0,
-        seguro: 0
+    this.fob = function() {
+        if (this.qtd <= 0) {
+            this.zeraObj();
+        } else {
+            this.fob = ((this.custo_unitario * (1 + this.parametros.percentual_comissao_conny)) * this.qtd);
+        }
     };
+    this.cif = 0;
     this.medidas = {
         peso: {
             contratado: 0, // Por enquanto não vou usar esse valor > Só será usado quando importar um produto muito pesado.
-                ocupado: 0,
-                ocupado_percentual: 0 // Por enquanto não vou usar esse valor > Só será usado quando importar um produto muito pesado.
+            ocupado: 0,
+            ocupado_percentual: 0 // Por enquanto não vou usar esse valor > Só será usado quando importar um produto muito pesado.
         },
         volume: {
             contratado: 0, // todo: Volume do Cntr escolhido para fazer o transporte da carga. Encontrar uma solução melhor para quando for trabalhar com outros volumes.
-                ocupado: 0,
-                ocupado_percentual: 0
+            ocupado: 0,
+            ocupado_percentual: 0
+        },
+        proporcionalidade: { // exibe a proporcionalidade do produto no estudo, de acordo com cada uma das letiáveis em questão.
+            fob: 0,
+            peso: 0,
         }
     };
-    this.taxas = {
-        duty: 0,
-        mpf: 0,
-        hmf: 0,
-        total: 0
-    };
     this.custos = {
-        aduaneiras: {
+        comissao_conny: {
+            total: 0
+        },
+        aduaneiros: {
             lista: [],
             total: 0
         },
         internacionais: { // Custos originadas no exterior.
-            compartilhadas: {
+            compartilhados: {
                 lista: [],
+                total_unitario: function(qtd) {
+                    return _calcula_valor_unitario(this.total, qtd)
+                },
                 total: 0
             },
-            individualizadas: {
+            individualizados: {
                 lista: [],
+                total_unitario: function(qtd) {
+                    return _calcula_valor_unitario(this.total, qtd)
+                },
                 total: 0,
             },  // Custos internacionais que dizem respeito a um único produto (viagem Conny para um fabricante, ou frete do produto para o porto.
             total: 0 // Custos internacionais totais - Somatório das custos compartilhadas com as individualizadas
         },
         nacionais: {
-            compartilhadas: {
+            compartilhados: {
                 lista: [],
                 total: 0
             },
-            individualizadas: {
+            individualizados: {
                 lista: [],
                 total: 0
             }
         },
+        frete_maritimo: {
+            valor: 0,
+            seguro: 0,
+            total: function() {
+                return this.valor + this.seguro;
+            }
+        },
+        taxas: {
+            duty: 0,
+            mpf: 0,
+            hmf: 0,
+            total: function() {
+                return this.duty + this.mpf + this.hmf;
+            }
+        },
         total: 0
     };
+    this.despesas = {};
     this.resultados = {
         investimento: 0,
-            lucro: 0,
-            roi: 0, // ROI: Retorno Sobre Investimento > Lucro BRL / Investimento BRL
-            comparacao: {
+        lucro: 0,
+        roi: 0, // ROI: Retorno Sobre Investimento > Lucro BRL / Investimento BRL
+        comparacao: {
             percentual_frete: 0,
                 percentual_fob: 0,
                 percentual_duties: 0,
@@ -325,27 +366,33 @@ function EstudoDoProduto() {
             custo_final_consolidado: 0 // custo final do produto com tudo incluído.
         }
     };
-    this.modulo_amazon = {
-        fba: {
-            fulfillment: 0,
-            inventory: 0,
-            placement: 0
-        },
-        comissoes: 0,
-        categoria: '',
-        inspectedRules: []
+    this.modulos = {
+        amazon: {
+            fba: {
+                fulfillment: 0,
+                inventory: 0,
+                placement: 0
+            },
+            comissoes: 0,
+            categoria: '',
+            inspectedRules: []
+        }
     };
+
+
+    function _calcula_valor_unitario(valor, qtd) {
+        if(qtd) {
+            return valor / qtd;
+        }
+        return 0;
+    }
+
 
     this.zeraObj = function() {
         this.qtd = 0;
-        // this.proporcionalidade = { // exibe a proporcionalidade do produto no estudo, de acordo com cada uma das letiáveis em questão.
-        //     fob: 0,
-        //     peso: 0,
-        // };
         this.custo_unitario = 0; // Não lembro o como funciona isso aqui.
         this.fob = 0;
         this.cif = 0;
-        this.frete_maritimo = {valor: 0, seguro: 0};
         this.medidas = {
             peso: {
                 contratado: 0, // Por enquanto não vou usar esse valor > Só será usado quando importar um produto muito pesado.
@@ -358,34 +405,27 @@ function EstudoDoProduto() {
                 ocupado_percentual: 0
             }
         };
-        this.taxas = {
-            duty: 0,
-            mpf: 0,
-            hmf: 0,
-            total: 0
-        };
-        this.custos = {
-            aduaneiras: {lista: [], total: 0},
-            internacionais: { // Custos originadas no exterior.
-            compartilhadas: {
-                lista: [],
-                total: 0
-            },
-            individualizadas: {
-                lista: [],
-                total: 0,
-            },  // Custos internacionais que dizem respeito a um único produto (viagem Conny para um fabricante, ou frete do produto para o porto.
-            total: 0 // Custos internacionais totais - Somatório das custos compartilhadas com as individualizadas
-        }, nacionais: {
-            compartilhadas: {
-                lista: [],
-                total: 0
-            },
-            individualizadas: {
-                lista: [],
-                total: 0
-            }
-        }, total: 0};
+
+        this.custos.aduaneiros.lista = [];
+        this.custos.aduaneiros.total = 0;
+
+        this.custos.internacionais.compartilhados.lista = [];
+        this.custos.internacionais.compartilhados.total = 0;
+        this.custos.internacionais.individualizados.lista = [];
+        this.custos.internacionais.individualizados.total = 0;
+        this.custos.internacionais.total = 0;
+
+        this.custos.nacionais.compartilhados.lista = [];
+        this.custos.nacionais.compartilhados.total = 0;
+        this.custos.nacionais.individualizados.lista = [];
+        this.custos.nacionais.individualizados.total = 0;
+        this.custos.nacionais.total = 0;
+
+        this.custos.taxas.duty = 0;
+        this.custos.taxas.mpf = 0;
+        this.custos.taxas.hmf = 0;
+
+        this.despesas = {};
         this.resultados = {
             investimento: 0,
             lucro: 0,
@@ -413,22 +453,21 @@ function EstudoDoProduto() {
                 custo_final_consolidado: 0 // custo final do produto com tudo incluído.
             }
         };
-        this.modulo_amazon = {
-            fba: {
-                fulfillment: 0,
-                inventory: 0,
-                placement: 0
-            },
-            comissoes: 0,
-            categoria: '',
-            inspectedRules: []
-        };
+
+        this.modulos.amazon.fba.fulfillment = 0;
+        this.modulos.amazon.fba.inventory = 0;
+        this.modulos.amazon.fba.placement = 0;
+        this.modulos.amazon.comissoes = 0;
+
+        this.modulos.amazon.categoria = '';
+        this.modulos.amazon.inspectedRules = [];
+
     };
-    this.calculaFob = function(percentual_comissao_conny) {
+    this.calculaFob = function() {
         if (this.qtd <= 0) {
             this.zeraObj();
         } else {
-            this.fob = ((this.custo_unitario * (1 + percentual_comissao_conny)) * this.qtd);
+            this.fob = ((this.custo_unitario * (1 + this.parametros.percentual_comissao_conny)) * this.qtd);
         }
     };
     this.calculaMedidasDoProduto = function(produto, estudo) {
@@ -447,62 +486,61 @@ function EstudoDoProduto() {
         }
     };
     this.calculaProporcionalidade = function(produto, estudo) {
-        this.frete_maritimo.valor = this.medidas.peso.ocupado_percentual * estudo.frete_maritimo.valor; // Cálculo de Frete Marítimo proporcional.
-        this.frete_maritimo.seguro = this.medidas.peso.ocupado_percentual * estudo.frete_maritimo.seguro; // Cálculo de SEGURO de Frete Marítimo proporcional.
-        this.cif = this.fob + this.frete_maritimo.valor + this.frete_maritimo.seguro; // Cálculo CIFs (que é o mesmo que Valor Aduaneiro).
+        this.custos.frete_maritimo.valor = this.medidas.peso.ocupado_percentual * this.parametros.frete_maritimo; // Cálculo de Frete Marítimo proporcional.
+        this.custos.frete_maritimo.seguro = this.medidas.peso.ocupado_percentual * this.parametros.seguro_frete_maritimo; // Cálculo de SEGURO de Frete Marítimo proporcional.
+        // this.custos.frete_maritimo.total = this.medidas.peso.ocupado_percentual * estudo.custos.frete_maritimo.total;
+        this.cif = this.fob + this.custos.frete_maritimo.total(); // Cálculo CIFs (que é o mesmo que Valor Aduaneiro). todo: Pq o cálculo do CIF está aqui?
     };
     this.calculaTaxas = function(produto, estudo) {
 
         // Cálculo de Taxas e Impostos
-        this.taxas.duty = produto.duty * this.fob; // Cálculo Duty Tax
+        this.custos.taxas.duty = produto.duty * this.fob; // Cálculo Duty Tax
 
-        this.taxas.mpf = estudo.config.mpf * this.fob; // Cálculo MPF
+        this.custos.taxas.mpf = estudo.parametros.mpf * this.fob; // Cálculo MPF
 
         // O MPF não pode custar menos de 35 dólares ou mais de 485.
-        if(this.taxas.mpf < 35) {
-            this.taxas.mpf = 35;
-        } else if(this.taxas.mpf > 485) {
-            this.taxas.mpf = 485;
+        if(this.custos.taxas.mpf < 35) {
+            this.custos.taxas.mpf = 35;
+        } else if(this.custos.taxas.mpf > 485) {
+            this.custos.taxas.mpf = 485;
         }
 
-        this.taxas.hmf = estudo.config.hmf * this.fob; // Cálculo HMF
-        this.taxas.total = this.taxas.duty + this.taxas.mpf + this.taxas.hmf; // Totaliza
-    };
-    this.calculaCustosAmazon = function(valor_unitario) {
-        this.modulo_amazon.fba.fulfillment = (valor_unitario * this.qtd);
+        this.custos.taxas.hmf = estudo.parametros.hmf * this.fob; // Cálculo HMF
 
     };
+    this.calculaCustosAmazon = function(valor_unitario) {
+        this.modulos.amazon.fba.fulfillment = (valor_unitario * this.qtd);
+    };
     this.totalizaCustos = function(produto, estudo) {
-        this.custos.total = (this.cif / estudo.cif) * estudo.custos.total; // Usar CIF ou FOB?
-        this.custos.total += this.modulo_amazon.fba.fulfillment;
+        this.custos.aduaneiros.total = (this.fob / estudo.fob) * estudo.custos.aduaneiros.total; // Usar CIF ou FOB?
+        this.custos.aduaneiros.total += this.modulos.amazon.fba.fulfillment;
     };
     this.calculaResultados = function(estudo) {
         this.resultados.investimento = (
             this.cif +
-            this.taxas.total +
-            this.custos.total
+            this.custos.taxas.total() +
+            this.custos.aduaneiros.total
         );
 
         // Cálculo do preço de Custo final do produto.
         this.resultados.precos.custo = this.resultados.investimento / this.qtd;
 
         // Calcula o resultado unitário e total de cada um dos produtos.
-        this.resultados.lucro = ((this.resultados.precos.venda * (1 - estudo.config.comissao_amazon)) - this.resultados.precos.custo) * this.qtd;
+        this.resultados.lucro = ((this.resultados.precos.venda * (1 - estudo.parametros.comissao_amazon)) - this.resultados.precos.custo) * this.qtd;
 
         // Calcula o roi do produto.
         this.resultados.roi = this.resultados.lucro / this.resultados.investimento;
 
         // Calcula os percentuais de comparação entre os componentes do preço final do produto;
-        this.resultados.comparacao.percentual_frete = this.frete_maritimo.valor / this.resultados.investimento;
-        this.resultados.comparacao.percentual_custos = this.custos.total / this.resultados.investimento;
-        this.resultados.comparacao.percentual_duties = this.taxas.duty / this.resultados.investimento;
-        this.resultados.comparacao.percentual_fob = this.cif / this.resultados.investimento;
-        this.resultados.comparacao.percentual_hmf = this.taxas.hmf / this.resultados.investimento;
-        this.resultados.comparacao.percentual_mpf = this.taxas.mpf / this.resultados.investimento;
-        this.resultados.comparacao.percentual_taxas = this.taxas.total / this.resultados.investimento;
+        this.resultados.comparacao.percentual_frete = this.custos.frete_maritimo.valor / this.resultados.investimento;
+        this.resultados.comparacao.percentual_custos = this.custos.aduaneiros.total / this.resultados.investimento;
+        this.resultados.comparacao.percentual_duties = this.custos.taxas.duty / this.resultados.investimento;
+        this.resultados.comparacao.percentual_fob = this.fob / this.resultados.investimento;
+        this.resultados.comparacao.percentual_hmf = this.custos.taxas.hmf / this.resultados.investimento;
+        this.resultados.comparacao.percentual_mpf = this.custos.taxas.mpf / this.resultados.investimento;
+        this.resultados.comparacao.percentual_taxas = this.custos.taxas.total / this.resultados.investimento;
 
     };
-
 }
 
 angular.module('estudos').factory('CompEstudos', ['Estudos', 'Custos', 'CompAmazon', function (Estudos, Custos, CompAmazon) {
@@ -519,10 +557,10 @@ angular.module('estudos').factory('CompEstudos', ['Estudos', 'Custos', 'CompAmaz
         setProdutosDoEstudo: function(listaDeProdutosDoEstudo) {
             produtosDoEstudo = listaDeProdutosDoEstudo;
         },
-        setConfig: function(objConfig) {
-            config = objConfig;
-            estudo.config = objConfig;
-            estudo._loadEstudoComDadosConfig();
+        setParametros: function(objParametros) {
+            parametros = objParametros;
+            estudo.parametros = objParametros;
+            estudo._loadParametrosDoEstudo(objParametros);
         },
 
         zeraDadosDoEstudo: function() {
@@ -530,6 +568,7 @@ angular.module('estudos').factory('CompEstudos', ['Estudos', 'Custos', 'CompAmaz
         },
         criaEstudoDoProduto: function(produto) {
             let obj = new EstudoDoProduto();
+            obj.parametros = parametros;
             obj.custo_unitario = produto.custo_usd;
             return obj;
         },
@@ -540,24 +579,23 @@ angular.module('estudos').factory('CompEstudos', ['Estudos', 'Custos', 'CompAmaz
         // 1
         setFobProdutos: function() {
             produtosDoEstudo.forEach(function (produto) {
-                produto.estudo_do_produto.calculaFob(estudo.config.percentual_comissao_conny);
+                produto.estudo_do_produto.calculaFob();
             });
         },
         // 2
         totalizaDadosBasicosEstudo: function() {
             produtosDoEstudo.forEach(function (produto) {
-
                 if(produto.estudo_do_produto.qtd <= 0) {
                     produto.estudo_do_produto.zeraObj();
                 } else {
-                    estudo.totalizaDadosBasicosDoEstudo(produto, estudo.config);
+                    estudo.totalizaDadosBasicosDoEstudo(produto, estudo.parametros);
                 }
 
             });
         },
         // 3
         totalizaCustosDoEstudo: function() {
-            estudo.totalizaCustosAduaneiras(listaCustos);
+            estudo.totalizaCustosAduaneiros(listaCustos);
         },
         // 4
         geraEstudoDeCadaProduto: function() {
@@ -582,8 +620,7 @@ angular.module('estudos').factory('CompEstudos', ['Estudos', 'Custos', 'CompAmaz
                     // Cálculo do total de custos proporcional do produto.
                     produto.estudo_do_produto.totalizaCustos(produto, estudo);
 
-
-                    estudo.totalizaImpostosEstudo(produto);
+                    estudo.totaliza_custos_taxas(produto);
 
                     // calculaResultadosProduto(produto);
                     produto.estudo_do_produto.calculaResultados(estudo);
@@ -596,11 +633,11 @@ angular.module('estudos').factory('CompEstudos', ['Estudos', 'Custos', 'CompAmaz
             });
         },
 
-        totalizaDadosBasicosDoEstudo: function(produto, config) {
-            estudo.totalizaDadosBasicosDoEstudo(produto, config);
+        totalizaDadosBasicosDoEstudo: function(produto, parametros) {
+            estudo.totalizaDadosBasicosDoEstudo(produto, parametros);
         },
-        loadEstudoComDadosConfig: function(config) {
-            estudo.loadEstudoComDadosConfig(config);
+        loadEstudoComDadosConfig: function(parametros) {
+            estudo.loadEstudoComDadosConfig(parametros);
         }
     }
 

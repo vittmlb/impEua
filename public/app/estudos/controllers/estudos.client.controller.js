@@ -27,7 +27,7 @@ angular.module('estudos').controller('EstudosController', ['$scope', '$uibModal'
         $scope.quantidades = [];
         $scope.produtosDoEstudo = [];
         $scope.estudo = CompEstudos.criaEstudo();
-        $scope.config = {
+        $scope.parametros = {
             volume_cntr_20: 0,
             frete_maritimo: 0,
             seguro_frete_maritimo: 0,
@@ -62,52 +62,52 @@ angular.module('estudos').controller('EstudosController', ['$scope', '$uibModal'
         }
 
         function determinaProporcionalidadeDosProdutos() {
-            let _fob = 0;
-            let _peso = 0;
-            $scope.produtosDoEstudo.forEach(function (prod) {
-                if(prod.estudo_do_produto.qtd > 0) {
-                    _fob += prod.estudo_do_produto.custo_unitario * prod.estudo_do_produto.qtd;
-                    _peso += prod.peso * prod.estudo_do_produto.qtd;
-                }
-            });
-            $scope.produtosDoEstudo.forEach(function (prod) {
-                if(prod.estudo_do_produto.qtd > 0 && _fob > 0) {
-                    prod.estudo_do_produto.proporcionalidade.fob = (prod.estudo_do_produto.custo_unitario * prod.estudo_do_produto.qtd) / _fob;
-                    prod.estudo_do_produto.proporcionalidade.peso = ((prod.peso * prod.estudo_do_produto.qtd) / _peso);
-                } else {
-                    prod.estudo_do_produto.proporcionalidade.fob = 0;
-                    prod.estudo_do_produto.proporcionalidade.peso = 0;
-                }
-            });
+            // let _fob = 0;
+            // let _peso = 0;
+            // $scope.produtosDoEstudo.forEach(function (prod) {
+            //     if(prod.estudo_do_produto.qtd > 0) {
+            //         _fob += prod.estudo_do_produto.custo_unitario * prod.estudo_do_produto.qtd;
+            //         _peso += prod.peso * prod.estudo_do_produto.qtd;
+            //     }
+            // });
+            // $scope.produtosDoEstudo.forEach(function (prod) {
+            //     if(prod.estudo_do_produto.qtd > 0 && _fob > 0) {
+            //         prod.estudo_do_produto.proporcionalidade.fob = (prod.estudo_do_produto.custo_unitario * prod.estudo_do_produto.qtd) / _fob;
+            //         prod.estudo_do_produto.proporcionalidade.peso = ((prod.peso * prod.estudo_do_produto.qtd) / _peso);
+            //     } else {
+            //         prod.estudo_do_produto.proporcionalidade.fob = 0;
+            //         prod.estudo_do_produto.proporcionalidade.peso = 0;
+            //     }
+            // });
         }
 
         function processaCustosInternacionaisCompartilhadas() {
 
             // Totaliza as custos internacionais compartilhadas.
-            let total = {usd: 0, brl: 0};
-            let despC = $scope.estudo.custos.internacionais.compartilhadas;
-            for(let i = 0; i < despC.length; i++) { // totaliza as custos no objeto estudo.
-                total.usd += despC[i].usd;
-                total.brl += despC[i].brl;
-            }
-            $scope.estudo.custos.internacionais.totais = total;
-
-            // Seta os valores proporcionais das custos internacionais compartilhadas em cada um dos produtos.
-            $scope.produtosDoEstudo.forEach(function (produto) {
-                if(produto.estudo_do_produto.qtd > 0) {
-                    let despProdInt = produto.estudo_do_produto.custos.internacionais;
-                    let auxTotal = {usd: 0, brl: 0}; // objeto para ser jogado no array de int.compartilhadas.
-                    despProdInt.compartilhadas = [];
-                    for(let i = 0; i < despC.length; i++) {
-                        let desc = despC[i].desc;
-                        let usd = produto.estudo_do_produto.proporcionalidade.fob * despC[i].usd;
-                        let brl = produto.estudo_do_produto.proporcionalidade.fob * despC[i].brl;
-                        despProdInt.compartilhadas.push({'desc': desc, 'usd': usd, 'brl': brl});
-                        despProdInt.totais.usd += usd;
-                        despProdInt.totais.brl += brl;
-                    }
-                }
-            });
+            // let total = {usd: 0, brl: 0};
+            // let despC = $scope.estudo.custos.internacionais.compartilhadas;
+            // for(let i = 0; i < despC.length; i++) { // totaliza as custos no objeto estudo.
+            //     total.usd += despC[i].usd;
+            //     total.brl += despC[i].brl;
+            // }
+            // $scope.estudo.custos.internacionais.totais = total;
+            //
+            // // Seta os valores proporcionais das custos internacionais compartilhadas em cada um dos produtos.
+            // $scope.produtosDoEstudo.forEach(function (produto) {
+            //     if(produto.estudo_do_produto.qtd > 0) {
+            //         let despProdInt = produto.estudo_do_produto.custos.internacionais;
+            //         let auxTotal = {usd: 0, brl: 0}; // objeto para ser jogado no array de int.compartilhadas.
+            //         despProdInt.compartilhadas = [];
+            //         for(let i = 0; i < despC.length; i++) {
+            //             let desc = despC[i].desc;
+            //             let usd = produto.estudo_do_produto.proporcionalidade.fob * despC[i].usd;
+            //             let brl = produto.estudo_do_produto.proporcionalidade.fob * despC[i].brl;
+            //             despProdInt.compartilhadas.push({'desc': desc, 'usd': usd, 'brl': brl});
+            //             despProdInt.totais.usd += usd;
+            //             despProdInt.totais.brl += brl;
+            //         }
+            //     }
+            // });
         }
         function processaCustosInternacionaisIndividuais() {
 
@@ -135,7 +135,7 @@ angular.module('estudos').controller('EstudosController', ['$scope', '$uibModal'
                 nome_estudo: $scope.estudo.nome_estudo,
                 estudo: $scope.estudo,
                 produtosDoEstudo: arrayTestes,
-                config: $scope.config
+                parametros: $scope.parametros
             });
             estudo.$save(function (response) {
                 alert(`Estudo id: ${response._id} criado com sucesso`);
@@ -161,7 +161,7 @@ angular.module('estudos').controller('EstudosController', ['$scope', '$uibModal'
                     produto.estudo_do_produto = prdEstudo[i].estudo_do_produto;
                     $scope.produtosDoEstudo.push(produto);
                 }
-                $scope.config = data.config;
+                $scope.parametros = data.parametros;
                 $scope.iniImport();
             });
         };
@@ -173,13 +173,13 @@ angular.module('estudos').controller('EstudosController', ['$scope', '$uibModal'
         };
 
         /**
-         * Carrega os dados à partir do BD e arquivos para <$scope.produtos> / <$scope.custos> / <$scope.config>
+         * Carrega os dados à partir do BD e arquivos para <$scope.produtos> / <$scope.custos> / <$scope.parametros>
          */
         $scope.loadData = function() {
             $scope.produtos = Produtos.query();
-            $http.get('/app/data/config.json').success(function (data) {
-                $scope.config = data;
-                CompEstudos.setConfig($scope.config);
+            $http.get('/app/data/parametros_estudo.json').success(function (data) {
+                $scope.parametros = data;
+                CompEstudos.setParametros($scope.parametros);
             });
             CompEstudos.setProdutosDoEstudo($scope.produtosDoEstudo);
         };
@@ -218,7 +218,7 @@ angular.module('estudos').controller('EstudosController', ['$scope', '$uibModal'
          * Evento invocado pelo formulário modal. Adiciona o "objeto" custo internacional compartilhada ao array de respectivas custos.
          */
         $scope.addCustoInternacionalCompartilhada = function() {
-            $scope.custo_internacional.brl = $scope.custo_internacional.usd * $scope.config.cotacao_dolar; // Convertendo custo internacional para brl.
+            $scope.custo_internacional.brl = $scope.custo_internacional.usd * $scope.parametros.cotacao_dolar; // Convertendo custo internacional para brl.
             $scope.estudo.custos.internacionais.compartilhadas.push($scope.custo_internacional); // todo: Ver como "zerar" o objeto.
             $scope.custo_internacional = {};
             totalizaCustosInternacionais();
@@ -240,7 +240,7 @@ angular.module('estudos').controller('EstudosController', ['$scope', '$uibModal'
 
         $scope.addCustoInternacionalDoProduto = function() {
             let produto = $scope.currentProduto;
-            $scope.custo_internacional_produto.brl = $scope.custo_internacional_produto.usd * $scope.config.cotacao_dolar; // Convertendo custo internacional para brl.
+            $scope.custo_internacional_produto.brl = $scope.custo_internacional_produto.usd * $scope.parametros.cotacao_dolar; // Convertendo custo internacional para brl.
             produto.estudo_do_produto.custos.internacionais.individualizadas.push($scope.custo_internacional_produto);
             $scope.custo_internacional_produto = {};
             $scope.currentProduto = {};
