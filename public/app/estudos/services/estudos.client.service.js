@@ -11,6 +11,16 @@ angular.module('estudos').factory('Estudos', ['$resource', function ($resource) 
     });
 }]);
 
+let config = {
+    volume_cntr_20: 0,
+    frete_maritimo: 0,
+    seguro_frete_maritimo: 0,
+    comissao_amazon: 0,
+    percentual_comissao_conny: 0,
+    mpf: 0,
+    hmf: 0,
+};
+
 let estudo = {
     nome_estudo: '',
     config: {
@@ -48,27 +58,40 @@ let estudo = {
         total: 0
     },
     despesas: {
-        aduaneiras: [],
+        aduaneiras: {
+            lista: [],
+            total: 0
+        },
         internacionais: { // Despesas originadas no exterior.
-            compartilhadas: [],
-            // compartilhadas: [{ // Despesas a serem compartilhadas por todos os produtos (como viagem da Conny para acompanhar o carregamento do contêiner).
-            //     desc: '',
-            //     usd: 0,
-            //     brl: 0
-            // }],
-            individualizadas: 0,  // Despesas internacionais que dizem respeito a um único produto (viagem Conny para um fabricante, ou frete do produto para o porto.
-            totais: 0 // Despesas internacionais totais - Somatório das despesas compartilhadas com as individualizadas
+            compartilhadas: {
+                lista: [],
+                total: 0
+            },
+            individualizadas: {
+                lista: [],
+                total: 0,
+            },  // Despesas internacionais que dizem respeito a um único produto (viagem Conny para um fabricante, ou frete do produto para o porto.
+            total: 0 // Despesas internacionais totais - Somatório das despesas compartilhadas com as individualizadas
         },
         nacionais: {
-            compartilhadas: 0,
-            individualizadas: 0
+            compartilhadas: {
+                lista: [],
+                total: 0
+            },
+            individualizadas: {
+                lista: [],
+                total: 0
+            }
         },
+        total: 0
+    },
+    modulo_amazon: {
         fba: {
             fulfillment: 0,
             inventory: 0,
             placement: 0
         },
-        total: 0
+        comissoes: 0
     },
     resultados: {
         investimento: 0,
@@ -89,15 +112,31 @@ let estudo = {
         this.cif = 0;
         this.taxas = {duty: 0, mpf: 0, hmf: 0, total: 0};
 
-        this.totalPeso = 0; // todo: Descobrir para que serve
-        this.volume_ocupado = 0; // todo: Descobrir para que serve
+        this.despesas = {aduaneiras: {lista: [], total: 0}, internacionais: { // Despesas originadas no exterior.
+                compartilhadas: {
+                    lista: [],
+                    total: 0
+                },
+                individualizadas: {
+                    lista: [],
+                    total: 0,
+                },  // Despesas internacionais que dizem respeito a um único produto (viagem Conny para um fabricante, ou frete do produto para o porto.
+                total: 0 // Despesas internacionais totais - Somatório das despesas compartilhadas com as individualizadas
+            }, nacionais: {
+                compartilhadas: {
+                    lista: [],
+                    total: 0
+                },
+                individualizadas: {
+                    lista: [],
+                    total: 0
+                }
+            }, total: 0};
 
-        this.despesas.total = 0;
-        this.despesas.aduaneiras = [];
-
-        this.despesas.fba.fulfillment = 0;
-        this.despesas.fba.inventory = 0;
-        this.despesas.fba.placement = 0;
+        this.modulo_amazon.fba.fulfillment = 0;
+        this.modulo_amazon.fba.inventory = 0;
+        this.modulo_amazon.fba.placement = 0;
+        this.modulo_amazon.comissoes = 0;
 
         this.medidas.peso = {contratado: 0, ocupado: 0, ocupado_percentual: 0};
         this.medidas.volume = {contratado: 0, ocupado: 0, ocupado_percentual: 0};
@@ -151,8 +190,6 @@ let estudo = {
         this.medidas.volume.ocupado_percentual = (this.medidas.volume.ocupado / this.medidas.volume.contratado) * 100;
     },
     totalizaDespesasAduaneiras: function(listaDespesas) {
-        this.despesas.aduaneiras = [];
-        this.despesas.total = 0;
         let aduaneiras = [];
         let valor = 0;
         listaDespesas.forEach(function (item) {
@@ -164,19 +201,27 @@ let estudo = {
                 valor += item.valor;
             }
         });
-        this.despesas.aduaneiras = aduaneiras;
+        this.despesas.aduaneiras.lista = aduaneiras;
+        this.despesas.aduaneiras.total = valor;
         this.despesas.total = valor;
     },
-    loadEstudoComDadosConfig: function(config) {
-        this.frete_maritimo.valor = Number(config.frete_maritimo);
-        this.frete_maritimo.seguro = Number(config.seguro_frete_maritimo);
-        this.config.comissao_amazon = Number(config.comissao_amazon);
+    totalizaDespesasDoEstudo: function() {
 
-        this.medidas.volume.contratado = Number(config.volume_cntr_20);
-        this.config.percentual_comissao_conny = Number(config.percentual_comissao_conny);
+    },
+    setConfig: function(objConfig) {
+        this.config = objConfig;
+        this._loadEstudoComDadosConfig();
+    },
+    _loadEstudoComDadosConfig: function() {
+        this.frete_maritimo.valor = Number(this.config.frete_maritimo);
+        this.frete_maritimo.seguro = Number(this.config.seguro_frete_maritimo);
+        this.config.comissao_amazon = Number(this.config.comissao_amazon);
 
-        this.config.mpf = Number(config.mpf);
-        this.config.hmf = Number(config.hmf);
+        this.medidas.volume.contratado = Number(this.config.volume_cntr_20);
+        this.config.percentual_comissao_conny = Number(this.config.percentual_comissao_conny);
+
+        this.config.mpf = Number(this.config.mpf);
+        this.config.hmf = Number(this.config.hmf);
     },
     _totalizaComparacoes: function() {
         this.resultados.comparacao.percentual_frete = this.frete_maritimo.valor / this.resultados.investimento;
@@ -187,7 +232,6 @@ let estudo = {
         this.resultados.comparacao.percentual_mpf = this.taxas.mpf / this.resultados.investimento;
         this.resultados.comparacao.percentual_taxas = this.taxas.total / this.resultados.investimento;
     },
-
 };
 
 let produtosDoEstudo = [];
@@ -203,7 +247,7 @@ function EstudoDoProduto() {
     this.cif = 0;
     this.frete_maritimo = {
         valor: 0,
-            seguro: 0
+        seguro: 0
     };
     this.medidas = {
         peso: {
@@ -224,34 +268,30 @@ function EstudoDoProduto() {
         total: 0
     };
     this.despesas = {
-        aduaneiras: [],
-            internacionais: { // Despesas originadas no exterior.
-            compartilhadas: [
-                //     { // Despesas a serem compartilhadas por todos os produtos (como viagem da Conny para acompanhar o carregamento do contêiner).
-                //     desc: '',
-                //     usd: 0,
-                //     brl: 0
-                // }
-            ],
-                individualizadas: [
-                // diluídas no PREÇO DO PRODUTO - Array com as despesas inerentes à cada produto.
-                // { // Despesas internacionais que dizem respeito a um único produto (viagem Conny para um fabricante, ou frete do produto para o porto.
-                //     desc: '',
-                //     usd: 0,
-                //     brl: 0
-                // }
-            ],
-                totais: 0 // Somatório das despesas compartilhadas e individualizadas.
+        aduaneiras: {
+            lista: [],
+            total: 0
         },
-        nacionais: { // Despesas originadas no exterior.
-            compartilhadas: 0, // Despesas a serem compartilhadas por todos os produtos (como viagem da Conny para acompanhar o carregamento do contêiner).
-                individualizadas: 0, // Despesas internacionais que dizem respeito a um único produto (viagem Conny para um fabricante, ou frete do produto para o porto.
-                totais: 0 // Somatório das despesas compartilhadas e individualizadas.
+        internacionais: { // Despesas originadas no exterior.
+            compartilhadas: {
+                lista: [],
+                total: 0
+            },
+            individualizadas: {
+                lista: [],
+                total: 0,
+            },  // Despesas internacionais que dizem respeito a um único produto (viagem Conny para um fabricante, ou frete do produto para o porto.
+            total: 0 // Despesas internacionais totais - Somatório das despesas compartilhadas com as individualizadas
         },
-        fba: {
-            fulfillment: 0,
-            inventory: 0,
-            placement: 0
+        nacionais: {
+            compartilhadas: {
+                lista: [],
+                total: 0
+            },
+            individualizadas: {
+                lista: [],
+                total: 0
+            }
         },
         total: 0
     };
@@ -269,13 +309,28 @@ function EstudoDoProduto() {
                 percentual_taxas: 0
         },
         precos: {
-            custo: 0,
-            venda: 0
+            custo: 0, // preço de custo final do produto.
+            venda: 0, // preço de venda - informado na tabela de produtos do estudo.
+            amazon: {
+                fba: {
+                    fulfillment: 0,
+                    inventory: 0,
+                    placement: 0
+                },
+                comissoes: 0
+            },
+            custo_final_consolidado: 0 // custo final do produto com tudo incluído.
         }
     };
     this.modulo_amazon = {
+        fba: {
+            fulfillment: 0,
+            inventory: 0,
+            placement: 0
+        },
+        comissoes: 0,
         categoria: '',
-            inspectedRules: []
+        inspectedRules: []
     };
 
     this.zeraObj = function() {
@@ -287,10 +342,7 @@ function EstudoDoProduto() {
         this.custo_unitario = 0; // Não lembro o como funciona isso aqui.
         this.fob = 0;
         this.cif = 0;
-        this.frete_maritimo = {
-            valor: 0,
-            seguro: 0
-        };
+        this.frete_maritimo = {valor: 0, seguro: 0};
         this.medidas = {
             peso: {
                 contratado: 0, // Por enquanto não vou usar esse valor > Só será usado quando importar um produto muito pesado.
@@ -310,37 +362,27 @@ function EstudoDoProduto() {
             total: 0
         };
         this.despesas = {
-            aduaneiras: [],
+            aduaneiras: {lista: [], total: 0},
             internacionais: { // Despesas originadas no exterior.
-                compartilhadas: [
-                    //     { // Despesas a serem compartilhadas por todos os produtos (como viagem da Conny para acompanhar o carregamento do contêiner).
-                    //     desc: '',
-                    //     usd: 0,
-                    //     brl: 0
-                    // }
-                ],
-                individualizadas: [
-                    // diluídas no PREÇO DO PRODUTO - Array com as despesas inerentes à cada produto.
-                    // { // Despesas internacionais que dizem respeito a um único produto (viagem Conny para um fabricante, ou frete do produto para o porto.
-                    //     desc: '',
-                    //     usd: 0,
-                    //     brl: 0
-                    // }
-                ],
-                totais: 0 // Somatório das despesas compartilhadas e individualizadas.
+            compartilhadas: {
+                lista: [],
+                total: 0
             },
-            nacionais: { // Despesas originadas no exterior.
-                compartilhadas: 0, // Despesas a serem compartilhadas por todos os produtos (como viagem da Conny para acompanhar o carregamento do contêiner).
-                individualizadas: 0, // Despesas internacionais que dizem respeito a um único produto (viagem Conny para um fabricante, ou frete do produto para o porto.
-                totais: 0 // Somatório das despesas compartilhadas e individualizadas.
+            individualizadas: {
+                lista: [],
+                total: 0,
+            },  // Despesas internacionais que dizem respeito a um único produto (viagem Conny para um fabricante, ou frete do produto para o porto.
+            total: 0 // Despesas internacionais totais - Somatório das despesas compartilhadas com as individualizadas
+        }, nacionais: {
+            compartilhadas: {
+                lista: [],
+                total: 0
             },
-            fba: {
-                fulfillment: 0,
-                inventory: 0,
-                placement: 0
-            },
-            total: 0
-        };
+            individualizadas: {
+                lista: [],
+                total: 0
+            }
+        }, total: 0};
         this.resultados = {
             investimento: 0,
             lucro: 0,
@@ -355,11 +397,26 @@ function EstudoDoProduto() {
                 percentual_taxas: 0
             },
             precos: {
-                custo: 0,
-                venda: 0
+                custo: 0, // preço de custo final do produto.
+                venda: 0, // preço de venda - informado na tabela de produtos do estudo.
+                amazon: {
+                    fba: {
+                        fulfillment: 0,
+                        inventory: 0,
+                        placement: 0
+                    },
+                    comissoes: 0
+                },
+                custo_final_consolidado: 0 // custo final do produto com tudo incluído.
             }
         };
         this.modulo_amazon = {
+            fba: {
+                fulfillment: 0,
+                inventory: 0,
+                placement: 0
+            },
+            comissoes: 0,
             categoria: '',
             inspectedRules: []
         };
@@ -458,9 +515,12 @@ angular.module('estudos').factory('CompEstudos', ['Estudos', 'Despesas', 'CompAm
         setProdutosDoEstudo: function(listaDeProdutosDoEstudo) {
             produtosDoEstudo = listaDeProdutosDoEstudo;
         },
-        zeraDadosEstudoDoProduto: function(produto) {
-            produto.estudo_do_produto.zeraObj();
+        setConfig: function(objConfig) {
+            config = objConfig;
+            estudo.config = objConfig;
+            estudo._loadEstudoComDadosConfig();
         },
+
         zeraDadosDoEstudo: function() {
             estudo.zeraObj();
         },
@@ -469,39 +529,69 @@ angular.module('estudos').factory('CompEstudos', ['Estudos', 'Despesas', 'CompAm
             obj.custo_unitario = produto.custo_usd;
             return obj;
         },
-        calculaMedidasDoEstudoDoProduto: function(produto) {
-            produto.estudo_do_produto.calculaMedidasDoProduto(produto, estudo);
-        },
-        calculaProporcionalidadeDoEstudoDoProduto: function(produto) {
-            produto.estudo_do_produto.calculaProporcionalidade(produto, estudo);
-        },
-        calculaTaxasDoEstudoDoProduto: function(produto) {
-            produto.estudo_do_produto.calculaTaxas(produto, estudo);
-        },
-        calculaDespesasAmazonDoEstudoDoProduto: function(produto) {
-            calculaDespesasAmazonDoEstudoDoProduto(produto);
-        },
-        totalizaDespesasDoEstudoDoProduto: function(produto) {
-            produto.estudo_do_produto.totalizaDespesas(produto, estudo);
-        },
         criaEstudo: function() {
             return estudo;
         },
-        totalizaDespesasAduaneiras: function() {
+
+        // 1
+        setFobProdutos: function() {
+            produtosDoEstudo.forEach(function (produto) {
+                produto.estudo_do_produto.calculaFob(estudo.config.percentual_comissao_conny);
+            });
+        },
+        // 2
+        totalizaDadosBasicosEstudo: function() {
+            produtosDoEstudo.forEach(function (produto) {
+
+                if(produto.estudo_do_produto.qtd <= 0) {
+                    produto.estudo_do_produto.zeraObj();
+                } else {
+                    estudo.totalizaDadosBasicosDoEstudo(produto, estudo.config);
+                }
+
+            });
+        },
+        // 3
+        totalizaDespesasDoEstudo: function() {
             estudo.totalizaDespesasAduaneiras(listaDespesas);
         },
-        totalizaImpostosDoEstudo: function(produto) {
-            estudo.totalizaImpostosEstudo(produto);
+        // 4
+        geraEstudoDeCadaProduto: function() {
+            produtosDoEstudo.forEach(function (produto) {
+                // Garante que o estudo somente seja realizado caso o produto iterado tenha quantidade maior que zero (problema de divisão por zero)
+                if(produto.estudo_do_produto.qtd <= 0) {
+                    produto.estudo_do_produto.zeraObj();
+                }
+                else
+                {
+                    produto.estudo_do_produto.calculaMedidasDoProduto(produto, estudo);
+
+                    // Cálculos de Proporcionalidade
+                    produto.estudo_do_produto.calculaProporcionalidade(produto, estudo);
+
+                    // Cálculos das Taxas: Duty, MPF, HMF e Total.
+                    produto.estudo_do_produto.calculaTaxas(produto, estudo);
+
+                    // Cálculo dos custos FBA
+                    calculaDespesasAmazonDoEstudoDoProduto(produto);
+
+                    // Cálculo do total de despesas proporcional do produto.
+                    produto.estudo_do_produto.totalizaDespesas(produto, estudo);
+
+
+                    estudo.totalizaImpostosEstudo(produto);
+
+                    // calculaResultadosProduto(produto);
+                    produto.estudo_do_produto.calculaResultados(estudo);
+
+                    // Região para acumular os dados do Estudo
+                    estudo.calculaResultados(produto);
+
+                }
+
+            });
         },
-        calculaFobEstudoDoProduto: function(produto) {
-            produto.estudo_do_produto.calculaFob(estudo.config.percentual_comissao_conny);
-        },
-        calculaResultadosEstudoDoProduto: function (produto) {
-            produto.estudo_do_produto.calculaResultados(estudo);
-        },
-        calculaResultadosDoEstudo: function(produto) {
-            estudo.calculaResultados(produto);
-        },
+
         totalizaDadosBasicosDoEstudo: function(produto, config) {
             estudo.totalizaDadosBasicosDoEstudo(produto, config);
         },

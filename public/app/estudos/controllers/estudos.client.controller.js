@@ -177,9 +177,9 @@ angular.module('estudos').controller('EstudosController', ['$scope', '$uibModal'
          */
         $scope.loadData = function() {
             $scope.produtos = Produtos.query();
-            $scope.despesas = Despesas.query();
             $http.get('/app/data/config.json').success(function (data) {
                 $scope.config = data;
+                CompEstudos.setConfig($scope.config);
             });
             CompEstudos.setProdutosDoEstudo($scope.produtosDoEstudo);
         };
@@ -336,95 +336,12 @@ angular.module('estudos').controller('EstudosController', ['$scope', '$uibModal'
             $scope.piePoints = [{"Frete": 0}, {"Fob": 0}, {"Despesas": 0}, {"Taxas": 0}];
         }
 
-        // 3
-        /**
-         * Itera por cada produto e seta os valores FOB (e letiáveis usd/brl/paypal/integral) <produto.estudo_do_produto.fob...>
-         */
-        function setFobProdutos() {
-            $scope.produtosDoEstudo.forEach(function (produto) {
-                CompEstudos.calculaFobEstudoDoProduto(produto);
-            });
-        }
-
-        // 4
-        /**
-         * Itera produtos para totalizar dados do <$scope.estudo> como FOBs, Peso e Volume.
-         */
-        function totalizaDadosBasicosDoEstudo() {
-
-            $scope.produtosDoEstudo.forEach(function (produto) {
-
-                if(produto.estudo_do_produto.qtd <= 0) {
-                    CompEstudos.zeraDadosEstudoDoProduto(produto);
-                }
-                else
-                {
-                    CompEstudos.totalizaDadosBasicosDoEstudo(produto, $scope.config);
-                }
-
-            });
-        }
-
-        // 5
-        /**
-         * Itera pelo objeto <$scope.despesas> e faz o somatório para adicionar ao <$scope.estudo>
-         */
-        function totalizaDespesasDoEstudo() {
-
-            CompEstudos.totalizaDespesasAduaneiras();
-
-        }
-
         function totalizaDespesasInternacionaisDoProduto(produto) {
             let desp = produto.estudo_do_produto.despesas.internacionais;
             desp.totais = {usd: 0, brl: 0};
             for(let i = 0; i < desp.individualizadas; i++) {
                 desp.totais += desp.individualizadas[i];
             }
-        }
-
-        // 6
-        /**
-         * Itera por cada produto de <$scope.ProdutosDoEstudo> para gerar um <estudo_do_produto> com os custos de importação individualizados e totalizar <$scope.estudo>.
-         */
-        function geraEstudoDeCadaProduto() {
-
-            $scope.produtosDoEstudo.forEach(function (produto) {
-
-                // Garante que o estudo somente seja realizado caso o produto iterado tenha quantidade maior que zero (problema de divisão por zero)
-                if(produto.estudo_do_produto.qtd <= 0) {
-                    CompEstudos.zeraDadosEstudoDoProduto(produto);
-                }
-                else
-                {
-                    CompEstudos.calculaMedidasDoEstudoDoProduto(produto);
-
-                    // Cálculos de Proporcionalidade
-                    CompEstudos.calculaProporcionalidadeDoEstudoDoProduto(produto);
-
-                    // Cálculos das Taxas: Duty, MPF, HMF e Total.
-                    CompEstudos.calculaTaxasDoEstudoDoProduto(produto);
-
-                    // Cálculo dos custos FBA
-                    CompEstudos.calculaDespesasAmazonDoEstudoDoProduto(produto);
-
-                    // Cálculo do total de despesas proporcional do produto.
-                    CompEstudos.totalizaDespesasDoEstudoDoProduto(produto);
-
-
-                    CompEstudos.totalizaImpostosDoEstudo(produto);
-
-                    // calculaResultadosProduto(produto);
-                    CompEstudos.calculaResultadosEstudoDoProduto(produto);
-
-                    // Região para acumular os dados do Estudo
-                    CompEstudos.calculaResultadosDoEstudo(produto);
-
-
-                }
-
-            });
-
         }
 
 
@@ -442,13 +359,12 @@ angular.module('estudos').controller('EstudosController', ['$scope', '$uibModal'
         $scope.iniImport = function() {
             CompEstudos.zeraDadosDoEstudo();
             zeraDadosGrafico();
-            CompEstudos.loadEstudoComDadosConfig($scope.config);
             if($scope.produtosDoEstudo.length > 0)
             {
-                setFobProdutos(); // Itera por cada produto e seta os valores FOB (e letiáveis usd/brl/paypal/integral) <produto.estudo_do_produto.fob...>
-                totalizaDadosBasicosDoEstudo(); // Itera produtos para totalizar dados do <$scope.estudo> como FOBs, Peso e Volume.
-                totalizaDespesasDoEstudo(); // Itera pelo objeto <$scope.despesas> e faz o somatório para adicionar ao <$scope.estudo>
-                geraEstudoDeCadaProduto(); // Itera por cada produto de <$scope.ProdutosDoEstudo> para gerar um <estudo_do_produto> com os custos de importação individualizados e totalizar <$scope.estudo>.
+                CompEstudos.setFobProdutos(); //Itera por cada produto e seta os valores FOB (e letiáveis usd/brl/paypal/integral) <produto.estudo_do_produto.fob...>
+                CompEstudos.totalizaDadosBasicosEstudo(); // Itera produtos para totalizar dados do <$scope.estudo> como FOBs, Peso e Volume.
+                CompEstudos.totalizaDespesasDoEstudo(); // Itera pelo objeto <$scope.despesas> e faz o somatório para adicionar ao <$scope.estudo>
+                CompEstudos.geraEstudoDeCadaProduto(); // Itera por cada produto de <$scope.ProdutosDoEstudo> para gerar um <estudo_do_produto> com os custos de importação individualizados e totalizar <$scope.estudo>.
                 criaGraficos();
             }
         };
