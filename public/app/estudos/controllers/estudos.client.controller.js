@@ -361,7 +361,7 @@ angular.module('estudos').controller('EstudosController', ['$scope', '$uibModal'
             zeraDadosGrafico();
             if($scope.produtosDoEstudo.length > 0)
             {
-                CompEstudos.setFobProdutos(); //Itera por cada produto e seta os valores FOB (e letiáveis usd/brl/paypal/integral) <produto.estudo_do_produto.fob...>
+                // CompEstudos.setFobProdutos(); //Itera por cada produto e seta os valores FOB (e letiáveis usd/brl/paypal/integral) <produto.estudo_do_produto.fob...>
                 CompEstudos.totalizaDadosBasicosEstudo(); // Itera produtos para totalizar dados do <$scope.estudo> como FOBs, Peso e Volume.
                 CompEstudos.totalizaCustosDoEstudo(); // Itera pelo objeto <$scope.custos> e faz o somatório para adicionar ao <$scope.estudo>
                 CompEstudos.geraEstudoDeCadaProduto(); // Itera por cada produto de <$scope.ProdutosDoEstudo> para gerar um <estudo_do_produto> com os custos de importação individualizados e totalizar <$scope.estudo>.
