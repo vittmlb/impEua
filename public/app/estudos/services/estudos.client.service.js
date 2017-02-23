@@ -22,6 +22,7 @@ let parametros = {
 };
 
 let estudo = {
+    parent: this,
     nome_estudo: '',
     parametros: {
         volume_cntr_20: 0,
@@ -119,34 +120,11 @@ let estudo = {
     zeraObj: function() {
         this.fob = 0;
         this.cif = 0;
-        this.taxas = {duty: 0, mpf: 0, hmf: 0, total: 0};
 
-        this.custos.comissao_conny.total = 0;
 
-        this.custos.aduaneiros.lista = [];
-        this.custos.aduaneiros.total = 0;
 
-        this.custos.internacionais.compartilhados.lista = [];
-        this.custos.internacionais.compartilhados.total = 0;
-        this.custos.internacionais.individualizados.lista = [];
-        this.custos.internacionais.individualizados.total = 0;
-        this.custos.internacionais.total = 0;
 
-        this.custos.nacionais.compartilhados.lista = [];
-        this.custos.nacionais.compartilhados.total = 0;
-        this.custos.nacionais.individualizados.lista = [];
-        this.custos.nacionais.individualizados.total = 0;
-        this.custos.nacionais.total = 0;
 
-        this.custos.taxas.duty = 0;
-        this.custos.taxas.mpf = 0;
-        this.custos.taxas.hmf = 0;
-        this.custos.taxas.total = 0;
-
-        this.modulos.amazon.fba.fulfillment = 0;
-        this.modulos.amazon.fba.inventory = 0;
-        this.modulos.amazon.fba.placement = 0;
-        this.modulos.amazon.comissoes = 0;
 
         this.medidas.peso.ocupado = 0;
         this.medidas.peso.ocupado_percentual = 0;
@@ -165,6 +143,45 @@ let estudo = {
         this.resultados.comparacao.percentual_hmf = 0;
         this.resultados.comparacao.percentual_custos = 0;
         this.resultados.comparacao.percentual_taxas = 0;
+    },
+
+    zera: {
+        obj: function() {
+            this._custos();
+            this._modulos.amazon();
+        },
+        _custos: function() {
+
+            parent.custos.comissao_conny.total = 0;
+
+            parent.custos.aduaneiros.lista = [];
+            this.custos.aduaneiros.total = 0;
+
+            this.custos.internacionais.compartilhados.lista = [];
+            this.custos.internacionais.compartilhados.total = 0;
+            this.custos.internacionais.individualizados.lista = [];
+            this.custos.internacionais.individualizados.total = 0;
+            this.custos.internacionais.total = 0;
+
+            this.custos.nacionais.compartilhados.lista = [];
+            this.custos.nacionais.compartilhados.total = 0;
+            this.custos.nacionais.individualizados.lista = [];
+            this.custos.nacionais.individualizados.total = 0;
+            this.custos.nacionais.total = 0;
+
+            this.custos.taxas.duty = 0;
+            this.custos.taxas.mpf = 0;
+            this.custos.taxas.hmf = 0;
+            this.custos.taxas.total = 0;
+        },
+        _modulos: {
+            amazon: function() {
+                this.modulos.amazon.fba.fulfillment = 0;
+                this.modulos.amazon.fba.inventory = 0;
+                this.modulos.amazon.fba.placement = 0;
+                this.modulos.amazon.comissoes = 0;
+            }
+        }
     },
 
     /**
@@ -252,6 +269,7 @@ let produtosDoEstudo = [];
 function EstudoDoProduto() {
     let parent = this;
     this.produto = {};
+    this.estudo = {};
     this.qtd = 0;
     this.parametros = {
         volume_cntr_20: 0,
@@ -262,19 +280,33 @@ function EstudoDoProduto() {
         mpf: 0,
         hmf: 0,
     };
-    this.custo_unitario = 0; // Não lembro o como funciona isso aqui.
+    this.custo_unitario = this.produto.custo_usd; // Não lembro o como funciona isso aqui.
     this.fob = 0;
     this.cif = 0;
     this.medidas = {
         peso: {
             contratado: 0, // Por enquanto não vou usar esse valor > Só será usado quando importar um produto muito pesado.
-            ocupado: 0,
-            ocupado_percentual: 0 // Por enquanto não vou usar esse valor > Só será usado quando importar um produto muito pesado.
+            ocupado: function() {
+                return parent.produto.medidas.peso * parent.qtd;
+            },
+            ocupado_percentual: function() {
+                if(parent.qtd) {
+                    return this.ocupado() / parent.estudo.medidas.peso.ocupado;
+                }
+                return 0;
+            } // Por enquanto não vou usar esse valor > Só será usado quando importar um produto muito pesado.
         },
         volume: {
             contratado: 0, // todo: Volume do Cntr escolhido para fazer o transporte da carga. Encontrar uma solução melhor para quando for trabalhar com outros volumes.
-            ocupado: 0,
-            ocupado_percentual: 0
+            ocupado: function() {
+                return parent.produto.medidas.cbm * parent.qtd;
+            },
+            ocupado_percentual: function() {
+                if(parent.qtd) {
+                    return this.ocupado() / parent.estudo.medidas.volume.ocupado;
+                }
+                return 0;
+            }
         },
         proporcionalidade: { // exibe a proporcionalidade do produto no estudo, de acordo com cada uma das letiáveis em questão.
             fob: 0,
@@ -394,6 +426,9 @@ function EstudoDoProduto() {
         parametros: function(parametros) {
             parent.parametros = parametros;
         },
+        estudo: function(estudo) {
+            parent.estudo = estudo;
+        },
         produto: function(produto) {
             parent.produto = produto;
         },
@@ -401,13 +436,16 @@ function EstudoDoProduto() {
             if(parent.qtd) {
                 parent.zeraObj();
             } else {
-                parent.medidas.peso.ocupado = produto.medidas.peso * parent.qtd;
+                // parent.medidas.peso.ocupado = produto.medidas.peso * parent.qtd;
                 parent.medidas.volume.ocupado = produto.medidas.cbm * parent.qtd;
 
                 // Cálculo dos percentuais > Peso e Volume proporcionais do produto
                 parent.medidas.peso.ocupado_percentual = parent.medidas.peso.ocupado / estudo.medidas.peso.ocupado;
                 parent.medidas.volume.ocupado_percentual = this.parent.volume.ocupado / estudo.medidas.volume.ocupado;
             }
+        },
+        custo_unitario: function(custo_unitario) {
+            parametros.custo_unitario = custo_unitario;
         }
     };
 
@@ -504,24 +542,24 @@ function EstudoDoProduto() {
 
     };
 
-    this.calculaMedidasDoProduto = function(produto, estudo) {
-        if(this.qtd <= 0) {
-            this.zeraObj();
-        }
-        else
-        {
-            // Cálculo das medidas > Peso e Volume totais do produto.
-            this.medidas.peso.ocupado = produto.medidas.peso * this.qtd;
-            this.medidas.volume.ocupado = produto.medidas.cbm * this.qtd;
-
-            // Cálculo dos percentuais > Peso e Volume proporcionais do produto
-            this.medidas.peso.ocupado_percentual = this.medidas.peso.ocupado / estudo.medidas.peso.ocupado;
-            this.medidas.volume.ocupado_percentual = this.medidas.volume.ocupado / estudo.medidas.volume.ocupado;
-        }
-    };
-    this.calculaProporcionalidade = function(produto, estudo) {
-        this.custos.frete_maritimo.valor = this.medidas.peso.ocupado_percentual * this.parametros.frete_maritimo; // Cálculo de Frete Marítimo proporcional.
-        this.custos.frete_maritimo.seguro = this.medidas.peso.ocupado_percentual * this.parametros.seguro_frete_maritimo; // Cálculo de SEGURO de Frete Marítimo proporcional.
+    // this.calculaMedidasDoProduto = function(produto, estudo) {
+    //     if(this.qtd <= 0) {
+    //         this.zeraObj();
+    //     }
+    //     else
+    //     {
+    //         // Cálculo das medidas > Peso e Volume totais do produto.
+    //         this.medidas.peso.ocupado = produto.medidas.peso * this.qtd;
+    //         this.medidas.volume.ocupado = produto.medidas.cbm * this.qtd;
+    //
+    //         // Cálculo dos percentuais > Peso e Volume proporcionais do produto
+    //         this.medidas.peso.ocupado_percentual = this.medidas.peso.ocupado / estudo.medidas.peso.ocupado;
+    //         this.medidas.volume.ocupado_percentual = this.medidas.volume.ocupado / estudo.medidas.volume.ocupado;
+    //     }
+    // };
+    this.calculaProporcionalidade = function() {
+        this.custos.frete_maritimo.valor = this.medidas.peso.ocupado_percentual() * this.parametros.frete_maritimo; // Cálculo de Frete Marítimo proporcional.
+        this.custos.frete_maritimo.seguro = this.medidas.peso.ocupado_percentual() * this.parametros.seguro_frete_maritimo; // Cálculo de SEGURO de Frete Marítimo proporcional.
         // this.custos.frete_maritimo.total = this.medidas.peso.ocupado_percentual * estudo.custos.frete_maritimo.total;
         this.cif = this.fob_calculado() + this.custos.frete_maritimo.total_calculado(); // Cálculo CIFs (que é o mesmo que Valor Aduaneiro). todo: Pq o cálculo do CIF está aqui?
     };
@@ -598,12 +636,14 @@ angular.module('estudos').factory('CompEstudos', ['Estudos', 'Custos', 'CompAmaz
         },
         zeraDadosDoEstudo: function() {
             estudo.zeraObj();
+            estudo.zera.obj();
         },
         criaEstudoDoProduto: function(produto) {
-            produto.xyz = produto.this;
             let obj = new EstudoDoProduto();
-            obj.parametros = parametros;
-            obj.custo_unitario = produto.custo_usd;
+            obj.set.parametros(parametros);
+            obj.set.estudo(estudo);
+            obj.set.produto(produto);
+            obj.set.custo_unitario(produto.custo_usd);
             return obj;
         },
         criaEstudo: function() {
@@ -634,7 +674,7 @@ angular.module('estudos').factory('CompEstudos', ['Estudos', 'Custos', 'CompAmaz
                 }
                 else
                 {
-                    produto.estudo_do_produto.calculaMedidasDoProduto(produto, estudo);
+                    // produto.estudo_do_produto.calculaMedidasDoProduto(produto, estudo);
 
                     // Cálculos de Proporcionalidade
                     produto.estudo_do_produto.calculaProporcionalidade(produto, estudo);
