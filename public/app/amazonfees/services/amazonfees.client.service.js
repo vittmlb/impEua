@@ -19,6 +19,17 @@ let flags = {
     pesagem: false
 };
 
+let response_modulo_amazon = {
+    fba: {
+        fulfillment: 0,
+        inventory: 0,
+        placement: 0
+    },
+    comissoes: 0,
+    categoria: '',
+    inspectedRules: []
+};
+
 let listaFees = [];
 let listas = {
     fba: function() {
@@ -170,7 +181,9 @@ angular.module('amazonfees').factory('CompAmazon', ['Amazonfees', function(Amazo
         let listaFba = listas.fba();
         amz.set_produto(produto);
         auxParams.setParametros(produto);
-        return avaliador.verificaRegras(auxParams.parametros, produto, listaFba);
+        response_modulo_amazon.fba.fulfillment = avaliador.verificaRegras(auxParams.parametros, produto, listaFba);
+        response_modulo_amazon.categoria = amz.modulo.nome_fee;
+        return response_modulo_amazon;
     }
 
     function auxCalculoEstoque(produto) {

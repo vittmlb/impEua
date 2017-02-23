@@ -21,31 +21,31 @@
                         <div class="col-xs-2">
                             <div class="form-group-sm">
                                 <label style="font-size: 0.85em" class="" for="inputVolumeCntr20">CBM 20"</label>
-                                <input type="number" class="form-control input-sm" id="inputVolumeCntr20" data-ng-model="parametros.volume_cntr_20" ng-change="iniImport()">
+                                <input type="number" class="form-control input-sm" id="inputVolumeCntr20" data-ng-model="estudo.parametros.volume_cntr_20" ng-change="iniImport()">
                             </div>
                         </div> <!-- Volume Cntr 20" -->
                         <div class="col-xs-2">
                             <div class="form-group-sm">
                                 <label style="font-size: 0.85em" for="inputFreteMaritimoUsd">Frete Marítimo</label>
-                                <input type="number" class="form-control input-sm" id="inputFreteMaritimoUsd" data-ng-model="parametros.frete_maritimo" ng-change="iniImport()">
+                                <input type="number" class="form-control input-sm" id="inputFreteMaritimoUsd" data-ng-model="estudo.parametros.frete_maritimo" ng-change="iniImport()">
                             </div>
                         </div> <!-- Frete Marítimo -->
                         <div class="col-xs-2">
                             <div class="form-group-sm">
                                 <label style="font-size: 0.85em" for="inputSeguroFreteMaritimoUsd">Seg. Frete. Marítimo:</label>
-                                <input type="number" class="form-control input-sm" id="inputSeguroFreteMaritimoUsd" data-ng-model="parametros.seguro_frete_maritimo" ng-change="iniImport()">
+                                <input type="number" class="form-control input-sm" id="inputSeguroFreteMaritimoUsd" data-ng-model="estudo.parametros.seguro_frete_maritimo" ng-change="iniImport()">
                             </div>
                         </div> <!-- Seguro Frete Marítimo -->
                         <div class="col-xs-2">
                             <div class="form-group form-group-sm">
                                 <label style="font-size: 0.85em" class="control-label" for="inputComissaoML">Comissão Amazon: </label>
-                                <input type="number" class="form-control input-sm" id="inputComissaoML" data-ng-model="parametros.comissao_amazon" ng-change="iniImport()">
+                                <input type="number" class="form-control input-sm" id="inputComissaoML" data-ng-model="estudo.parametros.comissao_amazon" ng-change="iniImport()">
                             </div>
                         </div> <!-- Comissão Amazon -->
                         <div class="col-xs-2">
                             <div class="form-group-sm">
                                 <label style="font-size: 0.85em" for="inputPercentualComissaoConny">% Comissão Conny:</label>
-                                <input type="number" class="form-control input-sm" id="inputPercentualComissaoConny" data-ng-model="parametros.percentual_comissao_conny" ng-change="iniImport()">
+                                <input type="number" class="form-control input-sm" id="inputPercentualComissaoConny" data-ng-model="estudo.parametros.percentual_comissao_conny" ng-change="iniImport()">
                             </div>
                         </div> <!-- Comissão Conny -->
                     </div> <!-- Config > Primeira Linha -->
@@ -91,16 +91,21 @@
 
                                 </td>
                                 <td class="project-title">
-                                    <a>{{itemEstudo.estudo_do_produto.custo_unitario | currency: 'U$ '}}</a>
+                                    <a>{{itemEstudo.estudo_do_produto.custo_unitario() | currency: 'U$ '}}</a>
                                     <br>
                                     <small>Investimento:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.resultados.investimento | currency: 'U$ '}}</small><br/>
+                                    <small>Frete:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.custos.frete_maritimo.valor() | currency: 'U$ '}}</small><br/>
+                                    <small>Aduaneiros:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.custos.aduaneiros.total() | currency: 'U$ '}}</small><br/>
+                                    <small>Taxas:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.custos.taxas.total() | currency: 'U$ '}}</small><br/>
+                                    <small>Conny:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.custos.comissao_conny.total() | currency: 'U$ '}}</small><br/>
+                                    <small>Custos:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.custos.total() | currency: 'U$ '}}</small><br/>
                                     <small>{{ itemEstudo.estudo_do_produto.modulo_amazon.categoria }}</small>
                                 </td>
                                 <td class="project-title">
                                     <input style="text-align: center;" type="number" class="form-control input-transparente" placeholder="qtd" data-ng-model="itemEstudo.estudo_do_produto.qtd" ng-change="processaMudancas(itemEstudo, 'qtd')">
                                 </td>
                                 <td class="project-title">
-                                    <span data-ng-bind="itemEstudo.estudo_do_produto.resultados.precos.custo | currency: 'U$ '"></span>
+                                    <span data-ng-bind="itemEstudo.estudo_do_produto.resultados.precos.custo() | currency: 'U$ '"></span>
                                 </td>
                                 <td class="project-title">
                                     <input style="text-align: center;" type="text" class="form-control input-transparente" placeholder="P.Venda (R$)" data-ng-model="itemEstudo.estudo_do_produto.resultados.precos.venda" ng-change="iniImport()">
@@ -128,7 +133,7 @@
                             <!--<div class="stat-percent font-bold text-success">{{(estudo.resultados.lucro/estudo.resultados.investimento) * 100 | percent: 2}} <i class="fa fa-bolt"></i></div>-->
                             <small class="pull-right" style="margin-left: 3px;" style="margin-top: 2px;"> roi</small>
                             <div class="stat-percent font-bold text-success">{{(estudo.resultados.roi) * 100 | percent: 2}} <i class="fa fa-bolt"></i></div>
-                            <small>Investimento: {{estudo.resultados.investimento | currency: 'U$ '}}</small>
+                            <small>Investimento: {{estudo.resultados.investimento.total() | currency: 'U$ '}}</small>
                         </div>
                     </div>
                 </div> <!-- Lucro -->
@@ -136,9 +141,9 @@
                     <div class="ibox">
                         <div class="ibox-content">
                             <h5>Contêiner</h5>
-                            <h2>{{estudo.medidas.volume.ocupado_percentual | percent: 2}}</h2>
+                            <h2>{{estudo.medidas.volume.ocupado_percentual() * 100 | percent: 2}}</h2>
                             <div class="progress progress-mini">
-                                <uib-progressbar class="progress-striped" value="estudo.medidas.volume.ocupado_percentual" type="warning">{{estudo.medidas.volume.ocupado_percentual}}</uib-progressbar>
+                                <uib-progressbar class="progress-striped" value="estudo.medidas.volume.ocupado_percentual() * 100" type="warning">{{ estudo.medidas.volume.ocupado_percentual() }}</uib-progressbar>
                             </div>
                             <div class="m-t-sm small">Contêiner de 20"</div>
                         </div>
