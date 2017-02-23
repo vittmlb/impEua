@@ -204,29 +204,47 @@ function Estudo() {
                 return parent.resultados.investimento.importacao() + parent.resultados.investimento.despesas(); // o 'this' não funcionou com "despesas"
             }
         },
-        lucro: 0,
-        roi: 0, // ROI: Retorno Sobre Investimento > Lucro BRL / Investimento BRL
+        lucro: function() {
+            if(parent.fob()) {
+                let totalVenda = 0;
+                parent.lista_produtos.forEach(function (produto) {
+                    if(produto.estudo_do_produto.qtd) {
+                        totalVenda += ((produto.estudo_do_produto.resultados.precos.venda * (1 - parent.parametros.comissao_amazon)) * produto.estudo_do_produto.qtd);
+                    }
+                });
+                if(totalVenda) {
+                    return (totalVenda - this.investimento.total());
+                }
+            }
+            return 0;
+        },
+        roi: function() {
+            if(this.investimento.total()) {
+                return this.lucro() / this.investimento.total();
+            }
+            return 0;
+        }, // ROI: Retorno Sobre Investimento > Lucro BRL / Investimento BRL
         comparacao: {
             percentual_frete: function() {
-                return parent.custos.frete_maritimo.total() / parent.resultados.investimento;
+                return parent.custos.frete_maritimo.total() / parent.resultados.investimento.total();
             },
             percentual_fob: function() {
-                return parent.fob / parent.resultados.investimento;
+                return parent.fob() / parent.resultados.investimento.total();
             },
             percentual_duties: function() {
-                return parent.custos.taxas.duty / parent.resultados.investimento;
+                return parent.custos.taxas.duty() / parent.resultados.investimento.total();
             },
             percentual_mpf: function() {
-                return parent.custos.taxas.mpf / parent.resultados.investimento;
+                return parent.custos.taxas.mpf() / parent.resultados.investimento.total();
             },
             percentual_hmf: function() {
-                return parent.custos.taxas.hmf / parent.resultados.investimento;
+                return parent.custos.taxas.hmf() / parent.resultados.investimento.total();
             },
             percentual_custos: function() {
-                return parent.custos.total / parent.resultados.investimento;
+                return parent.custos.total() / parent.resultados.investimento.total();
             },
             percentual_taxas: function() {
-                return parent.custos.taxas.total_calculado() / parent.resultados.investimento;
+                return parent.custos.taxas.total() / parent.resultados.investimento.total();
             }
         }
     };

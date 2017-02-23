@@ -172,9 +172,6 @@ angular.module('estudos').controller('EstudosController', ['$scope', '$uibModal'
             $scope.estudo = CompEstudos.criaEstudo();
             $scope.produtosDoEstudo = $scope.estudo.lista_produtos;
             $scope.parametros = $scope.estudo.parametros;
-            // $http.get('/app/data/parametros_estudo.json').success(function (data) {
-            //     $scope.parametros = data;
-            // });
         };
 
         $scope.testeModal = function() {
@@ -265,7 +262,6 @@ angular.module('estudos').controller('EstudosController', ['$scope', '$uibModal'
          * @param campo - string utilizada para designar qual é o campo que está sendo modificado.
          */
         $scope.processaMudancas = function(produto, campo) {
-
             totalizaCustosInternacionais();
             auxProcessaMudancas(produto, campo);
             $scope.iniImport();
@@ -342,10 +338,10 @@ angular.module('estudos').controller('EstudosController', ['$scope', '$uibModal'
         function criaGraficos() {
 
             $scope.piePoints = [
-                {"Frete": $scope.estudo.resultados.comparacao.percentual_frete},
-                {"Fob": $scope.estudo.resultados.comparacao.percentual_fob},
-                {"Custos": $scope.estudo.resultados.comparacao.percentual_custos},
-                {"Taxas": $scope.estudo.resultados.comparacao.percentual_taxas}
+                {"Frete": $scope.estudo.resultados.comparacao.percentual_frete()},
+                {"Fob": $scope.estudo.resultados.comparacao.percentual_fob()},
+                {"Custos": $scope.estudo.resultados.comparacao.percentual_custos()},
+                {"Taxas": $scope.estudo.resultados.comparacao.percentual_taxas()}
             ];
 
         }

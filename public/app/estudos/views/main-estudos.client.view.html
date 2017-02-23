@@ -129,10 +129,10 @@
                             <h5>Lucro</h5>
                         </div>
                         <div class="ibox-content">
-                            <h1 class="no-margins">{{estudo.resultados.lucro | currency: 'U$ '}}</h1>
+                            <h1 class="no-margins">{{estudo.resultados.lucro() | currency: 'U$ '}}</h1>
                             <!--<div class="stat-percent font-bold text-success">{{(estudo.resultados.lucro/estudo.resultados.investimento) * 100 | percent: 2}} <i class="fa fa-bolt"></i></div>-->
                             <small class="pull-right" style="margin-left: 3px;" style="margin-top: 2px;"> roi</small>
-                            <div class="stat-percent font-bold text-success">{{(estudo.resultados.roi) * 100 | percent: 2}} <i class="fa fa-bolt"></i></div>
+                            <div class="stat-percent font-bold text-success">{{(estudo.resultados.roi()) * 100 | percent: 2}} <i class="fa fa-bolt"></i></div>
                             <small>Investimento: {{estudo.resultados.investimento.total() | currency: 'U$ '}}</small>
                         </div>
                     </div>
