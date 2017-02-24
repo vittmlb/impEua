@@ -61,9 +61,9 @@
                         <div class="col-sm-3">
                             <div>
                                 <p>Estudo</p>
-                                <small>Inv. Imp: {{ estudo.resultados.investimento.total('importacao') | currency: 'u$ ' }}</small><br/>
-                                <small>Inv. Desp: {{ estudo.resultados.investimento.total('despesas') | currency: 'u$ ' }}</small><br/>
-                                <small>Investimento total: {{ estudo.resultados.investimento.total() | currency: 'u$ ' }}</small>
+                                <small>Inv. Imp: {{ estudo.resultados.investimento() | currency: 'u$ ' }}</small><br/>
+                                <small>Inv. Desp: {{ estudo.resultados.despesas() | currency: 'u$ ' }}</small><br/>
+                                <small>Investimento total: {{ estudo.resultados.investimento() + estudo.resultados.despesas() | currency: 'u$ ' }}</small>
                                 <hr>
                                 <p>Despesas:</p>
                                 <small>Comerciais: {{ estudo.despesas.comerciais.total() | currency: 'u$ ' }}</small><br/>
@@ -82,65 +82,107 @@
                 </div>
                 <div class="ibox-content">
                     <div class="project-list">
+                        <div class="row" data-ng-repeat="itemEstudo in produtosDoEstudo">
+                            <!--<td class="project-people pull-left">-->
+                            <!--<a href=""><img alt="image" class="img-circle" ng-src="{{ itemEstudo.img_url }}"></a>-->
+                            <!--</td>-->
+                            <div class="col-sm-3 project-title">
+                                <i class="fa fa-plus" style="cursor: pointer; margin-right: 3px;" ng-click="addDespesaInternacionalDoProdutoModal(itemEstudo)"></i>
+                                <a href="#"><img style="width: 40px;" class="img-circle" ng-src="{{ itemEstudo.img_url }}" alt="Imagem {{ itemEstudo.nome }}"></a>
+                                <a ng-click="produtoViewModal(itemEstudo)">{{ itemEstudo.nome | limitTo: 20 }}</a>
+                                <br/>
+                                <div data-ng-repeat="desp in itemEstudo.estudo_do_produto.despesas.internacionais.individualizadas">
+                                    <small style="display: block;">{{ desp.desc }}: {{ desp.usd | currency: 'usd ' }}</small>
+                                </div>
+                                <small style="margin-left: 18px; margin-top: 4px;">{{ itemEstudo.modelo }}</small><br>
+                                <!--<small>Cheio USD:{{ itemEstudo.estudo_do_produto.custo_unitario.cheio.usd }}</small><br/>-->
+                                <!--<small>Paypal USD: {{ itemEstudo.estudo_do_produto.custo_unitario.paypal.usd }}</small><br/>-->
+                                <!--<small>Declarado USD: {{ itemEstudo.estudo_do_produto.custo_unitario.declarado.usd }}</small><br/>-->
+                                <!--<small>Desp Int Tot: {{ itemEstudo.estudo_do_produto.custos.internacionais.totais.usd }}</small>-->
 
-                        <table class="table table-hover">
-                            <thead>
-                            <tr>
-                                <th data-toggle="true">Produto</th>
-                                <th style="text-align: center;">Custo</th>
-                                <th style="text-align: center;">Qtd</th>
-                                <th style="text-align: center;">C.Final</th>
-                                <th style="text-align: center;">P.Venda</th>
-                                <th style="text-align: center;">Opções</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr data-ng-repeat="itemEstudo in produtosDoEstudo">
-                                <!--<td class="project-people pull-left">-->
-                                    <!--<a href=""><img alt="image" class="img-circle" ng-src="{{ itemEstudo.img_url }}"></a>-->
+                            </div>
+                            <div class="col-sm-2 project-title">
+                                <a>{{itemEstudo.estudo_do_produto.custo_unitario() | currency: 'U$ '}}</a>
+                                <br>
+                                <small>Investimento:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.resultados.investimento() | currency: 'U$ '}}</small><br/>
+                                <!--<small>Frete:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.custos.frete_maritimo.valor() | currency: 'U$ '}}</small><br/>-->
+                                <!--<small>Aduaneiros:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.custos.aduaneiros.total() | currency: 'U$ '}}</small><br/>-->
+                                <!--<small>Taxas:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.custos.taxas.total() | currency: 'U$ '}}</small><br/>-->
+                                <!--<small>Conny:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.custos.comissao_conny.total() | currency: 'U$ '}}</small><br/>-->
+                                <!--<small>Custos:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.custos.total() | currency: 'U$ '}}</small><br/>-->
+                            </div>
+                            <div class="col-sm-1 project-title">
+                                <input style="text-align: center;" type="number" class="form-control input-transparente" placeholder="qtd" data-ng-model="itemEstudo.estudo_do_produto.qtd" ng-change="processaMudancas(itemEstudo, 'qtd')">
+                            </div>
+                            <div class="col-sm-1 project-title">
+                                <span data-ng-bind="itemEstudo.estudo_do_produto.resultados.precos.custo.total() | currency: 'U$ '"></span><br/>
+                                <small>{{ itemEstudo.estudo_do_produto.modulos.amazon.categoria }}</small>
+                            </div>
+                            <div class="col-sm-2 project-title">
+                                <input style="text-align: center;" type="text" class="form-control input-transparente" placeholder="P.Venda (R$)" data-ng-model="itemEstudo.estudo_do_produto.resultados.precos.venda" ng-change="iniImport()">
+                            </div>
+                            <div class="col-sm-2 project-title">
+                                <i data-toggle="tooltip" data-placement="right" title="Remover produto"  ng-click="removeProdutoEstudo(itemEstudo)" class="fa fa-times clickable"></i>
+                            </div>
+                        </div>
+                        <!--<table class="table table-hover">-->
+                            <!--<thead>-->
+                            <!--<tr>-->
+                                <!--<th data-toggle="true">Produto</th>-->
+                                <!--<th style="text-align: center;">Custo</th>-->
+                                <!--<th style="text-align: center;">Qtd</th>-->
+                                <!--<th style="text-align: center;">C.Final</th>-->
+                                <!--<th style="text-align: center;">P.Venda</th>-->
+                                <!--<th style="text-align: center;">Opções</th>-->
+                            <!--</tr>-->
+                            <!--</thead>-->
+                            <!--<tbody>-->
+                            <!--<tr data-ng-repeat="itemEstudo in produtosDoEstudo">-->
+                                <!--&lt;!&ndash;<td class="project-people pull-left">&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<a href=""><img alt="image" class="img-circle" ng-src="{{ itemEstudo.img_url }}"></a>&ndash;&gt;-->
+                                <!--&lt;!&ndash;</td>&ndash;&gt;-->
+                                <!--<td class="project-title">-->
+                                    <!--<i class="fa fa-plus" style="cursor: pointer; margin-right: 3px;" ng-click="addDespesaInternacionalDoProdutoModal(itemEstudo)"></i>-->
+                                    <!--<a href="#"><img style="width: 40px;" class="img-circle" ng-src="{{ itemEstudo.img_url }}" alt="Imagem {{ itemEstudo.nome }}"></a>-->
+                                    <!--<a ng-click="produtoViewModal(itemEstudo)">{{ itemEstudo.nome | limitTo: 20 }}</a>-->
+                                    <!--<br/>-->
+                                    <!--<div data-ng-repeat="desp in itemEstudo.estudo_do_produto.despesas.internacionais.individualizadas">-->
+                                        <!--<small style="display: block;">{{ desp.desc }}: {{ desp.usd | currency: 'usd ' }}</small>-->
+                                    <!--</div>-->
+                                    <!--<small style="margin-left: 18px; margin-top: 4px;">{{ itemEstudo.modelo }}</small><br>-->
+                                    <!--&lt;!&ndash;<small>Cheio USD:{{ itemEstudo.estudo_do_produto.custo_unitario.cheio.usd }}</small><br/>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<small>Paypal USD: {{ itemEstudo.estudo_do_produto.custo_unitario.paypal.usd }}</small><br/>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<small>Declarado USD: {{ itemEstudo.estudo_do_produto.custo_unitario.declarado.usd }}</small><br/>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<small>Desp Int Tot: {{ itemEstudo.estudo_do_produto.custos.internacionais.totais.usd }}</small>&ndash;&gt;-->
+
                                 <!--</td>-->
-                                <td class="project-title">
-                                    <i class="fa fa-plus" style="cursor: pointer; margin-right: 3px;" ng-click="addDespesaInternacionalDoProdutoModal(itemEstudo)"></i>
-                                    <a href="#"><img style="width: 40px;" class="img-circle" ng-src="{{ itemEstudo.img_url }}" alt="Imagem {{ itemEstudo.nome }}"></a>
-                                    <a ng-click="produtoViewModal(itemEstudo)">{{ itemEstudo.nome | limitTo: 20 }}</a>
-                                    <br/>
-                                    <div data-ng-repeat="desp in itemEstudo.estudo_do_produto.despesas.internacionais.individualizadas">
-                                        <small style="display: block;">{{ desp.desc }}: {{ desp.usd | currency: 'usd ' }}</small>
-                                    </div>
-                                    <small style="margin-left: 18px; margin-top: 4px;">{{ itemEstudo.modelo }}</small><br>
-                                    <!--<small>Cheio USD:{{ itemEstudo.estudo_do_produto.custo_unitario.cheio.usd }}</small><br/>-->
-                                    <!--<small>Paypal USD: {{ itemEstudo.estudo_do_produto.custo_unitario.paypal.usd }}</small><br/>-->
-                                    <!--<small>Declarado USD: {{ itemEstudo.estudo_do_produto.custo_unitario.declarado.usd }}</small><br/>-->
-                                    <!--<small>Desp Int Tot: {{ itemEstudo.estudo_do_produto.custos.internacionais.totais.usd }}</small>-->
+                                <!--<td class="project-title">-->
+                                    <!--<a>{{itemEstudo.estudo_do_produto.custo_unitario() | currency: 'U$ '}}</a>-->
+                                    <!--<br>-->
+                                    <!--<small>Investimento:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.resultados.investimento() | currency: 'U$ '}}</small><br/>-->
+                                    <!--&lt;!&ndash;<small>Frete:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.custos.frete_maritimo.valor() | currency: 'U$ '}}</small><br/>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<small>Aduaneiros:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.custos.aduaneiros.total() | currency: 'U$ '}}</small><br/>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<small>Taxas:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.custos.taxas.total() | currency: 'U$ '}}</small><br/>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<small>Conny:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.custos.comissao_conny.total() | currency: 'U$ '}}</small><br/>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<small>Custos:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.custos.total() | currency: 'U$ '}}</small><br/>&ndash;&gt;-->
+                                <!--</td>-->
+                                <!--<td class="project-title">-->
+                                    <!--<input style="text-align: center;" type="number" class="form-control input-transparente" placeholder="qtd" data-ng-model="itemEstudo.estudo_do_produto.qtd" ng-change="processaMudancas(itemEstudo, 'qtd')">-->
+                                <!--</td>-->
+                                <!--<td class="project-title">-->
+                                    <!--<span data-ng-bind="itemEstudo.estudo_do_produto.resultados.precos.custo.total() | currency: 'U$ '"></span><br/>-->
+                                    <!--<small>{{ itemEstudo.estudo_do_produto.modulos.amazon.categoria }}</small>-->
+                                <!--</td>-->
+                                <!--<td class="project-title">-->
+                                    <!--<input style="text-align: center;" type="text" class="form-control input-transparente" placeholder="P.Venda (R$)" data-ng-model="itemEstudo.estudo_do_produto.resultados.precos.venda" ng-change="iniImport()">-->
+                                <!--</td>-->
+                                <!--<td class="project-title">-->
+                                    <!--<i data-toggle="tooltip" data-placement="right" title="Remover produto"  ng-click="removeProdutoEstudo(itemEstudo)" class="fa fa-times clickable"></i>-->
+                                <!--</td>-->
+                            <!--</tr>-->
 
-                                </td>
-                                <td class="project-title">
-                                    <a>{{itemEstudo.estudo_do_produto.custo_unitario() | currency: 'U$ '}}</a>
-                                    <br>
-                                    <small>Investimento:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.resultados.investimento.total() | currency: 'U$ '}}</small><br/>
-                                    <!--<small>Frete:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.custos.frete_maritimo.valor() | currency: 'U$ '}}</small><br/>-->
-                                    <!--<small>Aduaneiros:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.custos.aduaneiros.total() | currency: 'U$ '}}</small><br/>-->
-                                    <!--<small>Taxas:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.custos.taxas.total() | currency: 'U$ '}}</small><br/>-->
-                                    <!--<small>Conny:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.custos.comissao_conny.total() | currency: 'U$ '}}</small><br/>-->
-                                    <!--<small>Custos:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.custos.total() | currency: 'U$ '}}</small><br/>-->
-                                </td>
-                                <td class="project-title">
-                                    <input style="text-align: center;" type="number" class="form-control input-transparente" placeholder="qtd" data-ng-model="itemEstudo.estudo_do_produto.qtd" ng-change="processaMudancas(itemEstudo, 'qtd')">
-                                </td>
-                                <td class="project-title">
-                                    <span data-ng-bind="itemEstudo.estudo_do_produto.resultados.precos.custo.total() | currency: 'U$ '"></span><br/>
-                                    <small>{{ itemEstudo.estudo_do_produto.modulos.amazon.categoria }}</small>
-                                </td>
-                                <td class="project-title">
-                                    <input style="text-align: center;" type="text" class="form-control input-transparente" placeholder="P.Venda (R$)" data-ng-model="itemEstudo.estudo_do_produto.resultados.precos.venda" ng-change="iniImport()">
-                                </td>
-                                <td class="project-title">
-                                    <i data-toggle="tooltip" data-placement="right" title="Remover produto"  ng-click="removeProdutoEstudo(itemEstudo)" class="fa fa-times clickable"></i>
-                                </td>
-                            </tr>
-
-                            </tbody>
-                        </table>
+                            <!--</tbody>-->
+                        <!--</table>-->
                     </div>
 
                 </div>
@@ -214,7 +256,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr data-ng-repeat="item in produtosDoEstudo | orderBy: 'estudo_do_produto.resultados.lucro.unitario.brl'">
+                        <tr data-ng-repeat="item in produtosDoEstudo | orderBy: 'estudo_do_produto.resultados.lucro()'">
                             <td>
                                 <span>{{ item.modelo }}</span>
                             </td>
@@ -281,15 +323,15 @@
                         <tbody>
                         <tr>
                             <td>Investimento</td>
-                            <td data-ng-bind="estudo.resultados.investimento | currency: 'U$ '"></td>
+                            <td data-ng-bind="estudo.resultados.investimento() | currency: 'U$ '"></td>
                         </tr>
                         <tr>
                             <td>Lucro</td>
-                            <td data-ng-bind="estudo.resultados.lucro| currency: 'U$ '"></td>
+                            <td data-ng-bind="estudo.resultados.lucro()| currency: 'U$ '"></td>
                         </tr>
                         <tr>
                             <td>Fob</td>
-                            <td data-ng-bind="estudo.fob | currency: 'U$ '"></td>
+                            <td data-ng-bind="estudo.fob() | currency: 'U$ '"></td>
                         </tr>
                         <tr>
                             <td>CIF</td>
@@ -297,19 +339,19 @@
                         </tr>
                         <tr>
                             <td>Duties</td>
-                            <td data-ng-bind="estudo.taxas.duty | currency: 'U$ '"></td>
+                            <td data-ng-bind="estudo.custos.taxas.duty() | currency: 'U$ '"></td>
                         </tr>
                         <tr>
                             <td>MPF</td>
-                            <td data-ng-bind="estudo.taxas.mpf | currency: 'U$ '"></td>
+                            <td data-ng-bind="estudo.custos.taxas.mpf() | currency: 'U$ '"></td>
                         </tr>
                         <tr>
                             <td>HMF</td>
-                            <td data-ng-bind="estudo.taxas.hmf | currency: 'U$ '"></td>
+                            <td data-ng-bind="estudo.custos.taxas.hmf() | currency: 'U$ '"></td>
                         </tr>
                         <tr>
-                            <td>Despesas</td>
-                            <td data-ng-bind="estudo.despesas.total | currency: 'U$ '"></td>
+                            <td>Custos</td>
+                            <td data-ng-bind="estudo.custos.total() | currency: 'U$ '"></td>
                         </tr>
                         </tbody>
                     </table>
