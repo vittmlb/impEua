@@ -53,6 +53,30 @@
             </div> <!-- Configurações -->
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
+                    <h5>Análises</h5>
+                    <div ibox-tools></div>
+                </div>
+                <div class="ibox-content">
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <div>
+                                <p>Estudo</p>
+                                <small>Inv. Imp: {{ estudo.resultados.investimento.total('importacao') | currency: 'u$ ' }}</small><br/>
+                                <small>Inv. Desp: {{ estudo.resultados.investimento.total('despesas') | currency: 'u$ ' }}</small><br/>
+                                <small>Investimento total: {{ estudo.resultados.investimento.total() | currency: 'u$ ' }}</small>
+                                <hr>
+                                <p>Despesas:</p>
+                                <small>Comerciais: {{ estudo.despesas.comerciais.total() | currency: 'u$ ' }}</small><br/>
+                                <small style="margin-left: 13px;">Amz Fulf: {{ estudo.despesas.comerciais.amazon.fulfillment() | currency: 'u$ ' }}</small><br/>
+                                <small style="margin-left: 13px;">Amz Com: {{ estudo.despesas.comerciais.amazon.comissoes() | currency: 'u$ ' }}</small><br/>
+                                <small>Total: {{ estudo.despesas.total() | currency: 'u$ ' }}</small><br/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
                     <h5>Tabela de Produtos <small class="text-danger"> {{ auxTestes }}</small></h5>
                     <div ibox-tools></div>
                 </div>
@@ -93,19 +117,19 @@
                                 <td class="project-title">
                                     <a>{{itemEstudo.estudo_do_produto.custo_unitario() | currency: 'U$ '}}</a>
                                     <br>
-                                    <small>Investimento:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.resultados.investimento | currency: 'U$ '}}</small><br/>
-                                    <small>Frete:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.custos.frete_maritimo.valor() | currency: 'U$ '}}</small><br/>
-                                    <small>Aduaneiros:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.custos.aduaneiros.total() | currency: 'U$ '}}</small><br/>
-                                    <small>Taxas:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.custos.taxas.total() | currency: 'U$ '}}</small><br/>
-                                    <small>Conny:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.custos.comissao_conny.total() | currency: 'U$ '}}</small><br/>
-                                    <small>Custos:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.custos.total() | currency: 'U$ '}}</small><br/>
-                                    <small>{{ itemEstudo.estudo_do_produto.modulo_amazon.categoria }}</small>
+                                    <small>Investimento:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.resultados.investimento.total() | currency: 'U$ '}}</small><br/>
+                                    <!--<small>Frete:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.custos.frete_maritimo.valor() | currency: 'U$ '}}</small><br/>-->
+                                    <!--<small>Aduaneiros:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.custos.aduaneiros.total() | currency: 'U$ '}}</small><br/>-->
+                                    <!--<small>Taxas:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.custos.taxas.total() | currency: 'U$ '}}</small><br/>-->
+                                    <!--<small>Conny:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.custos.comissao_conny.total() | currency: 'U$ '}}</small><br/>-->
+                                    <!--<small>Custos:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.custos.total() | currency: 'U$ '}}</small><br/>-->
                                 </td>
                                 <td class="project-title">
                                     <input style="text-align: center;" type="number" class="form-control input-transparente" placeholder="qtd" data-ng-model="itemEstudo.estudo_do_produto.qtd" ng-change="processaMudancas(itemEstudo, 'qtd')">
                                 </td>
                                 <td class="project-title">
-                                    <span data-ng-bind="itemEstudo.estudo_do_produto.resultados.precos.custo() | currency: 'U$ '"></span>
+                                    <span data-ng-bind="itemEstudo.estudo_do_produto.resultados.precos.custo.total() | currency: 'U$ '"></span><br/>
+                                    <small>{{ itemEstudo.estudo_do_produto.modulos.amazon.categoria }}</small>
                                 </td>
                                 <td class="project-title">
                                     <input style="text-align: center;" type="text" class="form-control input-transparente" placeholder="P.Venda (R$)" data-ng-model="itemEstudo.estudo_do_produto.resultados.precos.venda" ng-change="iniImport()">
@@ -185,17 +209,17 @@
                         <thead>
                         <tr>
                             <th>Modelo</th>
-                            <th>Lucro</th>
-                            <th>R.O.I</th>
+                            <th style="text-align: center;">Lucro</th>
+                            <th style="text-align: center;">R.O.I</th>
                         </tr>
                         </thead>
                         <tbody>
                         <tr data-ng-repeat="item in produtosDoEstudo | orderBy: 'estudo_do_produto.resultados.lucro.unitario.brl'">
                             <td>
-                                <small>{{item.modelo}}</small>
+                                <span>{{ item.modelo }}</span>
                             </td>
-                            <td>{{item.estudo_do_produto.resultados.lucro | currency: 'U$ '}}</td>
-                            <td class="text-navy"><i class="fa fa-level-up"></i> {{ item.estudo_do_produto.resultados.roi | percentage: 2}}</td>
+                            <td style="text-align: center;">{{ item.estudo_do_produto.resultados.lucro() | currency: 'U$ ' }}</td>
+                            <td class="text-navy" style="text-align: center;"><i class="fa fa-level-up"></i> {{ item.estudo_do_produto.resultados.roi() | percentage: 2 }}</td>
                         </tr>
 
                         </tbody>

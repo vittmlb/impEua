@@ -21,6 +21,18 @@ let parametros = {
     hmf: 0,
 };
 
+let enumDesp = {
+    comerciais: 'comerciais',
+    administrativas: 'administrativas',
+    armazenamento: 'amrmazenamento',
+    outras: 'outras',
+    importacao: 'importacao',
+    despesas: 'despesas',
+    amazon: 'amazon',
+    fulfillment: 'fulfillment',
+    comissoes: 'comissoes'
+};
+
 let produtosDoEstudo = [];
 
 function Estudo() {
@@ -173,7 +185,105 @@ function Estudo() {
             return 0;
         }
     };
-    this.despesas = {};
+    this.despesas = {
+        comerciais: {
+            amazon: {
+                fulfillment: function() {
+                    let auxSoma = 0;
+                    if(parent.fob()) {
+                        parent.lista_produtos.forEach(function (produto) {
+                            auxSoma += produto.estudo_do_produto.despesas.comerciais.amazon.fulfillment();
+                        });
+                    }
+                    return auxSoma;
+                },
+                comissoes: function() {
+                    let auxSoma = 0;
+                    if(parent.fob()) {
+                        parent.lista_produtos.forEach(function (produto) {
+                            auxSoma += produto.estudo_do_produto.despesas.comerciais.amazon.comissoes();
+                        });
+                    }
+                    return auxSoma;
+                },
+                total: function(tipo) {
+                    if(parent.fob()) {
+                        switch (tipo) {
+                            case 'fulfillment':
+                                return this.fulfillment();
+                            case 'comissoes':
+                                return this.comissoes();
+                            default:
+                                return this.fulfillment() + this.comissoes();
+                        }
+                    }
+                    return 0;
+                }
+            },
+            total: function(tipo) {
+                if(parent.fob()) {
+                    return this.amazon.total(tipo);
+                }
+                return 0;
+            }
+        },
+        armazenamento: {
+            amazon: {
+                inventory: function() {
+                    return 0;
+                },
+                placement: function() {
+                    return 0;
+                },
+                total: function(tipo) {
+                    if(parent.fob()) {
+                        switch (tipo) {
+                            case 'inventory':
+                                return this.inventory();
+                            case 'placement':
+                                return this.placement();
+                            default:
+                                return this.inventory() + this.placement();
+                        }
+                    }
+                    return 0;
+                }
+            },
+            total: function(tipo) {
+                if(parent.qtd) {
+                    return this.amazon.total(tipo);
+                }
+                return 0;
+            }
+        },
+        administrativas: {
+            total: function() {
+                return 0;
+            }
+        },
+        outras: {
+            total: function() {
+                return 0;
+            }
+        },
+        total: function(categoria, subtipo) {
+            if(parent.fob()) {
+                switch (categoria) {
+                    case 'comerciais':
+                        return this.comerciais.total(subtipo);
+                    case 'armazenamento':
+                        return this.armazenamento.total(subtipo);
+                    case 'administrativas':
+                        return this.administrativas.total();
+                    case 'outras':
+                        return this.outras.total();
+                    default:
+                        return this.comerciais.total() + this.armazenamento.total() + this.administrativas.total() + this.outras.total();
+                }
+            }
+            return 0;
+        }
+    };
     this.modulos = {
         amazon: {
             fba: {
@@ -187,40 +297,45 @@ function Estudo() {
     this.resultados = {
         investimento: {
             importacao: function() {
-                return parent.fob() + parent.custos.total();
+                if(parent.fob()) {
+                    return parent.fob() + parent.custos.total();
+                }
+                return 0;
             },
             despesas: function() { // Custo que as despesas comerciais (amazon) representam na operação.
-                let auxSoma = 0;
-                if(parent.lista_produtos.length) {
-                    parent.lista_produtos.forEach(function (produto) {
-                        if(produto.estudo_do_produto.qtd) {
-                            auxSoma += (produto.estudo_do_produto.modulos.amazon.fba.fulfillment * produto.estudo_do_produto.qtd);
-                        }
-                    });
+                if(parent.fob()) {
+                    return parent.despesas.total();
                 }
-                return auxSoma;
+                return 0;
             },
-            total: function() {
-                return parent.resultados.investimento.importacao() + parent.resultados.investimento.despesas(); // o 'this' não funcionou com "despesas"
+            total: function(tipo) {
+                if(parent.fob()) {
+                    switch (tipo) {
+                        case 'importacao':
+                            return parent.resultados.investimento.importacao();
+                        case 'despesas':
+                            return parent.resultados.investimento.despesas();
+                        default:
+                            return parent.resultados.investimento.importacao() + parent.resultados.investimento.despesas(); // o 'this' não funcionou com "despesas"
+                    }
+                }
+                return 0;
             }
         },
         lucro: function() {
+            let totalVenda = 0;
             if(parent.fob()) {
-                let totalVenda = 0;
                 parent.lista_produtos.forEach(function (produto) {
-                    if(produto.estudo_do_produto.qtd) {
-                        totalVenda += ((produto.estudo_do_produto.resultados.precos.venda * (1 - parent.parametros.comissao_amazon)) * produto.estudo_do_produto.qtd);
-                    }
+                    totalVenda += ((produto.estudo_do_produto.resultados.precos.venda * produto.estudo_do_produto.qtd) - produto.estudo_do_produto.resultados.investimento.total());
                 });
-                if(totalVenda) {
-                    return (totalVenda - this.investimento.total());
-                }
             }
-            return 0;
+            return totalVenda;
         },
         roi: function() {
-            if(this.investimento.total()) {
-                return this.lucro() / this.investimento.total();
+            let fob = parent.fob();
+            let investimento = this.investimento.total();
+            if(fob && investimento) {
+                return this.lucro() / investimento;
             }
             return 0;
         }, // ROI: Retorno Sobre Investimento > Lucro BRL / Investimento BRL
@@ -309,51 +424,6 @@ function Estudo() {
         }
     };
 
-    this.totaliza = {
-        custos: {
-            /**
-             * Incrementa os totais dos tributos do estudo "geral" com base nos valores de cada produto passado como argumento.
-             * @param produto
-             */
-            taxas: function(produto) {
-                let estProduto = produto.estudo_do_produto;
-
-                // Update (soma) dos valores dos impostos ao Estudo Geral.
-                parent.custos.taxas.duty += estProduto.custos.taxas.duty;
-                parent.custos.taxas.mpf += estProduto.custos.taxas.mpf;
-                parent.custos.taxas.hmf += estProduto.custos.taxas.hmf;
-                parent.custos.taxas.total += estProduto.custos.taxas.total;
-            },
-        },
-        resultados: function(produto) {
-            // Região para acumular os dados do Estudo
-            parent.resultados.investimento += produto.estudo_do_produto.resultados.investimento;
-            // Update (soma) dos lucros dos produtos para formar o Lucro Total do Estudo.
-            parent.resultados.lucro += produto.estudo_do_produto.resultados.lucro;
-            parent.resultados.roi = parent.resultados.lucro / parent.resultados.investimento;
-        }
-    };
-
-    this.teste = {
-        setMedida: function(valor) {
-            parent.medidas.volume.ocupado = valor;
-        }
-    };
-
-
-    this.totalizaDadosBasicosDoEstudo = function(produto) {
-        this.fob = 0;
-        this.medidas.peso.ocupado = 0;
-        this.medidas.volume.ocupado = 0;
-        this.medidas.volume.ocupado_percentual = 0;
-
-        this.fob += ((produto.estudo_do_produto.custo_unitario * produto.estudo_do_produto.qtd) * (1 + this.parametros.percentual_comissao_conny)); // Calcula Fob
-        this.cif = this.fob + this.custos.frete_maritimo.total();
-        this.medidas.peso.ocupado += produto.medidas.peso * produto.estudo_do_produto.qtd; // Calcula peso total
-        this.medidas.volume.ocupado += produto.medidas.cbm * produto.estudo_do_produto.qtd; // Calcula volume ocupado no contêiner
-        this.medidas.volume.ocupado_percentual = (this.medidas.volume.ocupado / this.medidas.volume.contratado) * 100;
-    };
-
 
 }
 
@@ -405,9 +475,12 @@ function EstudoDoProduto() {
         },
         proporcionalidade: { // exibe a proporcionalidade do produto no estudo, de acordo com cada uma das letiáveis em questão.
             fob: function() {
-                if(parent.estudo.medidas.peso.ocupado) {
-
+                let qtd = parent.qtd;
+                let estudo_fob = parent.estudo.fob();
+                if(qtd && estudo_fob) {
+                    return parent.fob() / estudo_fob;
                 }
+                return 0;
             },
             peso: 0,
             volume: function() {
@@ -428,7 +501,7 @@ function EstudoDoProduto() {
             lista: [],
             total: function() {
                 if(parent.qtd) {
-                    return parent.medidas.proporcionalidade.volume() * parent.estudo.custos.aduaneiros.total();
+                    return parent.medidas.proporcionalidade.fob() * parent.estudo.custos.aduaneiros.total();
                 }
                 return 0;
             }
@@ -514,60 +587,97 @@ function EstudoDoProduto() {
             return 0;
         }
     };
-    this.despesas = {};
-    this.resultados = {
-        investimento: {
-            importacao: function() {
-                if(parent.qtd) {
-                    return parent.fob() + parent.custos.total();
+    this.despesas = {
+        comerciais: {
+            amazon: {
+                fulfillment: function() {
+                    if(parent.qtd) {
+                        return parent.modulos.amazon.fba.fulfillment * parent.qtd;
+                    }
+                    return 0;
+                },
+                comissoes: function() {
+                    if(parent.qtd) {
+                        return parent.resultados.precos.venda * parent.parametros().comissao_amazon * parent.qtd;
+                    }
+                    return 0;
+                },
+                total: function(tipo) {
+                    if(parent.qtd) {
+                        switch (tipo) {
+                            case 'fulfillment':
+                                return this.fulfillment();
+                            case 'comissoes':
+                                return this.comissoes();
+                            default:
+                                return this.fulfillment() + this.comissoes();
+                        }
+                    }
+                    return 0;
                 }
-                return 0;
             },
-            despesas: function() { // Custo que as despesas comerciais (amazon) representam na operação.
+            total: function(tipo) {
                 if(parent.qtd) {
-                    return parent.modulos.amazon.fba.fulfillment * parent.qtd;
-                }
-                return 0;
-            },
-            total: function() {
-                if(parent.qtd) {
-                    return this.importacao() + parent.resultados.investimento.despesas(); // o 'this' não funcionou com "despesas"
+                    return this.amazon.total(tipo);
                 }
                 return 0;
             }
         },
-        lucro: function() {
+        armazenamento: {
+            amazon: {
+                inventory: function() {
+                    return 0;
+                },
+                placement: function() {
+                    return 0;
+                },
+                total: function(tipo) {
+                    if(parent.qtd) {
+                        switch (tipo) {
+                            case 'inventory':
+                                return this.inventory();
+                            case 'placement':
+                                return this.placement();
+                            default:
+                                return this.inventory() + this.placement();
+                        }
+                    }
+                    return 0;
+                }
+            },
+            total: function(tipo) {
+                if(parent.qtd) {
+                    return this.amazon.total(tipo);
+                }
+                return 0;
+            }
+        },
+        administrativas: {
+            total: function() {
+                return 0;
+            }
+        },
+        outras: {
+            total: function() {
+                return 0;
+            }
+        },
+        total: function(categoria, subtipo) {
             if(parent.qtd) {
-                return ((parent.resultados.precos.venda * (1 - parent.parametros().comissao_amazon)) - parent.resultados.precos.custo()) * parent.qtd;
+                switch (categoria) {
+                    case 'comerciais':
+                        return this.comerciais.total(subtipo);
+                    case 'armazenamento':
+                        return this.armazenamento.total(subtipo);
+                    case 'administrativas':
+                        return this.administrativas.total();
+                    case 'outras':
+                        return this.outras.total();
+                    default:
+                        return this.comerciais.total() + this.armazenamento.total() + this.administrativas.total() + this.outras.total();
+                }
             }
             return 0;
-        },
-        roi: 0, // ROI: Retorno Sobre Investimento > Lucro BRL / Investimento BRL
-        comparacao: {
-            percentual_frete: 0,
-                percentual_fob: 0,
-                percentual_duties: 0,
-                percentual_mpf: 0,
-                percentual_hmf: 0,
-                percentual_custos: 0,
-                percentual_taxas: 0
-        },
-        precos: {
-            custo: function() {
-                if(parent.qtd) {
-                    return parent.resultados.investimento.total() / parent.qtd;
-                }
-            }, // preço de custo final do produto.
-            venda: 0, // preço de venda - informado na tabela de produtos do estudo.
-            amazon: {
-                fba: {
-                    fulfillment: 0,
-                    inventory: 0,
-                    placement: 0
-                },
-                comissoes: 0
-            },
-            custo_final_consolidado: 0 // custo final do produto com tudo incluído.
         }
     };
     this.modulos = {
@@ -582,7 +692,70 @@ function EstudoDoProduto() {
             inspectedRules: []
         }
     };
-
+    this.resultados = {
+        investimento: {
+            importacao: function() {
+                if(parent.qtd) {
+                    return parent.fob() + parent.custos.total();
+                }
+                return 0;
+            },
+            despesas: function() { // Custo que as despesas comerciais (amazon) representam na operação.
+                if(parent.qtd) {
+                    return parent.despesas.total(enumDesp.comerciais);
+                }
+                return 0;
+            },
+            total: function(tipo) {
+                if(parent.qtd) {
+                    switch (tipo) {
+                        case 'importacao':
+                            return parent.resultados.investimento.importacao();
+                        case 'despesas':
+                            return parent.resultados.investimento.despesas();
+                        default:
+                            return this.importacao() + parent.resultados.investimento.despesas(); // o 'this' não funcionou com "despesas"
+                    }
+                }
+                return 0;
+            }
+        },
+        lucro: function() {
+            if(parent.qtd) {
+                return (parent.resultados.precos.venda * parent.qtd) - this.investimento.total();
+                // return ((parent.resultados.precos.venda * (1 - parent.parametros().comissao_amazon)) - parent.resultados.precos.custo()) * parent.qtd;
+            }
+            return 0;
+        },
+        roi: function() {
+            if(parent.qtd && this.investimento.total()) {
+                return (this.lucro() / this.investimento.total())
+            }
+            return 0;
+        }, // ROI: Retorno Sobre Investimento > Lucro BRL / Investimento BRL
+        precos: {
+            custo: {
+                importacao: function() {
+                    if(parent.qtd) {
+                        return parent.resultados.investimento.total(enumDesp.importacao);
+                    }
+                    return 0;
+                },
+                despesas: function() {
+                    if(parent.qtd) {
+                        return parent.resultados.investimento.total(enumDesp.despesas);
+                    }
+                    return 0;
+                },
+                total: function() {
+                    if(parent.qtd) {
+                        return parent.resultados.investimento.total() / parent.qtd;
+                    }
+                }
+            },
+            venda: 0, // preço de venda - informado na tabela de produtos do estudo.
+        }
+    };
     this.load = {
         estudo: function(estudo) {
             parent.set._estudo(estudo);
@@ -612,167 +785,6 @@ function EstudoDoProduto() {
         },
     };
 
-    this.fob_calculado = function() {
-        if (this.qtd <= 0) {
-            this.zeraObj();
-        } else {
-            this.fob = ((this.custo_unitario * (1 + this.parametros.percentual_comissao_conny)) * this.qtd);
-            return this.fob;
-        }
-    };
-
-    this._calcula_valor_unitario = function(valor) {
-        if(this.qtd) {
-            return valor / this.qtd;
-        }
-        return 0;
-    };
-
-
-    this.zeraObj = function() {
-        this.qtd = 0;
-        this.custo_unitario = 0; // Não lembro o como funciona isso aqui.
-        this.fob = 0;
-        this.cif = 0;
-        this.medidas = {
-            peso: {
-                contratado: 0, // Por enquanto não vou usar esse valor > Só será usado quando importar um produto muito pesado.
-                ocupado: 0,
-                ocupado_percentual: 0 // Por enquanto não vou usar esse valor > Só será usado quando importar um produto muito pesado.
-            },
-            volume: {
-                contratado: 0, // todo: Volume do Cntr escolhido para fazer o transporte da carga. Encontrar uma solução melhor para quando for trabalhar com outros volumes.
-                ocupado: 0,
-                ocupado_percentual: 0
-            }
-        };
-
-        this.custos.aduaneiros.lista = [];
-        this.custos.aduaneiros.total = 0;
-
-        this.custos.internacionais.compartilhados.lista = [];
-        this.custos.internacionais.compartilhados.total = 0;
-        this.custos.internacionais.individualizados.lista = [];
-        this.custos.internacionais.individualizados.total = 0;
-        this.custos.internacionais.total = 0;
-
-        this.custos.nacionais.compartilhados.lista = [];
-        this.custos.nacionais.compartilhados.total = 0;
-        this.custos.nacionais.individualizados.lista = [];
-        this.custos.nacionais.individualizados.total = 0;
-        this.custos.nacionais.total = 0;
-
-        this.custos.taxas.duty = 0;
-        this.custos.taxas.mpf = 0;
-        this.custos.taxas.hmf = 0;
-
-        this.despesas = {};
-        this.resultados = {
-            investimento: 0,
-            lucro: 0,
-            roi: 0, // ROI: Retorno Sobre Investimento > Lucro BRL / Investimento BRL
-            comparacao: {
-                percentual_frete: 0,
-                percentual_fob: 0,
-                percentual_duties: 0,
-                percentual_mpf: 0,
-                percentual_hmf: 0,
-                percentual_custos: 0,
-                percentual_taxas: 0
-            },
-            precos: {
-                custo: 0, // preço de custo final do produto.
-                venda: 0, // preço de venda - informado na tabela de produtos do estudo.
-                amazon: {
-                    fba: {
-                        fulfillment: 0,
-                        inventory: 0,
-                        placement: 0
-                    },
-                    comissoes: 0
-                },
-                custo_final_consolidado: 0 // custo final do produto com tudo incluído.
-            }
-        };
-
-        this.modulos.amazon.fba.fulfillment = 0;
-        this.modulos.amazon.fba.inventory = 0;
-        this.modulos.amazon.fba.placement = 0;
-        this.modulos.amazon.comissoes = 0;
-
-        this.modulos.amazon.categoria = '';
-        this.modulos.amazon.inspectedRules = [];
-
-    };
-
-    // this.calculaMedidasDoProduto = function(produto, estudo) {
-    //     if(this.qtd <= 0) {
-    //         this.zeraObj();
-    //     }
-    //     else
-    //     {
-    //         // Cálculo das medidas > Peso e Volume totais do produto.
-    //         this.medidas.peso.ocupado = produto.medidas.peso * this.qtd;
-    //         this.medidas.volume.ocupado = produto.medidas.cbm * this.qtd;
-    //
-    //         // Cálculo dos percentuais > Peso e Volume proporcionais do produto
-    //         this.medidas.peso.ocupado_percentual = this.medidas.peso.ocupado / estudo.medidas.peso.ocupado;
-    //         this.medidas.volume.ocupado_percentual = this.medidas.volume.ocupado / estudo.medidas.volume.ocupado;
-    //     }
-    // };
-    this.calculaProporcionalidade = function() {
-        this.custos.frete_maritimo.valor = this.medidas.peso.ocupado_percentual() * this.parametros.frete_maritimo; // Cálculo de Frete Marítimo proporcional.
-        this.custos.frete_maritimo.seguro = this.medidas.peso.ocupado_percentual() * this.parametros.seguro_frete_maritimo; // Cálculo de SEGURO de Frete Marítimo proporcional.
-        // this.custos.frete_maritimo.total = this.medidas.peso.ocupado_percentual * estudo.custos.frete_maritimo.total;
-        this.cif = this.fob_calculado() + this.custos.frete_maritimo.total_calculado(); // Cálculo CIFs (que é o mesmo que Valor Aduaneiro). todo: Pq o cálculo do CIF está aqui?
-    };
-    this.calculaTaxas = function(produto, estudo) {
-
-        // Cálculo de Taxas e Impostos
-        this.custos.taxas.duty = produto.duty * this.fob_calculado(); // Cálculo Duty Tax
-
-        this.custos.taxas.mpf = estudo.parametros.mpf * this.fob_calculado(); // Cálculo MPF
-
-        // O MPF não pode custar menos de 35 dólares ou mais de 485.
-        if(this.custos.taxas.mpf < 35) {
-            this.custos.taxas.mpf = 35;
-        } else if(this.custos.taxas.mpf > 485) {
-            this.custos.taxas.mpf = 485;
-        }
-
-        this.custos.taxas.hmf = estudo.parametros.hmf * this.fob_calculado(); // Cálculo HMF
-
-    };
-    this.totalizaCustos = function(produto, estudo) {
-        this.custos.aduaneiros.total = (this.fob_calculado() / estudo.fob) * estudo.custos.aduaneiros.total; // Usar CIF ou FOB?
-        this.custos.aduaneiros.total += this.modulos.amazon.fba.fulfillment;
-    };
-    this.calculaResultados = function(estudo) {
-
-        this.resultados.investimento = (
-            this.fob_calculado() +
-            this.custos.total_calculado()
-        );
-
-        // Cálculo do preço de Custo final do produto.
-        this.resultados.precos.custo = this.resultados.investimento / this.qtd;
-
-        // Calcula o resultado unitário e total de cada um dos produtos.
-        this.resultados.lucro = ((this.resultados.precos.venda * (1 - estudo.parametros.comissao_amazon)) - this.resultados.precos.custo) * this.qtd;
-
-        // Calcula o roi do produto.
-        this.resultados.roi = this.resultados.lucro / this.resultados.investimento;
-
-        // Calcula os percentuais de comparação entre os componentes do preço final do produto;
-        this.resultados.comparacao.percentual_frete = this.custos.frete_maritimo.valor / this.resultados.investimento;
-        this.resultados.comparacao.percentual_custos = this.custos.aduaneiros.total / this.resultados.investimento;
-        this.resultados.comparacao.percentual_duties = this.custos.taxas.duty / this.resultados.investimento;
-        this.resultados.comparacao.percentual_fob = this.fob_calculado() / this.resultados.investimento;
-        this.resultados.comparacao.percentual_hmf = this.custos.taxas.hmf / this.resultados.investimento;
-        this.resultados.comparacao.percentual_mpf = this.custos.taxas.mpf / this.resultados.investimento;
-        this.resultados.comparacao.percentual_taxas = this.custos.taxas.total_calculado() / this.resultados.investimento;
-
-    };
 }
 
 angular.module('estudos').factory('CompEstudos', ['Custos', 'CompAmazon', '$http', function (Custos, CompAmazon, $http) {
@@ -798,12 +810,6 @@ angular.module('estudos').factory('CompEstudos', ['Custos', 'CompAmazon', '$http
     }
 
     return {
-        loadProdutosDoEstudo: function(listaDeProdutosDoEstudo) {
-            produtosDoEstudo.lista = listaDeProdutosDoEstudo;
-        },
-        loadParametros: function(objParametros) {
-            parametros = objParametros;
-        },
         iniProcesso: function() {
             Bamonos();
         },
@@ -817,30 +823,12 @@ angular.module('estudos').factory('CompEstudos', ['Custos', 'CompAmazon', '$http
             obj.load.custo_unitario(produto.custo_usd);
             return obj;
         },
-        criaListaProdutosDoEstudo: function() {
-            return listasDoEstudo.produtosDoEstudo;
-        },
         criaEstudo: function() {
             estudo.load.lista_custos_aduaneiros(listaCustosAduaneiros);
             estudo.load.parametros(parametros);
             return estudo;
         },
-        criaParametros: function() {
-            return parametros;
-        },
 
-        // 2
-        // totalizaDadosBasicosEstudo: function() {
-        //     produtosDoEstudo.forEach(function (produto) {
-        //         if(produto.estudo_do_produto.qtd <= 0) {
-        //             produto.estudo_do_produto.zeraObj();
-        //         } else {
-        //             estudo.totalizaDadosBasicosDoEstudo(produto, estudo.parametros);
-        //         }
-        //
-        //     });
-        // },
-        // 3
         totalizaCustosDoEstudo: function() {
             estudo.totalizaCustosAduaneiros(listaCustos);
         },
