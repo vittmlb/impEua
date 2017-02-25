@@ -11,7 +11,7 @@
     <br/>
     <div class="row">
         <div class="col-xs-9">
-            <div class="ibox float-e-margins">
+            <div class="ibox collapsed float-e-margins">
                 <div class="ibox-title">
                     <h5>Configurações</h5>
                     <div ibox-tools></div>
@@ -51,7 +51,7 @@
                     </div> <!-- Config > Primeira Linha -->
                 </div>
             </div> <!-- Configurações -->
-            <div class="ibox float-e-margins">
+            <div class="ibox collapsed float-e-margins">
                 <div class="ibox-title">
                     <h5>Análises</h5>
                     <div ibox-tools></div>
@@ -81,50 +81,89 @@
                     <div ibox-tools></div>
                 </div>
                 <div class="ibox-content">
-                    <div class="project-list">
-                        <div class="row" data-ng-repeat="itemEstudo in produtosDoEstudo">
-                            <!--<td class="project-people pull-left">-->
-                            <!--<a href=""><img alt="image" class="img-circle" ng-src="{{ itemEstudo.img_url }}"></a>-->
-                            <!--</td>-->
-                            <div class="col-sm-3 project-title">
-                                <i class="fa fa-plus" style="cursor: pointer; margin-right: 3px;" ng-click="addDespesaInternacionalDoProdutoModal(itemEstudo)"></i>
-                                <a href="#"><img style="width: 40px;" class="img-circle" ng-src="{{ itemEstudo.img_url }}" alt="Imagem {{ itemEstudo.nome }}"></a>
-                                <a ng-click="produtoViewModal(itemEstudo)">{{ itemEstudo.nome | limitTo: 20 }}</a>
-                                <br/>
-                                <div data-ng-repeat="desp in itemEstudo.estudo_do_produto.despesas.internacionais.individualizadas">
-                                    <small style="display: block;">{{ desp.desc }}: {{ desp.usd | currency: 'usd ' }}</small>
+                    <div class="produto-estudo-activity-header-list">
+                        <div class="row">
+                            <div class="produto-estudo-element-header">
+                                <div class="col-sm-4" style="text-align: left;">
+                                    Produto
                                 </div>
-                                <small style="margin-left: 18px; margin-top: 4px;">{{ itemEstudo.modelo }}</small><br>
-                                <!--<small>Cheio USD:{{ itemEstudo.estudo_do_produto.custo_unitario.cheio.usd }}</small><br/>-->
-                                <!--<small>Paypal USD: {{ itemEstudo.estudo_do_produto.custo_unitario.paypal.usd }}</small><br/>-->
-                                <!--<small>Declarado USD: {{ itemEstudo.estudo_do_produto.custo_unitario.declarado.usd }}</small><br/>-->
-                                <!--<small>Desp Int Tot: {{ itemEstudo.estudo_do_produto.custos.internacionais.totais.usd }}</small>-->
-
-                            </div>
-                            <div class="col-sm-2 project-title">
-                                <a>{{itemEstudo.estudo_do_produto.custo_unitario() | currency: 'U$ '}}</a>
-                                <br>
-                                <small>Investimento:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.resultados.investimento() | currency: 'U$ '}}</small><br/>
-                                <!--<small>Frete:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.custos.frete_maritimo.valor() | currency: 'U$ '}}</small><br/>-->
-                                <!--<small>Aduaneiros:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.custos.aduaneiros.total() | currency: 'U$ '}}</small><br/>-->
-                                <!--<small>Taxas:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.custos.taxas.total() | currency: 'U$ '}}</small><br/>-->
-                                <!--<small>Conny:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.custos.comissao_conny.total() | currency: 'U$ '}}</small><br/>-->
-                                <!--<small>Custos:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.custos.total() | currency: 'U$ '}}</small><br/>-->
-                            </div>
-                            <div class="col-sm-1 project-title">
-                                <input style="text-align: center;" type="number" class="form-control input-transparente" placeholder="qtd" data-ng-model="itemEstudo.estudo_do_produto.qtd" ng-change="processaMudancas(itemEstudo, 'qtd')">
-                            </div>
-                            <div class="col-sm-1 project-title">
-                                <span data-ng-bind="itemEstudo.estudo_do_produto.resultados.precos.custo.total() | currency: 'U$ '"></span><br/>
-                                <small>{{ itemEstudo.estudo_do_produto.modulos.amazon.categoria }}</small>
-                            </div>
-                            <div class="col-sm-2 project-title">
-                                <input style="text-align: center;" type="text" class="form-control input-transparente" placeholder="P.Venda (R$)" data-ng-model="itemEstudo.estudo_do_produto.resultados.precos.venda" ng-change="iniImport()">
-                            </div>
-                            <div class="col-sm-2 project-title">
-                                <i data-toggle="tooltip" data-placement="right" title="Remover produto"  ng-click="removeProdutoEstudo(itemEstudo)" class="fa fa-times clickable"></i>
+                                <div class="col-sm-3" style="text-align: left;">
+                                    Custo
+                                </div>
+                                <div class="col-sm-1">
+                                    Qtd
+                                </div>
+                                <div class="col-sm-1">P.Venda</div>
+                                <div class="col-sm-2">C.Final</div>
+                                <div class="col-sm-1">Opções</div>
                             </div>
                         </div>
+                    </div> <!-- HEADER -->
+
+                    <div class="produto-estudo-activity-list" data-ng-repeat="itemEstudo in produtosDoEstudo">
+                        <div class="row">
+                            <div class="produto-estudo-element">
+                                <div class="col-sm-4">
+                                    <a data-toggle="collapse" data-target="#{{ itemEstudo._id }}" href="" class="pull-left">
+                                        <i class="fa fa-plus" style="cursor: pointer; margin-right: 3px;" ng-click="addDespesaInternacionalDoProdutoModal(itemEstudo)"></i>
+                                        <img style="width: 40px;" class="img-circle" ng-src="{{ itemEstudo.img_url }}" alt="Imagem {{ itemEstudo.nome }}">
+                                    </a>
+                                    <div class="media-body" style="margin-top: 12px; margin-left: 70px;">
+                                        <!--<small class="pull-right text-navy">{{ itemEstudo.modelo }}</small>-->
+                                        <small class="pull-right text-navy">{{ itemEstudo.estudo_do_produto.modulos.amazon.categoria }}</small>
+                                        <strong><a ng-click="produtoViewModal(itemEstudo)">{{ itemEstudo.nome | limitTo: 16 }}</a></strong>
+                                        <small class="text-muted"></small>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <a>{{itemEstudo.estudo_do_produto.custo_unitario() | currency: 'U$ '}}</a>
+                                    <br>
+                                    <small>Investimento:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.resultados.investimento() | currency: 'U$ '}}</small><br/>
+                                </div>
+                                <div class="col-sm-1">
+                                    <input style="text-align:center;" type="number" class="form-control input-transparente" placeholder="qtd" data-ng-model="itemEstudo.estudo_do_produto.qtd" ng-change="processaMudancas(itemEstudo, 'qtd')">
+                                </div>
+                                <div class="col-sm-1">
+                                    <input style="text-align: center;" type="text" class="form-control input-transparente" placeholder="P.Venda (R$)" data-ng-model="itemEstudo.estudo_do_produto.resultados.precos.venda" ng-change="iniImport()">
+                                </div>
+                                <div class="col-sm-2">
+                                    <p style="text-align: center;" data-ng-show="!itemEstudo.estudo_do_produto.resultados.precos.custo.total()">- - -</p>
+                                    <p style="text-align: center;" data-ng-bind="itemEstudo.estudo_do_produto.resultados.precos.custo.total() | currency: 'U$ '"></p>
+                                </div>
+                                <div class="col-sm-1" style="text-align:center;">
+                                    <i data-toggle="tooltip" data-placement="right" title="Remover produto"  ng-click="removeProdutoEstudo(itemEstudo)" class="fa fa-times clickable"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="collapse" id="{{ itemEstudo._id }}">
+                                <div class="col-sm-4 col-sm-offset-0">
+                                    <small>Frete:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.custos.frete_maritimo.valor() | currency: 'U$ '}}</small><br/>
+                                    <small>Aduaneiros:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.custos.aduaneiros.total() | currency: 'U$ '}}</small><br/>
+                                    <small>Taxas:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.custos.taxas.total() | currency: 'U$ '}}</small><br/>
+                                    <small>Conny:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.custos.comissao_conny.total() | currency: 'U$ '}}</small><br/>
+                                    <small>Custos:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.custos.total() | currency: 'U$ '}}</small><br/>
+                                </div>
+                                <div class="col-sm-3">
+                                    <small class="pull-right">46h ago</small>
+                                    <strong>Mike Loreipsum</strong> started following <strong>Monica Smith</strong>. <br>
+                                    <small class="text-muted">3 days ago at 7:58 pm - 10.06.2014</small>
+                                </div>
+                                <div class="col-sm-2"></div>
+                                <div class="col-sm-3">
+                                    <small>Custo Imp:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.resultados.precos.custo.importacao() | currency: 'U$ '}}</small><br/>
+                                    <small>Custo Desp:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.resultados.precos.custo.despesas() | currency: 'U$ '}}</small><br/>
+                                    <small>Total:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.resultados.precos.custo.importacao() + itemEstudo.estudo_do_produto.resultados.precos.custo.despesas() | currency: 'U$ '}}</small><br/><br/>
+                                    <small>Amazon fba:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.despesas.comerciais.amazon.fulfillment() | currency: 'U$ '}}</small><br/>
+                                    <small>Amazon Comissões:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.despesas.comerciais.amazon.comissoes() | currency: 'U$ '}}</small><br/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <!--<div class="project-list">-->
                         <!--<table class="table table-hover">-->
                             <!--<thead>-->
                             <!--<tr>-->
@@ -137,7 +176,7 @@
                             <!--</tr>-->
                             <!--</thead>-->
                             <!--<tbody>-->
-                            <!--<tr data-ng-repeat="itemEstudo in produtosDoEstudo">-->
+                                <!--<tr data-ng-repeat="itemEstudo in produtosDoEstudo">-->
                                 <!--&lt;!&ndash;<td class="project-people pull-left">&ndash;&gt;-->
                                     <!--&lt;!&ndash;<a href=""><img alt="image" class="img-circle" ng-src="{{ itemEstudo.img_url }}"></a>&ndash;&gt;-->
                                 <!--&lt;!&ndash;</td>&ndash;&gt;-->
@@ -183,7 +222,7 @@
 
                             <!--</tbody>-->
                         <!--</table>-->
-                    </div>
+                    <!--</div>-->
 
                 </div>
             </div> <!-- Tabela de Produtos do Estudo -->
@@ -199,7 +238,7 @@
                             <!--<div class="stat-percent font-bold text-success">{{(estudo.resultados.lucro/estudo.resultados.investimento) * 100 | percent: 2}} <i class="fa fa-bolt"></i></div>-->
                             <small class="pull-right" style="margin-left: 3px;" style="margin-top: 2px;"> roi</small>
                             <div class="stat-percent font-bold text-success">{{(estudo.resultados.roi()) * 100 | percent: 2}} <i class="fa fa-bolt"></i></div>
-                            <small>Investimento: {{estudo.resultados.investimento.total() | currency: 'U$ '}}</small>
+                            <small>Investimento: {{estudo.resultados.investimento() | currency: 'U$ '}}</small>
                         </div>
                     </div>
                 </div> <!-- Lucro -->

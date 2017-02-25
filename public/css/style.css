@@ -138,5 +138,56 @@ footer {
     font-size: 1.1em;
 }
 
-/*Main Handlebars*/
+.produto-estudo-activity-header-list {
+    border-bottom: 2px solid #e7eaec;
+    text-align: center;
+}
 
+.produto-estudo-element-header {
+    margin-bottom: 30px;
+}
+
+.produto-estudo-activity-list .produto-estudo-element {
+    border-bottom: 1px solid #e7eaec;
+}
+.produto-estudo-element:first-child {
+    margin-top: 20px;
+}
+.produto-estudo-element {
+    padding-bottom: 15px;
+}
+.produto-estudo-element,
+.produto-estudo-element .media {
+    margin-top: 15px;
+}
+.produto-estudo-element,
+.media-body {
+    overflow: hidden;
+}
+.produto-estudo-element > .pull-left {
+    margin-right: 10px;
+}
+.produto-estudo-element img.img-circle,
+.dropdown-messages-box img.img-circle {
+    width: 38px;
+    height: 38px;
+}
+.produto-estudo-element .well {
+    border: 1px solid #e7eaec;
+    box-shadow: none;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    padding: 10px 20px;
+    font-size: 11px;
+    line-height: 16px;
+}
+.produto-estudo-element .actions {
+    margin-top: 10px;
+}
+.produto-estudo-element .photos {
+    margin: 10px 0;
+}
+
+.produto-estudo-unity {
+    margin: auto;
+}

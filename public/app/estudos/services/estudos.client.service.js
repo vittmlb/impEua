@@ -320,7 +320,7 @@ function Estudo() {
         },
         roi: function() {
             let fob = parent.fob();
-            let investimento = parent.resultados.investimento() - parent.resultados.despesas();
+            let investimento = parent.resultados.investimento();
             if(fob && investimento) {
                 return this.lucro() / investimento;
             }
