@@ -1,8 +1,8 @@
 /**
  * Created by Vittorio on 30/05/2016.
  */
-angular.module('estudos').controller('EstudosController', ['$scope', '$uibModal', '$routeParams', '$location', 'Produtos', 'Estudos', '$http', '$stateParams', 'toaster', 'CompAmazon', 'CompEstudos',
-    function($scope, $uibModal, $routeParams, $location, Produtos, Estudos, $http, $stateParams, toaster, CompAmazon, CompEstudos) {
+angular.module('estudos').controller('EstudosController', ['$scope', '$uibModal', '$routeParams', '$location', 'Produtos', 'Estudos', '$http', '$stateParams', 'toaster', 'CompAmazon', 'CompEstudos', 'CompGraficos',
+    function($scope, $uibModal, $routeParams, $location, Produtos, Estudos, $http, $stateParams, toaster, CompAmazon, CompEstudos, CompGraficos) {
 
         $scope.piePoints = [{"Frete": 0}, {"Fob": 0}, {"Custos": 0}, {"Taxas": 0}];
         $scope.pieColumns = [{"id": "Frete", "type": "pie"}, {"id": "Fob", "type": "pie"}, {"id": "Custos", "type": "pie"}, {"id": "Taxas", "type": "pie"}];
@@ -27,7 +27,15 @@ angular.module('estudos').controller('EstudosController', ['$scope', '$uibModal'
         $scope.quantidades = [];
         // $scope.produtosDoEstudo = [];
         $scope.estudo = {};
+        CompGraficos.set.estudo($scope.estudo);
         $scope.parametros = {};
+
+        $scope.graficos = {
+            geral: {
+                piePoints: [{"Frete": 0}, {"Fob": 0}, {"Custos": 0}, {"Taxas": 0}],
+                pieColumns: [{"id": "Frete", "type": "pie"}, {"id": "Fob", "type": "pie"}, {"id": "Custos", "type": "pie"}, {"id": "Taxas", "type": "pie"}]
+            }
+        };
 
         $scope.custo_internacional = {
             // Variável referenciada no formulário modal usada para inserir a custo em <$scope.estudo> custos[].
@@ -172,6 +180,10 @@ angular.module('estudos').controller('EstudosController', ['$scope', '$uibModal'
             $scope.estudo = CompEstudos.criaEstudo();
             $scope.produtosDoEstudo = $scope.estudo.lista_produtos;
             $scope.parametros = $scope.estudo.parametros;
+            CompGraficos.set.estudo($scope.estudo);
+
+            $scope.graficos.geral = CompGraficos.geral();
+
         };
 
         $scope.testeModal = function() {
@@ -323,7 +335,8 @@ angular.module('estudos').controller('EstudosController', ['$scope', '$uibModal'
         //region Etapas para cálculo do estudo - iniImp()
 
         function zeraDadosGrafico() {
-            $scope.piePoints = [{"Frete": 0}, {"Fob": 0}, {"Custos": 0}, {"Taxas": 0}];
+            // $scope.piePoints = [{"Frete": 0}, {"Fob": 0}, {"Custos": 0}, {"Taxas": 0}];
+            CompGraficos.estudo.zera();
         }
 
         function totalizaCustosInternacionaisDoProduto(produto) {
@@ -337,12 +350,14 @@ angular.module('estudos').controller('EstudosController', ['$scope', '$uibModal'
 
         function criaGraficos() {
 
-            $scope.piePoints = [
-                {"Frete": $scope.estudo.resultados.comparacao.percentual_frete()},
-                {"Fob": $scope.estudo.resultados.comparacao.percentual_fob()},
-                {"Custos": $scope.estudo.resultados.comparacao.percentual_custos()},
-                {"Taxas": $scope.estudo.resultados.comparacao.percentual_taxas()}
-            ];
+            $scope.piePoints = CompGraficos.estudo.geral();
+
+            // $scope.piePoints = [
+            //     {"Frete": $scope.estudo.resultados.comparacao.percentual_frete()},
+            //     {"Fob": $scope.estudo.resultados.comparacao.percentual_fob()},
+            //     {"Custos": $scope.estudo.resultados.comparacao.percentual_custos()},
+            //     {"Taxas": $scope.estudo.resultados.comparacao.percentual_taxas()}
+            // ];
 
         }
 
@@ -352,7 +367,7 @@ angular.module('estudos').controller('EstudosController', ['$scope', '$uibModal'
             if($scope.produtosDoEstudo.length > 0)
             {
                 // CompEstudos.setFobProdutos(); //Itera por cada produto e seta os valores FOB (e letiáveis usd/brl/paypal/integral) <produto.estudo_do_produto.fob...>
-                CompEstudos.totalizaDadosBasicosEstudo(); // Itera produtos para totalizar dados do <$scope.estudo> como FOBs, Peso e Volume.
+                // CompEstudos.totalizaDadosBasicosEstudo(); // Itera produtos para totalizar dados do <$scope.estudo> como FOBs, Peso e Volume.
                 CompEstudos.totalizaCustosDoEstudo(); // Itera pelo objeto <$scope.custos> e faz o somatório para adicionar ao <$scope.estudo>
                 CompEstudos.geraEstudoDeCadaProduto(); // Itera por cada produto de <$scope.ProdutosDoEstudo> para gerar um <estudo_do_produto> com os custos de importação individualizados e totalizar <$scope.estudo>.
                 criaGraficos();

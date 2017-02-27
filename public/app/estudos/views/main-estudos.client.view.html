@@ -51,6 +51,7 @@
                     </div> <!-- Config > Primeira Linha -->
                 </div>
             </div> <!-- Configurações -->
+
             <div class="ibox collapsed float-e-margins">
                 <div class="ibox-title">
                     <h5>Análises</h5>
@@ -60,21 +61,82 @@
                     <div class="row">
                         <div class="col-sm-3">
                             <div>
-                                <p>Estudo</p>
-                                <small>Inv. Imp: {{ estudo.resultados.investimento() | currency: 'u$ ' }}</small><br/>
-                                <small>Inv. Desp: {{ estudo.resultados.despesas() | currency: 'u$ ' }}</small><br/>
-                                <small>Investimento total: {{ estudo.resultados.investimento() + estudo.resultados.despesas() | currency: 'u$ ' }}</small>
-                                <hr>
-                                <p>Despesas:</p>
-                                <small>Comerciais: {{ estudo.despesas.comerciais.total() | currency: 'u$ ' }}</small><br/>
-                                <small style="margin-left: 13px;">Amz Fulf: {{ estudo.despesas.comerciais.amazon.fulfillment() | currency: 'u$ ' }}</small><br/>
-                                <small style="margin-left: 13px;">Amz Com: {{ estudo.despesas.comerciais.amazon.comissoes() | currency: 'u$ ' }}</small><br/>
-                                <small>Total: {{ estudo.despesas.total() | currency: 'u$ ' }}</small><br/>
+                                <div class="social-footer" >
+                                    <table class="table table-striped small m-t-sm" ng-init="rel_analise_geral = estudo.display.relatorio.analises.geral">
+                                        <thead>
+                                        <tr>
+                                            <th>Estudo</th>
+                                            <th></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr>
+                                            <td>Fob</td>
+                                            <td><span class="text-success">{{ rel_analise_geral.fob() | currency: 'U$ '}}</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Custos</td>
+                                            <td><span class="text-success">{{ rel_analise_geral.custos() | currency: 'U$ '}}</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Despesas</td>
+                                            <td><span class="text-success">{{ rel_analise_geral.despesas() | currency: 'U$ '}}</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Inv. inicial</td>
+                                            <td><span class="text-success">{{ rel_analise_geral.investimento.importacao() | currency: 'U$ '}}</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Total</td>
+                                            <td><span class="text-success">{{ rel_analise_geral.investimento.total() | currency: 'U$ '}}</span></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div>
+                                <div class="social-footer" >
+                                    <table class="table table-striped small m-t-sm" ng-init="rel_analise_despesas = estudo.display.relatorio.analises.despesas">
+                                        <thead>
+                                        <tr>
+                                            <th>Despesas</th>
+                                            <th></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr>
+                                            <td>Comerciais</td>
+                                            <td><span class="text-success">{{ rel_analise_despesas.comerciais() | currency: 'U$ '}}</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Administrativas</td>
+                                            <td><span class="text-success">{{ rel_analise_despesas.administrativas() | currency: 'U$ '}}</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Armazenamento</td>
+                                            <td><span class="text-success">{{ rel_analise_despesas.armazenamento() | currency: 'U$ '}}</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Outras</td>
+                                            <td><span class="text-success">{{ rel_analise_despesas.outras() | currency: 'U$ '}}</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Total</td>
+                                            <td><span class="text-success">{{ rel_analise_despesas.total() | currency: 'U$ '}}</span></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-1">
+
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> <!-- Análises -->
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
                     <h5>Tabela de Produtos <small class="text-danger"> {{ auxTestes }}</small></h5>
@@ -87,15 +149,20 @@
                                 <div class="col-sm-4" style="text-align: left;">
                                     Produto
                                 </div>
-                                <div class="col-sm-3" style="text-align: left;">
-                                    Custo
+                                <div class="col-sm-8">
+                                    <div class="row">
+                                        <div class="col-sm-2" style="text-align: left;">
+                                            Custo
+                                        </div>
+                                        <div class="col-sm-2">
+                                            Qtd
+                                        </div>
+                                        <div class="col-sm-2">P.Venda</div>
+                                        <div class="col-sm-2">V. Diária</div>
+                                        <div class="col-sm-2">C.Final</div>
+                                        <div class="col-sm-2">Opções</div>
+                                    </div>
                                 </div>
-                                <div class="col-sm-1">
-                                    Qtd
-                                </div>
-                                <div class="col-sm-1">P.Venda</div>
-                                <div class="col-sm-2">C.Final</div>
-                                <div class="col-sm-1">Opções</div>
                             </div>
                         </div>
                     </div> <!-- HEADER -->
@@ -108,122 +175,147 @@
                                         <i class="fa fa-plus" style="cursor: pointer; margin-right: 3px;" ng-click="addDespesaInternacionalDoProdutoModal(itemEstudo)"></i>
                                         <img style="width: 40px;" class="img-circle" ng-src="{{ itemEstudo.img_url }}" alt="Imagem {{ itemEstudo.nome }}">
                                     </a>
-                                    <div class="media-body" style="margin-top: 12px; margin-left: 70px;">
-                                        <!--<small class="pull-right text-navy">{{ itemEstudo.modelo }}</small>-->
+                                    <div class="media-body" style="margin-left: 70px;">
                                         <small class="pull-right text-navy">{{ itemEstudo.estudo_do_produto.modulos.amazon.categoria }}</small>
-                                        <strong><a ng-click="produtoViewModal(itemEstudo)">{{ itemEstudo.nome | limitTo: 16 }}</a></strong>
+                                        <span style="cursor: pointer; font-size: 1.1em;" ng-click="produtoViewModal(itemEstudo)">{{ itemEstudo.nome | limitTo: 20 }}</span>
                                         <small class="text-muted"></small>
                                     </div>
                                 </div>
-                                <div class="col-sm-3">
-                                    <a>{{itemEstudo.estudo_do_produto.custo_unitario() | currency: 'U$ '}}</a>
-                                    <br>
-                                    <small>Investimento:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.resultados.investimento() | currency: 'U$ '}}</small><br/>
-                                </div>
-                                <div class="col-sm-1">
-                                    <input style="text-align:center;" type="number" class="form-control input-transparente" placeholder="qtd" data-ng-model="itemEstudo.estudo_do_produto.qtd" ng-change="processaMudancas(itemEstudo, 'qtd')">
-                                </div>
-                                <div class="col-sm-1">
-                                    <input style="text-align: center;" type="text" class="form-control input-transparente" placeholder="P.Venda (R$)" data-ng-model="itemEstudo.estudo_do_produto.resultados.precos.venda" ng-change="iniImport()">
-                                </div>
-                                <div class="col-sm-2">
-                                    <p style="text-align: center;" data-ng-show="!itemEstudo.estudo_do_produto.resultados.precos.custo.total()">- - -</p>
-                                    <p style="text-align: center;" data-ng-bind="itemEstudo.estudo_do_produto.resultados.precos.custo.total() | currency: 'U$ '"></p>
-                                </div>
-                                <div class="col-sm-1" style="text-align:center;">
-                                    <i data-toggle="tooltip" data-placement="right" title="Remover produto"  ng-click="removeProdutoEstudo(itemEstudo)" class="fa fa-times clickable"></i>
+                                <div class="col-sm-8">
+                                    <div class="row">
+                                        <div class="col-sm-2" style="text-align: left;">
+                                            <div class="media-body">
+                                                <span class="text-success">{{itemEstudo.estudo_do_produto.custo_unitario() | currency: 'U$ '}}</span>
+                                            </div>
+                                            <br>
+                                            <!--<small>Investimento:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.resultados.investimento() | currency: 'U$ '}}</small><br/>-->
+                                        </div>
+                                        <div class="col-sm-2" style="text-align: center;">
+                                            <div class="media-body">
+                                                <input style="text-align:center;" type="number" class="form-control input-transparente" placeholder="qtd" data-ng-model="itemEstudo.estudo_do_produto.qtd" ng-change="processaMudancas(itemEstudo, 'qtd')">
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-2" style="text-align: center;">
+                                            <div class="media-body">
+                                                <input style="text-align:center;" type="number" class="form-control input-transparente" placeholder="P.Venda (R$)" data-ng-model="itemEstudo.estudo_do_produto.resultados.precos.venda" ng-change="iniImport()">
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-2" style="text-align: center;">
+                                            <div class="media-body">
+                                                <input style="text-align: center;" type="number" class="form-control input-transparente" placeholder="venda diária" data-ng-model="itemEstudo.estudo_do_produto.venda_media.diaria.unidades" ng-change="processaMudancas(itemEstudo, 'qtd')">
+                                                <a class="text-info" style="text-align: center;"> {{ itemEstudo.estudo_do_produto.venda_media.converte.dia_para_mes() | currency: ''}}</a><br/>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-2" style="text-align: center;">
+                                            <div class="media-body">
+                                                <p style="text-align: center;" data-ng-show="!itemEstudo.estudo_do_produto.resultados.precos.custo.total()">- - -</p>
+                                                <p style="text-align: center;" data-ng-bind="itemEstudo.estudo_do_produto.resultados.precos.custo.total() | currency: 'U$ '"></p>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-1" style="text-align:center;">
+                                            <div class="media-body">
+                                                <i data-toggle="tooltip" data-placement="right" title="Remover produto"  ng-click="removeProdutoEstudo(itemEstudo)" class="fa fa-times clickable"></i>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="collapse" id="{{ itemEstudo._id }}">
-                                <div class="col-sm-4 col-sm-offset-0">
-                                    <small>Frete:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.custos.frete_maritimo.valor() | currency: 'U$ '}}</small><br/>
-                                    <small>Aduaneiros:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.custos.aduaneiros.total() | currency: 'U$ '}}</small><br/>
-                                    <small>Taxas:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.custos.taxas.total() | currency: 'U$ '}}</small><br/>
-                                    <small>Conny:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.custos.comissao_conny.total() | currency: 'U$ '}}</small><br/>
-                                    <small>Custos:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.custos.total() | currency: 'U$ '}}</small><br/>
+                                <div class="col-sm-3">
+                                    <div class="social-footer" style="margin-top: 8px;">
+                                        <table class="table table-striped small m-t-sm" data-ng-init="rel_principal = itemEstudo.estudo_do_produto.display.relatorio.tabela_de_produtos.principal">
+                                            <thead>
+                                            <tr>
+                                                <th>Principal</th>
+                                                <th></th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr>
+                                                <td>Frete</td>
+                                                <td><span class="text-success">{{ rel_principal.frete() | currency: 'U$ '}}</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Custos Aduaneiros</td>
+                                                <td><span class="text-success">{{ rel_principal.custos_aduaneiros() | currency: 'U$ '}}</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Taxas</td>
+                                                <td><span class="text-success">{{ rel_principal.taxas() | currency: 'U$ '}}</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Conny</td>
+                                                <td><span class="text-success">{{ rel_principal.conny() | currency: 'U$ '}}</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Custos</td>
+                                                <td><span class="text-success">{{ rel_principal.custos() | currency: 'U$ '}}</span></td>
+                                            </tr>
+
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                                 <div class="col-sm-3">
-                                    <small class="pull-right">46h ago</small>
-                                    <strong>Mike Loreipsum</strong> started following <strong>Monica Smith</strong>. <br>
-                                    <small class="text-muted">3 days ago at 7:58 pm - 10.06.2014</small>
+                                    <div class="social-footer" style="margin-top: 8px;">
+                                        <table class="table table-striped small m-t-sm" ng-init="rel_custos = itemEstudo.estudo_do_produto.display.relatorio.tabela_de_produtos.custos">
+                                            <thead>
+                                            <tr>
+                                                <th>Custos Unitários</th>
+                                                <th></th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr>
+                                                <td>Custo Imp.</td>
+                                                <td><span class="text-success">{{ rel_custos.importacao() | currency: 'U$ '}}</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Amazon fba</td>
+                                                <td><span class="text-success">{{ rel_custos.amazon.fba() | currency: 'U$ '}}</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Amazon comissões</td>
+                                                <td><span class="text-success">{{ rel_custos.amazon.comissoes() | currency: 'U$ '}}</span></td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
-                                <div class="col-sm-2"></div>
                                 <div class="col-sm-3">
-                                    <small>Custo Imp:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.resultados.precos.custo.importacao() | currency: 'U$ '}}</small><br/>
-                                    <small>Custo Desp:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.resultados.precos.custo.despesas() | currency: 'U$ '}}</small><br/>
-                                    <small>Total:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.resultados.precos.custo.importacao() + itemEstudo.estudo_do_produto.resultados.precos.custo.despesas() | currency: 'U$ '}}</small><br/><br/>
-                                    <small>Amazon fba:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.despesas.comerciais.amazon.fulfillment() | currency: 'U$ '}}</small><br/>
-                                    <small>Amazon Comissões:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.despesas.comerciais.amazon.comissoes() | currency: 'U$ '}}</small><br/>
+                                    <div class="social-footer" style="margin-top: 8px;"></div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="social-footer" style="margin-top: 8px;">
+                                        <table class="table table-striped small m-t-sm" ng-init="rel_custos_unitarios = itemEstudo.estudo_do_produto.display.relatorio.tabela_de_produtos.custos_unitarios">
+                                            <thead>
+                                            <tr>
+                                                <th>Custos Unitários</th>
+                                                <th></th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr>
+                                                <td>Custo Imp.</td>
+                                                <td><span class="text-success">{{ rel_custos_unitarios.importacao() | currency: 'U$ '}}</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Amazon fba</td>
+                                                <td><span class="text-success">{{ rel_custos_unitarios.amazon.fba() | currency: 'U$ '}}</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Amazon comissões</td>
+                                                <td><span class="text-success">{{ rel_custos_unitarios.amazon.comissoes() | currency: 'U$ '}}</span></td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-
-
-                    <!--<div class="project-list">-->
-                        <!--<table class="table table-hover">-->
-                            <!--<thead>-->
-                            <!--<tr>-->
-                                <!--<th data-toggle="true">Produto</th>-->
-                                <!--<th style="text-align: center;">Custo</th>-->
-                                <!--<th style="text-align: center;">Qtd</th>-->
-                                <!--<th style="text-align: center;">C.Final</th>-->
-                                <!--<th style="text-align: center;">P.Venda</th>-->
-                                <!--<th style="text-align: center;">Opções</th>-->
-                            <!--</tr>-->
-                            <!--</thead>-->
-                            <!--<tbody>-->
-                                <!--<tr data-ng-repeat="itemEstudo in produtosDoEstudo">-->
-                                <!--&lt;!&ndash;<td class="project-people pull-left">&ndash;&gt;-->
-                                    <!--&lt;!&ndash;<a href=""><img alt="image" class="img-circle" ng-src="{{ itemEstudo.img_url }}"></a>&ndash;&gt;-->
-                                <!--&lt;!&ndash;</td>&ndash;&gt;-->
-                                <!--<td class="project-title">-->
-                                    <!--<i class="fa fa-plus" style="cursor: pointer; margin-right: 3px;" ng-click="addDespesaInternacionalDoProdutoModal(itemEstudo)"></i>-->
-                                    <!--<a href="#"><img style="width: 40px;" class="img-circle" ng-src="{{ itemEstudo.img_url }}" alt="Imagem {{ itemEstudo.nome }}"></a>-->
-                                    <!--<a ng-click="produtoViewModal(itemEstudo)">{{ itemEstudo.nome | limitTo: 20 }}</a>-->
-                                    <!--<br/>-->
-                                    <!--<div data-ng-repeat="desp in itemEstudo.estudo_do_produto.despesas.internacionais.individualizadas">-->
-                                        <!--<small style="display: block;">{{ desp.desc }}: {{ desp.usd | currency: 'usd ' }}</small>-->
-                                    <!--</div>-->
-                                    <!--<small style="margin-left: 18px; margin-top: 4px;">{{ itemEstudo.modelo }}</small><br>-->
-                                    <!--&lt;!&ndash;<small>Cheio USD:{{ itemEstudo.estudo_do_produto.custo_unitario.cheio.usd }}</small><br/>&ndash;&gt;-->
-                                    <!--&lt;!&ndash;<small>Paypal USD: {{ itemEstudo.estudo_do_produto.custo_unitario.paypal.usd }}</small><br/>&ndash;&gt;-->
-                                    <!--&lt;!&ndash;<small>Declarado USD: {{ itemEstudo.estudo_do_produto.custo_unitario.declarado.usd }}</small><br/>&ndash;&gt;-->
-                                    <!--&lt;!&ndash;<small>Desp Int Tot: {{ itemEstudo.estudo_do_produto.custos.internacionais.totais.usd }}</small>&ndash;&gt;-->
-
-                                <!--</td>-->
-                                <!--<td class="project-title">-->
-                                    <!--<a>{{itemEstudo.estudo_do_produto.custo_unitario() | currency: 'U$ '}}</a>-->
-                                    <!--<br>-->
-                                    <!--<small>Investimento:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.resultados.investimento() | currency: 'U$ '}}</small><br/>-->
-                                    <!--&lt;!&ndash;<small>Frete:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.custos.frete_maritimo.valor() | currency: 'U$ '}}</small><br/>&ndash;&gt;-->
-                                    <!--&lt;!&ndash;<small>Aduaneiros:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.custos.aduaneiros.total() | currency: 'U$ '}}</small><br/>&ndash;&gt;-->
-                                    <!--&lt;!&ndash;<small>Taxas:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.custos.taxas.total() | currency: 'U$ '}}</small><br/>&ndash;&gt;-->
-                                    <!--&lt;!&ndash;<small>Conny:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.custos.comissao_conny.total() | currency: 'U$ '}}</small><br/>&ndash;&gt;-->
-                                    <!--&lt;!&ndash;<small>Custos:</small><small class="text-info"> {{ itemEstudo.estudo_do_produto.custos.total() | currency: 'U$ '}}</small><br/>&ndash;&gt;-->
-                                <!--</td>-->
-                                <!--<td class="project-title">-->
-                                    <!--<input style="text-align: center;" type="number" class="form-control input-transparente" placeholder="qtd" data-ng-model="itemEstudo.estudo_do_produto.qtd" ng-change="processaMudancas(itemEstudo, 'qtd')">-->
-                                <!--</td>-->
-                                <!--<td class="project-title">-->
-                                    <!--<span data-ng-bind="itemEstudo.estudo_do_produto.resultados.precos.custo.total() | currency: 'U$ '"></span><br/>-->
-                                    <!--<small>{{ itemEstudo.estudo_do_produto.modulos.amazon.categoria }}</small>-->
-                                <!--</td>-->
-                                <!--<td class="project-title">-->
-                                    <!--<input style="text-align: center;" type="text" class="form-control input-transparente" placeholder="P.Venda (R$)" data-ng-model="itemEstudo.estudo_do_produto.resultados.precos.venda" ng-change="iniImport()">-->
-                                <!--</td>-->
-                                <!--<td class="project-title">-->
-                                    <!--<i data-toggle="tooltip" data-placement="right" title="Remover produto"  ng-click="removeProdutoEstudo(itemEstudo)" class="fa fa-times clickable"></i>-->
-                                <!--</td>-->
-                            <!--</tr>-->
-
-                            <!--</tbody>-->
-                        <!--</table>-->
-                    <!--</div>-->
-
                 </div>
             </div> <!-- Tabela de Produtos do Estudo -->
             <div class="row">
@@ -313,7 +405,8 @@
                     <div ibox-tools></div>
                 </div>
                 <div class="ibox-content">
-                    <c3chart bindto-id="pie-plot1-chart" chart-data="piePoints" chart-columns="pieColumns">
+                    <c3chart bindto-id="pie-plot1-chart" chart-data="graficos.geral.piePoints" chart-columns="graficos.geral.pieColumns" width="10">
+                        <chart-colors color-pattern="{{ graficos.geral.colors }}"/>
                     </c3chart>
                 </div>
             </div>

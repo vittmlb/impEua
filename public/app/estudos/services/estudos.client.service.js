@@ -21,18 +21,6 @@ let parametros = {
     hmf: 0,
 };
 
-let enumDesp = {
-    comerciais: 'comerciais',
-    administrativas: 'administrativas',
-    armazenamento: 'amrmazenamento',
-    outras: 'outras',
-    importacao: 'importacao',
-    despesas: 'despesas',
-    amazon: 'amazon',
-    fulfillment: 'fulfillment',
-    comissoes: 'comissoes'
-};
-
 let produtosDoEstudo = [];
 
 function Estudo() {
@@ -53,7 +41,7 @@ function Estudo() {
         let auxFob = 0;
         this.lista_produtos.forEach(function (produto) {
             if(produto.estudo_do_produto.qtd) {
-                auxFob = produto.estudo_do_produto.fob();
+                auxFob += produto.estudo_do_produto.fob();
             }
         });
         return auxFob;
@@ -337,16 +325,112 @@ function Estudo() {
                 return parent.custos.taxas.duty() / parent.resultados.investimento();
             },
             percentual_mpf: function() {
-                return parent.custos.taxas.mpf() / parent.resultados.investimento;
+                return parent.custos.taxas.mpf() / parent.resultados.investimento();
             },
             percentual_hmf: function() {
-                return parent.custos.taxas.hmf() / parent.resultados.investimento;
+                return parent.custos.taxas.hmf() / parent.resultados.investimento();
             },
             percentual_custos: function() {
-                return parent.custos.total() / parent.resultados.investimento;
+                return parent.custos.total() / parent.resultados.investimento();
             },
             percentual_taxas: function() {
-                return parent.custos.taxas.total() / parent.resultados.investimento;
+                return parent.custos.taxas.total() / parent.resultados.investimento();
+            }
+        }
+    };
+    this.display = {
+        relatorio: {
+            analises: {
+                geral: {
+                    fob: function() {
+                        if(parent.fob()) {
+                            return parent.fob();
+                        }
+                        return 0;
+                    },
+                    custos: function() {
+                        if(parent.fob()) {
+                            return parent.custos.total();
+                        }
+                    },
+                    despesas: function () {
+                        if (parent.fob()) {
+                            return parent.despesas.total();
+                        }
+                        return 0;
+                    },
+                    investimento: {
+                        importacao: function () {
+                            if (parent.fob()) {
+                                return parent.resultados.investimento();
+                            }
+                            return 0;
+                        },
+                        total: function() {
+                            if(parent.fob()) {
+                                return parent.resultados.investimento() + parent.resultados.despesas();
+                            }
+                            return 0;
+                        }
+
+                    },
+                    despesass: {
+                        amazon: {
+                            fulfillment: function () {
+                                if (parent.fob()) {
+                                    return parent.despesas.comerciais.amazon.fulfillment();
+                                }
+                                return 0;
+                            },
+                            comissoes: function () {
+                                if (parent.fob()) {
+                                    return parent.despesas.comerciais.amazon.comissoes();
+                                }
+                            }
+                        },
+                        total: function() {
+                            if(parent.fob()) {
+                                return parent.despesas.comerciais.amazon.total();
+                            }
+                            return 0;
+                        }
+                    },
+                },
+                despesas: {
+                    comerciais: function() {
+                        if(parent.fob()) {
+                            return parent.despesas.comerciais.total();
+                        }
+                        return 0;
+                    },
+                    armazenamento: function() {
+                        if(parent.fob()) {
+                            return parent.despesas.armazenamento.total();
+                        }
+                        return 0;
+                    },
+                    administrativas: function() {
+                        if(parent.fob()) {
+                            return parent.despesas.administrativas.total();
+                        }
+                        return 0;
+                    },
+                    outras: function() {
+                        if(parent.fob()) {
+                            return parent.despesas.outras.total();
+                        }
+                        return 0;
+                    },
+                    total: function() {
+                        if(parent.fob()) {
+                            return parent.despesas.total();
+                        }
+                        return 0;
+                    }
+                },
+                custos: function() {
+
+                }
             }
         }
     };
@@ -423,6 +507,29 @@ function EstudoDoProduto() {
     this.produto = {};
     this.estudo = {};
     this.qtd = 0;
+    this.venda_media = {
+        diaria: {
+            unidades: 0,
+        },
+        mensal: {
+            unidades: 0
+        },
+        converte: {
+            dia_para_mes: function() {
+                if(parent.qtd && parent.venda_media.diaria.unidades) {
+                    return parent.qtd / (parent.venda_media.diaria.unidades * 30);
+                }
+                return '';
+            }
+        },
+        calcula: {
+            venda: {
+                mensal: function() {
+                    return parent.venda_media.diaria.unidades * parent.qtd;
+                }
+            }
+        }
+    };
     this.parametros = function() {
         return this.estudo.parametros;
     };
@@ -700,6 +807,180 @@ function EstudoDoProduto() {
                 }
             },
             venda: 0, // preço de venda - informado na tabela de produtos do estudo.
+        }
+    };
+    this.display = {
+        relatorio: {
+            tabela_de_produtos: {
+                custos_unitarios: {
+                    importacao: function() {
+                        if(parent.qtd) {
+                            return parent.resultados.precos.custo.importacao();
+                        }
+                        return 0;
+                    },
+                    amazon: {
+                        fba: function() {
+                            if(parent.qtd) {
+                                return parent.despesas.comerciais.amazon.fulfillment() / parent.qtd;
+                            }
+                            return 0;
+                        },
+                        comissoes: function() {
+                            if(parent.qtd) {
+                                return parent.despesas.comerciais.amazon.comissoes() / parent.qtd;
+                            }
+                            return 0;
+                        },
+                    },
+                    total: function() {
+                        if(parent.qtd) {
+                            return parent.display.relatorio.custos.importacao.unitario() + parent.display.relatorio.custos.despesas.unitario();
+                        }
+                        return 0;
+                    },
+                },
+                custos: {
+                    importacao: function() {
+                        if(parent.qtd) {
+                            return parent.resultados.precos.custo.importacao() * parent.qtd;
+                        }
+                        return 0;
+                    },
+                    amazon: {
+                        fba: function() {
+                            if(parent.qtd) {
+                                return parent.despesas.comerciais.amazon.fulfillment();
+                            }
+                            return 0;
+                        },
+                        comissoes: function() {
+                            if(parent.qtd) {
+                                return parent.despesas.comerciais.amazon.comissoes();
+                            }
+                            return 0;
+                        },
+                    },
+                    total: function() {
+                        if(parent.qtd) {
+                            return parent.custos.total();
+                        }
+                        return 0;
+                    },
+                },
+                principal: {
+                    frete: function() {
+                        if(parent.qtd) {
+                            return parent.custos.frete_maritimo.valor();
+                        }
+                        return 0;
+                    },
+                    custos_aduaneiros: function() {
+                        if(parent.qtd) {
+                            return parent.custos.aduaneiros.total();
+                        }
+                        return 0;
+                    },
+                    taxas: function() {
+                        if(parent.qtd) {
+                            return parent.custos.taxas.total();
+                        }
+                        return 0;
+                    },
+                    conny: function() {
+                        if(parent.qtd) {
+                            return parent.custos.comissao_conny.total();
+                        }
+                        return 0;
+                    },
+                    custos: function() {
+                        if(parent.qtd) {
+                            return parent.custos.total();
+                        }
+                        return 0;
+                    }
+                },
+                despesas: {
+
+                }
+            },
+            custos: {
+                importacao: {
+                    unitario: function() {
+                        if(parent.qtd) {
+                            return parent.resultados.precos.custo.importacao();
+                        }
+                        return 0;
+                    },
+                    somatorio: function() {
+                        if(parent.qtd) {
+                            return this.unitario() * parent.qtd;
+                        }
+                    }
+                },
+                despesas: {
+                    unitario: function() {
+                        if(parent.qtd) {
+                            return parent.resultados.despesas() / parent.qtd;
+                        }
+                        return 0;
+                    },
+                    somatorio: function() {
+                        if(parent.qtd) {
+                            return parent.resultados.despesas();
+                        }
+                        return 0;
+                    }
+                },
+                total: {
+                    unitario: function() {
+                        if(parent.qtd) {
+                            return parent.display.relatorio.custos.importacao.unitario() + parent.display.relatorio.custos.despesas.unitario();
+                        }
+                        return 0;
+                    },
+                    somatorio: function() {
+                        if(parent.qtd) {
+                            return parent.display.relatorio.custos.importacao.total() + parent.display.relatorio.custos.despesas.total();
+                        }
+                        return 0;
+                    }
+                }
+            },
+            despesas: {
+                comerciais: {
+                    amazon: {
+                        fba: {
+                            unitario: function() {
+                                if(parent.qtd) {
+                                    return parent.despesas.comerciais.amazon.fulfillment() / parent.qtd;
+                                }
+                                return 0;
+                            },
+                            somatorio: function() {
+                                if(parent.qtd) {
+                                    return parent.despesas.comerciais.amazon.fulfillment();
+                                }
+                                return 0;
+                            }
+                        },
+                        comissoes: {
+                            unitario: function() {
+                                if(parent.qtd) {
+                                    return parent.despesas.comerciais.amazon.comissoes() / parent.qtd;
+                                }
+                                return 0;
+                            },
+                            somatorio: function() {
+                                if(parent.qtd) {
+                                    return parent.despesas.comerciais.amazon.comissoes();
+                                }
+                                return 0;
+                            }
+                        }
+                    }
+                }
+            }
         }
     };
     this.load = {

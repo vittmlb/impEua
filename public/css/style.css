@@ -163,6 +163,7 @@ footer {
 .produto-estudo-element,
 .media-body {
     overflow: hidden;
+    margin-top: 10px;
 }
 .produto-estudo-element > .pull-left {
     margin-right: 10px;
