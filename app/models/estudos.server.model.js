@@ -1,28 +1,34 @@
 /**
  * Created by Vittorio on 15/Number8/2Number16.
  */
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
+let mongoose = require('mongoose');
+let Schema = mongoose.Schema;
 
-var ConfigSchema = new Schema({
-    taxa_paypal: {
+let ConfigSchema = new Schema({
+    volume_cntr_20: {
         type: Number
     },
-    iof_cartao: {
+    frete_maritimo: {
         type: Number
     },
-    comissao_ml: {
+    seguro_frete_maritimo: {
         type: Number
     },
-    aliquota_simples: {
+    comissao_amazon: {
         type: Number
     },
     percentual_comissao_conny: {
         type: Number
+    },
+    mpf: {
+        type: Number
+    },
+    hmf: {
+        type: Number
     }
 });
 
-var ObjetoConfigSchema = new Schema({
+let ObjetoConfigSchema = new Schema({
     cotacao_dolar: Number,
     cotacao_dolar_paypal: Number,
     volume_cntr_20: Number,
@@ -36,8 +42,9 @@ var ObjetoConfigSchema = new Schema({
     percentual_comissao_conny: Number
 });
 
-var ObjetoEstudoSchema = new Schema({
+let ObjetoEstudoSchema = new Schema({
     nome_estudo: String,
+    lista_produtos: [],
     cotacao_dolar: {
         type: Number
     },
@@ -224,9 +231,9 @@ var ObjetoEstudoSchema = new Schema({
     },
 });
 
-var EstudoDoProduto = new Schema({
+let EstudoDoProduto = new Schema({
     qtd: Number,
-    proporcionalidade: { // exibe a proporcionalidade do produto no estudo, de acordo com cada uma das variáveis em questão.
+    proporcionalidade: { // exibe a proporcionalidade do produto no estudo, de acordo com cada uma das letiáveis em questão.
         fob: Number,
         peso: Number,
     },
@@ -448,7 +455,7 @@ var EstudoDoProduto = new Schema({
     },
 });
 
-var EstudoSchema = new Schema({
+let EstudoSchema = new Schema({
     criadoEm: {
         type: Date,
         default: Date.now
