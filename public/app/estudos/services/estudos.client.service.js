@@ -176,14 +176,22 @@ function Estudo() {
     this.despesas = {
         comerciais: {
             amazon: {
-                fulfillment: function() {
-                    let auxSoma = 0;
-                    if(parent.fob()) {
-                        parent.lista_produtos.forEach(function (produto) {
-                            auxSoma += produto.estudo_do_produto.despesas.comerciais.amazon.fulfillment();
-                        });
+                fba: {
+                    fulfillment: function() {
+                        let auxSoma = 0;
+                        if(parent.fob()) {
+                            parent.lista_produtos.forEach(function (produto) {
+                                auxSoma += produto.estudo_do_produto.despesas.comerciais.amazon.fba.total();
+                            });
+                        }
+                        return auxSoma;
+                    },
+                    total: function() {
+                        if(parent.fob()) {
+                            return parent.despesas.comerciais.amazon.fba.fulfillment();
+                        }
+                        return 0;
                     }
-                    return auxSoma;
                 },
                 comissoes: function() {
                     let auxSoma = 0;
@@ -194,52 +202,52 @@ function Estudo() {
                     }
                     return auxSoma;
                 },
-                total: function(tipo) {
+                total: function() {
                     if(parent.fob()) {
-                        switch (tipo) {
-                            case 'fulfillment':
-                                return this.fulfillment();
-                            case 'comissoes':
-                                return this.comissoes();
-                            default:
-                                return this.fulfillment() + this.comissoes();
-                        }
+                        return parent.despesas.comerciais.amazon.fba.total() + this.comissoes();
                     }
                     return 0;
                 }
             },
-            total: function(tipo) {
+            total: function() {
                 if(parent.fob()) {
-                    return this.amazon.total(tipo);
+                    return this.amazon.fba.total();
                 }
                 return 0;
             }
         },
         armazenamento: {
             amazon: {
-                inventory: function() {
-                    return 0;
-                },
-                placement: function() {
-                    return 0;
-                },
-                total: function(tipo) {
-                    if(parent.fob()) {
-                        switch (tipo) {
-                            case 'inventory':
-                                return this.inventory();
-                            case 'placement':
-                                return this.placement();
-                            default:
-                                return this.inventory() + this.placement();
+                fba: {
+                    inventory: function() {
+                        let auxSoma = 0;
+                        if(parent.fob()) {
+                            parent.lista_produtos.forEach(function (produto) {
+                                auxSoma += produto.estudo_do_produto.despesas.armazenamento.amazon.fba.inventory();
+                            });
                         }
+                        return auxSoma;
+                    },
+                    placement: function() {
+                        let auxSoma = 0;
+                        if(parent.fob()) {
+                            parent.lista_produtos.forEach(function (produto) {
+                                auxSoma += produto.estudo_do_produto.despesas.armazenamento.amazon.fba.placement();
+                            });
+                        }
+                        return auxSoma;
+                    },
+                    total: function() {
+                        if(parent.fob()) {
+                            return parent.despesas.armazenamento.amazon.fba.inventory() + parent.despesas.armazenamento.amazon.fba.placement();
+                        }
+                        return 0;
                     }
-                    return 0;
-                }
+                },
             },
-            total: function(tipo) {
+            total: function() {
                 if(parent.qtd) {
-                    return this.amazon.total(tipo);
+                    return parent.despesas.armazenamento.amazon.fba.total();
                 }
                 return 0;
             }
@@ -275,11 +283,32 @@ function Estudo() {
     this.modulos = {
         amazon: {
             fba: {
-                fulfillment: 0,
-                inventory: 0,
-                placement: 0
+                fulfillment: {
+                    nome_fee: '',
+                    valor: 0,
+                    inspectedRules: [{
+                        params: {},
+                        rule_set: []
+                    }]
+                },
+                inventory: {
+                    nome_fee: '',
+                    valor: 0,
+                    inspectedRules: [{
+                        params: {},
+                        rule_set: []
+                    }]
+                },
+                placement: {
+                    nome_fee: '',
+                    valor: 0,
+                    inspectedRules: [{
+                        params: {},
+                        rule_set: []
+                    }]
+                }
             },
-            comissoes: 0
+            comissoes: 0,
         }
     };
     this.resultados = {
@@ -525,7 +554,7 @@ function EstudoDoProduto() {
         calcula: {
             venda: {
                 mensal: function() {
-                    return parent.venda_media.diaria.unidades * parent.qtd;
+                    return parent.venda_media.diaria.unidades * 30;
                 }
             }
         }
@@ -684,11 +713,18 @@ function EstudoDoProduto() {
     this.despesas = {
         comerciais: {
             amazon: {
-                fulfillment: function() {
-                    if(parent.qtd) {
-                        return parent.modulos.amazon.fba.fulfillment * parent.qtd;
+                fba: {
+                    fulfillment: function() {
+                        if(parent.qtd) {
+                            return parent.modulos.amazon.fba.fulfillment.valor * parent.qtd;
+                        }
+                        return 0;
+                    },
+                    total: function() {
+                        if(parent.qtd) {
+                            return parent.despesas.comerciais.amazon.fba.fulfillment();
+                        }
                     }
-                    return 0;
                 },
                 comissoes: function() {
                     if(parent.qtd) {
@@ -698,7 +734,7 @@ function EstudoDoProduto() {
                 },
                 total: function() {
                     if(parent.qtd) {
-                        return this.fulfillment() + this.comissoes();
+                        return parent.despesas.comerciais.amazon.fba.total() + this.comissoes();
                     }
                     return 0;
                 }
@@ -712,22 +748,34 @@ function EstudoDoProduto() {
         },
         armazenamento: {
             amazon: {
-                inventory: function() {
-                    return 0;
-                },
-                placement: function() {
-                    return 0;
+                fba: {
+                    inventory: function() {
+                        if(parent.qtd) {
+                            return parent.modulos.amazon.fba.inventory.valor * parent.qtd;
+                        }
+                        return 0;                    },
+                    placement: function() {
+                        if(parent.qtd) {
+                            return parent.modulos.amazon.fba.placement.valor * parent.qtd;
+                        }
+                        return 0;
+                    },
+                    total: function() {
+                        if(parent.qtd) {
+                            return parent.despesas.armazenamento.amazon.fba.inventory() + parent.despesas.armazenamento.amazon.fba.placement();
+                        }
+                    }
                 },
                 total: function() {
                     if(parent.qtd) {
-                        return this.inventory() + this.placement();
+                        return parent.despesas.armazenamento.amazon.fba.total();
                     }
                     return 0;
                 }
             },
-            total: function(tipo) {
+            total: function() {
                 if(parent.qtd) {
-                    return this.amazon.total(tipo);
+                    return parent.despesas.armazenamento.amazon.total();
                 }
                 return 0;
             }
@@ -752,13 +800,32 @@ function EstudoDoProduto() {
     this.modulos = {
         amazon: {
             fba: {
-                fulfillment: 0,
-                inventory: 0,
-                placement: 0
+                fulfillment: {
+                    nome_fee: '',
+                    valor: 0,
+                    inspectedRules: [{
+                        params: {},
+                        rule_set: []
+                    }]
+                },
+                inventory: {
+                    nome_fee: '',
+                    valor: 0,
+                    inspectedRules: [{
+                        params: {},
+                        rule_set: []
+                    }]
+                },
+                placement: {
+                    nome_fee: '',
+                    valor: 0,
+                    inspectedRules: [{
+                        params: {},
+                        rule_set: []
+                    }]
+                }
             },
             comissoes: 0,
-            categoria: '',
-            inspectedRules: []
         }
     };
     this.resultados = {
@@ -822,7 +889,7 @@ function EstudoDoProduto() {
                     amazon: {
                         fba: function() {
                             if(parent.qtd) {
-                                return parent.despesas.comerciais.amazon.fulfillment() / parent.qtd;
+                                return parent.despesas.comerciais.amazon.fba.total() / parent.qtd;
                             }
                             return 0;
                         },
@@ -850,7 +917,7 @@ function EstudoDoProduto() {
                     amazon: {
                         fba: function() {
                             if(parent.qtd) {
-                                return parent.despesas.comerciais.amazon.fulfillment();
+                                return parent.despesas.comerciais.amazon.fba.total();
                             }
                             return 0;
                         },

@@ -1,0 +1,76 @@
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-4">
+        <h2>Despesas</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a href="index.html">Home</a>
+            </li>
+            <li class="active">
+                <strong>Lista de Despesas</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="wrapper wrapper-content animated fadeInUp">
+            <section data-ng-controller="DespesasController" data-ng-init="find()">
+                <div class="ibox">
+                    <div class="ibox-title">
+                        <h5>Lista de Despesas</h5>
+
+                        <div class="ibox-tools">
+                            <a ui-sref="embalagem_create" class="btn btn-primary btn-xs">Criar nova Despesa</a>
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="row m-b-sm m-t-sm">
+                            <div class="col-md-1">
+                                <button type="button" id="loading-example-btn" class="btn btn-white btn-sm"><i class="fa fa-refresh"></i> Refresh</button>
+                            </div>
+                            <div class="col-md-11">
+                                <div class="input-group"><input type="text" placeholder="Busca" class="input-sm form-control" ng-model="query"> <span class="input-group-btn">
+                                        <button type="button" class="btn btn-sm btn-primary"> Go!</button> </span></div>
+                            </div>
+                        </div>
+
+                        <div class="project-list">
+
+                            <table class="table table-hover">
+                                <tbody>
+                                <tr data-ng-repeat="despesa in despesas | filter: query">
+                                    <!--<td class="project-status">-->
+                                    <!--<span class="label label-primary" ng-show="!ncm.li">Sem LI</span>-->
+                                    <!--<span class="label label-danger" ng-show="ncm.li">Licença</span>-->
+                                    <!--</td>-->
+                                    <td class="project-title">
+                                        <a ng-href="#!/despesas/{{ despesa._id }}">{{ despesa.nome_despesa }}</a>
+                                        <br/>
+                                        <small style="font-size: 0.9em;">{{ despesa.periodicidade }}</small>
+                                    </td>
+                                    <td class="project-title">
+                                        <a>{{ despesa.tipo_despesa }}</a>
+                                        <br>
+                                        <small class="text-info" ng-show="despesa.tipo_despesa === 'Valor'"> {{ despesa.valor_despesa | currency: 'U$ ' }}</small>
+                                        <small class="text-info" ng-show="despesa.tipo_despesa === 'Percentual'"> {{ despesa.percentual_despesa | percentage: 2 }}</small>
+                                    </td>
+                                    <td class="project-people">
+                                        <!--<a href=""><img alt="image" class="img-circle" src=""></a>-->
+
+                                    </td>
+                                    <td class="project-actions">
+                                        <a ng-href="#!/despesas/{{ despesa._id }}" class="btn btn-white btn-sm"><i class="fa fa-eye"></i></a>
+                                        <a ng-href="#!/despesas/{{ despesa._id }}/edit" class="btn btn-white btn-sm"><i class="fa fa-pencil"></i></a>
+                                        <a ng-click="deleteAlert(despesa)" class="btn btn-white btn-sm"><i class="fa fa-times"></i></a>
+                                    </td>
+                                </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>

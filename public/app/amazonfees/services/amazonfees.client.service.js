@@ -39,6 +39,15 @@ let opt = {
         polegadas: 'polegadas',
         metro: 'metro',
         m3: 'm3'
+    },
+    lista: {
+        fba: 'fba',
+        misf: 'misf'
+    },
+    fee: {
+        fulfillment: 'FBA Fulfillment Fees',
+        misf: 'Monthly Inventory Storage Fees',
+        placement: 'Inventory Placement Service Fees'
     }
 };
 
@@ -49,12 +58,22 @@ let flags = {
     pesagem: false
 };
 
-let listaFees = [];
-
 let listas = {
+    listaFees: [],
+    set: function(listaFees) {
+        this.listaFees = listaFees;
+    },
+    get: function(tipoLista) {
+        switch (tipoLista) {
+            case opt.lista.fba:
+                return this.fba();
+            case opt.lista.misf:
+                return this.misf();
+        }
+    },
     fba: function() {
-        let listaFba = listaFees.filter(function (data) {
-            if (data.tipo_fee === 'FBA Fulfillment Fees') {
+        let listaFba = this.listaFees.filter(function (data) {
+            if (data.tipo_fee === opt.fee.fulfillment) {
                 return data;
             }
         });
@@ -63,8 +82,8 @@ let listas = {
         });
     },
     misf: function() {
-        let listaMisf = listaFees.filter(function (data) {
-            if (data.tipo_fee === 'FBA Fulfillment Fees') {
+        let listaMisf = this.listaFees.filter(function (data) {
+            if (data.tipo_fee === opt.fee.misf) {
                 return data;
             }
         });
@@ -94,7 +113,18 @@ let RuleAux = function() {
             }
         },
         volume: -1,
-            meses: -1,
+        estoque: {
+            inicial: function() {
+                return parent.produto.estudo_do_produto.qtd * parent.parametros.estoque.volume_unitario();
+            },
+            volume_unitario: function() {
+                return parent.produto.embalagem.dimensoes.altura * parent.produto.embalagem.dimensoes.largura * parent.produto.embalagem.dimensoes.comprimento;
+            },
+            volume_venda_mensal: function() {
+                return parent.parametros.estoque.volume_unitario() * parent.produto.estudo_do_produto.venda_media.calcula.venda.mensal();
+            }
+        },
+        meses: -1,
     };
     this.produto = {};
     this.fee = {};
@@ -148,6 +178,18 @@ let RuleAux = function() {
             total: function() {
                 return this.base() + this.extra();
             }
+        },
+        inventory: function() {
+            let cbmVendaMensal = parent.parametros.estoque.volume_venda_mensal();
+            if (!cbmVendaMensal) return 0;
+            let estoque = parent.parametros.estoque.inicial();
+            let multiplicador = parent.fee.dados_fee.calculado.multiplicador;
+            let valor = 0;
+            while(estoque > 0) {
+                valor += (multiplicador * estoque);
+                estoque = estoque - cbmVendaMensal;
+            }
+            return valor / parent.produto.estudo_do_produto.qtd;
         }
     };
 
@@ -218,202 +260,116 @@ let RuleAux = function() {
 
 };
 
-let auxParams = {
-    parametros: {
-        dimensoes: {
-            longest: -1,
-            shortest: -1,
-            median: -1,
-            girth: -1
-        },
-        peso: {
-            lb: -1,
-            oz: -1,
-        },
-        volume: -1,
-        meses: -1,
-    },
-    produto: {},
-    setParametros: function(produto) {
-        this.setProduto(produto);
-        this.setParametrosProduto(produto);
-    },
-    setProduto: function(produto) {
-        this.produto = produto;
-    },
-    setParametrosProduto: function(produto) {
-        let dim = produto.embalagem.dimensoes;
-        let array = [dim.largura, dim.comprimento, dim.altura].sort();
-        this.parametros.dimensoes.shortest = this.convMetroToPolegada(array[0]);
-        this.parametros.dimensoes.median = this.convMetroToPolegada(array[1]);
-        this.parametros.dimensoes.longest = this.convMetroToPolegada(array[2]);
-        this.parametros.dimensoes.girth =  2 * (this.parametros.dimensoes.median + this.parametros.dimensoes.shortest); // já está convertido para polegadas.
-        this.parametros.peso.lb = this.convKgToLb(produto.embalagem.peso.bruto);
-        this.parametros.peso.oz = this.convKgToOz(produto.embalagem.peso.bruto);
-        this.parametros.volume = this.calculaVolume(produto);
-        this.parametros.meses = produto.estudo_do_produto.venda_media.converte.dia_para_mes();
-        return this.parametros;
-    },
-    calculaEstoqueBaseM3: function() {
-        return this.volume * this.produto.estudo_do_produto.qtd;
-    },
-    calculaVendaMensalM3: function() {
-        return this.produto.estudo_do_produto.venda_media.calcula.venda.mensal() * this.parametros.volume;
-    },
-    calculaVolume: function(produto) {
-        let dim = produto.embalagem.dimensoes;
-        return (dim.largura * dim.comprimento * dim.altura);
-    },
-    convKgToOz: function (kg) {
-        return kg * 35.274;
-    },
-    convKgToLb: function (kg) {
-        return kg * 2.20462;
-    },
-    convMetroToPolegada: function(m) {
-        return m * 39.3701;
-    }
-};
-
-
-let amz = {
-    produto: {},
-    modulo: {
+let ModuloAmz = function() {
+    let parent = this;
+    this.modulo = {
         fba: {
-            fulfillment: 0,
-            inventory: 0,
-            placement: 0
+            fulfillment: {
+                nome_fee: '',
+                valor: 0,
+                inspectedRules: [{
+                    params: {},
+                    rule_set: []
+                }]
+            },
+            inventory: {
+                nome_fee: '',
+                valor: 0,
+                inspectedRules: [{
+                    params: {},
+                    rule_set: []
+                }]
+            },
+            placement: {
+                nome_fee: '',
+                valor: 0,
+                inspectedRules: [{
+                    params: {},
+                    rule_set: []
+                }]
+            },
         },
         comissoes: 0,
-        categoria: '',
-        nome_fee: 0,
-        inspectedRules: [{
-            params: {},
-            rule_set: []
-        }]
-    },
-    set_modulo: function(mod) {
-        this.modulo = mod;
-    },
-    set_nome_fee: function(nome) {
-        this.produto.estudo_do_produto.modulos.amazon.categoria = nome;
-        this.modulo.nome_fee = nome;
-    },
-    set_inspectedRules: function(inspectedRulesArray) {
-        this.produto.estudo_do_produto.modulos.amazon.inspectedRules = inspectedRulesArray;
-        this.modulo.inspectedRules = inspectedRulesArray;
-    },
-    set_produto: function(produto) {
-        this.produto = produto;
-    },
-    unset_inspectedRules: function() {
-        this.modulo.inspectedRules = [{
-            params: {},
-            rule_set: []
-        }]
-    }
+    };
+    this.set = {
+        modulo: function(aux, tipoLista) {
+            switch (tipoLista) {
+                case opt.lista.fba:
+                    parent.modulo.fba.fulfillment.valor = aux.calcula.fulfillment.total();
+                    parent.modulo.fba.fulfillment.nome_fee = aux.fee.nome_fee;
+                    return true;
+                case opt.lista.misf:
+                    parent.modulo.fba.inventory.valor = aux.calcula.inventory();
+                    parent.modulo.fba.inventory.nome_fee = aux.fee.nome_fee;
+            }
+        },
+        inspectedRules: function(aux, rule_set, tipoLista) {
+            switch (tipoLista) {
+                case opt.lista.fba:
+                    parent.modulo.fba.fulfillment.inspectedRules.push({"params": aux.parametros, "rule_set": rule_set});
+                    return true;
+                case opt.lista.misf:
+                    parent.modulo.fba.inventory.inspectedRules.push({"params": aux.parametros, "rule_set": rule_set});
+                   return true;
+            }
+        }
+    };
+    this.unset = {
+        inspectedRules: function(aux, tipoLista) {
+            switch (tipoLista) {
+                case opt.lista.fba:
+                    parent.modulo.fba.fulfillment.inspectedRules = [];
+                    return true;
+                case opt.lista.misf:
+                    parent.modulo.fba.inventory.inspectedRules = [];
+                    return true;
+            }
+        }
+    };
 };
 
-let avaliador = {
-    inspectedRules: [],
-    currentFee: {},
-    currentRule: {},
-    currentRuleSet: {},
-    verificaRegras: function(params, produto, listaFees) {
-        let custo = 0;
-        for(let i = 0; i < listaFees.length; i++) {
-            custo = listaFees[i].dados_fee.valor;
-            if(!evaluate_dimensionamento(params, listaFees[i].rules_fee.dimensionamento)) {
-                this.unset_inspectedRules();
-                continue;
-            }
-
-            if(!evaluate_pesagem(params, listaFees[i].rules_fee.pesagem)) {
-                this.unset_inspectedRules();
-                continue;
-            }
-
-            if(checkFlags()) {
-                // amz.set.inspectedRules(auxParams.inspectedRules); // todo: Encontrar uma forma de jogar esse array para o objeto amazon.
-                amz.set_nome_fee(listaFees[i].nome_fee);
-                if(listaFees[i].tem_valor_calculado) custo = evaluate_unidade(params, listaFees[i], produto);
-                return custo;
-            }
-        }
-        return 0;
-    },
-    verificaRegrasInventory: function(produto) {
-        let custo = 0;
-        let lista = listas.misf();
-        for(let i = 0; i < lista.length; i++) {
-            custo = lista[i].dados_fee.valor;
-            if(!evaluate_dimensionamento(auxParams, lista[i].rules_fee.dimensionamento)) {
-                this.unset_inspectedRules();
-                continue;
-            }
-
-            if(flags.dimensionamento) {
-                amz.set_nome_fee(lista[i].nome_fee);
-                if(lista[i].tem_valor_calculado) custo = evaluate_unidade(params, lista[i], produto);
-                return custo;
-            }
-        }
-        return 0;
-    },
-    unset_inspectedRules: function() {
-        this.inspectedRules = [];
-    },
-    eval_operadores: function(param_1, param_2, operator) {
-        switch (operator) {
-            case 'igual':
-                return (param_1 === param_2);
-            case 'maior':
-                return (param_1 > param_2);
-            case 'menor':
-                return (param_1 < param_2);
-            case 'maior ou igual':
-                return (param_1 >= param_2);
-            case 'menor ou igual':
-                return (param_1 <= param_2);
-            default:
-                return 0;
-        }
-    }
-};
 
 angular.module('amazonfees').factory('CompAmazon', ['Amazonfees', function(Amazonfees) {
 
-    listaFees = Amazonfees.query();
-
-    function teste(produto) {
-        let listaFba = listas.fba();
-        amz.set_produto(produto);
-        auxParams.setParametros(produto);
-        amz.modulo.fba.fulfillment = avaliador.verificaRegras(auxParams.parametros, produto, listaFba);
-        amz.modulo.fba.inventory = avaliador.verificaRegrasInventory(produto);
-        amz.modulo.categoria = amz.modulo.nome_fee;
-        return amz.modulo;
-    }
+    listas.set(Amazonfees.query());
+    let amz = new ModuloAmz();
+    let tipoLista = '';
 
     function novoTeste(produto) {
-        let listaFba = listas.fba();
-        amz.set_produto(produto);
-        my_eval(produto);
+        eval_fees(produto, opt.lista.fba);
+        eval_fees(produto, opt.lista.misf);
         return amz.modulo;
     }
 
-    function auxCalculoEstoque(produto) {
-        amz.set_produto(produto);
-        auxParams.setParametros(produto);
-        let parametros = {};
-        let listaMisf = listas.misf();
+    function eval_fees(produto, tipoDaLista) {
+        tipoLista = tipoDaLista;
+        let lista = listas.get(tipoLista);
+        let aux = new RuleAux();
+        aux.set.produto(produto);
+        aux.set.parametros();
+        for(let i = 0; i < lista.length; i++) {
+            aux.set.fee(lista[i]);
+            if(!eval_dim(aux, lista[i])) {
+                amz.unset.inspectedRules(aux, tipoLista);
+                continue;
+            }
+            if(flags.dimensionamento) {
+                amz.set.modulo(aux, tipoLista);
+                return true;
+            }
+        }
+        return 0;
     }
 
-    function auxDeterminaParametros(parametros, produto) {
-        auxParams.setParametros(produto);
-        parametros.dimensoes = auxParams.parametros.dimensoes;
-        parametros.peso = auxParams.parametros.peso;
-        // parametros.dimensoes.girth = auxParams.determinaGirth(parametros.dimensoes);
+    function eval_dim(aux) {
+        let rule_set = aux.fee.rules_fee.dimensionamento.rule_set;
+        for(let i = 0; i < rule_set.length; i++) {
+            aux.set.rule(rule_set[i]);
+            flags.dimensionamento = aux.eval.dimensionamento.tipo_rule();
+            if(!flags.dimensionamento) return false;
+            amz.set.inspectedRules(aux, rule_set[i], tipoLista);
+        }
+        return flags.dimensionamento;
     }
 
     return {
@@ -423,136 +379,5 @@ angular.module('amazonfees').factory('CompAmazon', ['Amazonfees', function(Amazo
     }
 
 }]);
-
-function my_eval(produto) {
-    let lista = listas.fba();
-    let custo = 0;
-    let aux = new RuleAux();
-    aux.set.produto(produto);
-    aux.set.parametros();
-    for(let i = 0; i < lista.length; i++) {
-        custo = lista[i].dados_fee.valor;
-        aux.set.fee(lista[i]);
-        if(!eval_dim(aux, lista[i])) {
-            // this.unset_inspectedRules();
-            continue;
-        }
-
-        if(flags.dimensionamento) {
-            // amz.set.inspectedRules(auxParams.inspectedRules); // todo: Encontrar uma forma de jogar esse array para o objeto amazon.
-            amz.modulo.fba.fulfillment = aux.calcula.fulfillment.total();
-            // amz.modulo.fba.inventory = avaliador.verificaRegrasInventory(produto);
-            amz.modulo.categoria = amz.modulo.nome_fee;
-            // if(listaFees[i].tem_valor_calculado) custo = aux.calcula.fulfillment.total();
-            return custo;
-        }
-    }
-    return 0;
-}
-
-function eval_dim(aux, fee) {
-    let rule_set = aux.fee.rules_fee.dimensionamento.rule_set;
-    for(let i = 0; i < rule_set.length; i++) {
-        aux.set.rule(rule_set[i]);
-        flags.dimensionamento = aux.eval.dimensionamento.tipo_rule();
-        if(!flags.dimensionamento) return false;
-        amz.modulo.inspectedRules.push({"params": aux.parametros, "rule_set": rule_set[i]});
-    }
-    return flags.dimensionamento;
-}
-
-function evaluate_dimensionamento(params, fee) {
-    let rule_set = fee.rule_set;
-    for(let i = 0; i < rule_set.length; i++) {
-        flags.dimensionamento = evaluate(params, rule_set[i], rule_set[i].tipo_rule);
-        if(!flags.dimensionamento) return false;
-        amz.modulo.inspectedRules.push({"params": params, "rule_set": rule_set[i]});
-    }
-    return flags.dimensionamento;
-}
-function evaluate_medida(params, regra) {
-    switch (regra.params_rule.lados) {
-        case opt.shortest:
-            return avaliador.eval_operadores(params.dimensoes.shortest, regra.dados_rule.valor, regra.operador_rule);
-        case opt.median:
-            return avaliador.eval_operadores(params.dimensoes.median, regra.dados_rule.valor, regra.operador_rule);
-        case opt.longest:
-            return avaliador.eval_operadores(params.dimensoes.longest, regra.dados_rule.valor, regra.operador_rule);
-        case opt.girth:
-            return avaliador.eval_operadores((params.dimensoes.longest + params.dimensoes.girth), regra.dados_rule.valor, regra.operador_rule);
-        default:
-            return 0;
-    }
-}
-
-function evaluate_pesagem(params, fee) {
-    let rule_set = fee.rule_set;
-    for(let i = 0; i < rule_set.length; i++) {
-        flags.pesagem = evaluate(params, rule_set[i], rule_set[i].tipo_rule);
-        if(!checkFlags()) break;
-        amz.modulo.inspectedRules.push({"params": params, "rule_set": rule_set[i]});
-    }
-    return flags.pesagem;
-}
-function evaluate_peso(params, regra) {
-    switch (regra.dados_rule.unidade) {
-        case 'oz':
-            return avaliador.eval_operadores(params.peso.oz, regra.dados_rule.valor, regra.operador_rule);
-        case 'lb':
-            return avaliador.eval_operadores(params.peso.lb, regra.dados_rule.valor, regra.operador_rule);
-        default:
-            return 0;
-    }
-}
-
-function evaluate(params, regra, tipo_rule) {
-    switch (tipo_rule) {
-        case 'peso':
-            return evaluate_peso(params, regra);
-        case 'medida':
-            return evaluate_medida(params, regra);
-        default:
-            return false;
-    }
-}
-
-
-// function auxInspectRules (params, rule_set) {
-//     let auxString = '';
-//     let inspectedRule = {};
-//     inspectedRule.params = params;
-//     inspectedRule.rule_set = rule_set;
-//     amz.modulo.inspectedRules.push({"params": params, "rule_set": rule_set});
-//     inspectedRules.push(inspectedRule);
-// }
-
-
-function evaluate_unidade(params, regra, produto) {
-    switch (regra.dados_fee.calculado.unidade_franquia) {
-        case 'm3':
-            return calcula_custo_inventorio(regra);
-        case 'lb':
-            let base = params.peso.lb - regra.dados_fee.calculado.franquia;
-            regra.dados_fee.calculado.resultado = base * regra.dados_fee.calculado.multiplicador;
-            return regra.dados_fee.calculado.resultado + regra.dados_fee.valor;
-        default:
-            return 0;
-    }
-}
-
-function checkFlags() {
-    return flags.dimensionamento == true && flags.intervalo_data == true && flags.pesagem == true && flags.vigencia == true;
-}
-
-function calcula_custo_inventorio(regra) {
-    let estoque = auxParams.calculaEstoqueBaseM3();
-    let venda_mensal = auxParams.calculaVendaMensalM3();
-    let custo = 0;
-    while(estoque > 0) {
-        custo += (estoque * regra.dados_fee.valor);
-        estoque = estoque - venda_mensal;
-    }
-    return custo;
-}
 
 

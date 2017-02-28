@@ -39,6 +39,7 @@ module.exports = function() {
     require('../app/models/embalagens.server.model');
     require('../app/models/amazonfees.server.model.js');
     require('../app/models/amazonrules.server.model');
+    require('../app/models/despesas.server.model');
 
     return db;
 };
