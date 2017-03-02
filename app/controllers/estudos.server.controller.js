@@ -1,11 +1,11 @@
 /**
  * Created by Vittorio on 15/08/2016.
  */
-var Estudos = require('mongoose').model('Estudo');
-var produtos = require('./produtos.server.controller');
+let Estudos = require('mongoose').model('Estudo');
+let produtos = require('./produtos.server.controller');
 
 exports.create = function(req, res) {
-    var estudo = new Estudos(req.body);
+    let estudo = new Estudos(req.body);
     estudo.save(function (err) {
         if(err) {
             return res.status(400).send({
@@ -44,7 +44,7 @@ exports.findById = function(req, res, next, id) {
 };
 
 exports.update = function(req, res) {
-    var estudo = req.estudo;
+    let estudo = req.estudo;
     estudo.cotacao_dolar = req.body.cotacao_dolar;
     estudo.config = req.body.config;
     estudo.save(function (err) {
@@ -59,7 +59,7 @@ exports.update = function(req, res) {
 };
 
 exports.delete = function(req, res) {
-    var estudo = req.estudo;
+    let estudo = req.estudo;
     estudo.remove(function (err) {
         if(err) {
             return res.status(400).send({
@@ -72,7 +72,7 @@ exports.delete = function(req, res) {
 };
 
 function add_estudo(req, res, estudo) {
-    var estudo_id = estudo._id;
+    let estudo_id = estudo._id;
     estudo.produtosDoEstudo.forEach(function (data) {
         req.params.produtoId = data.produto_ref;
         req.params.estudoId = estudo_id;

@@ -28,20 +28,6 @@ let ConfigSchema = new Schema({
     }
 });
 
-let ObjetoConfigSchema = new Schema({
-    cotacao_dolar: Number,
-    cotacao_dolar_paypal: Number,
-    volume_cntr_20: Number,
-    iof_cartao: Number,
-    taxa_paypal: Number,
-    frete_maritimo_usd: Number,
-    seguro_frete_maritimo_usd: Number,
-    comissao_conny: Number,
-    comissao_ml: Number,
-    aliquota_simples: Number,
-    percentual_comissao_conny: Number
-});
-
 let ObjetoEstudoSchema = new Schema({
     nome_estudo: String,
     lista_produtos: [],
@@ -233,224 +219,10 @@ let ObjetoEstudoSchema = new Schema({
 
 let EstudoDoProduto = new Schema({
     qtd: Number,
-    proporcionalidade: { // exibe a proporcionalidade do produto no estudo, de acordo com cada uma das letiáveis em questão.
-        fob: Number,
-        peso: Number,
-    },
-    custo_unitario: {
-        declarado: { // Custo que constará da Invoice, ou seja, será o custo declarado para o governo, mas não contemplará o montante enviado por paypal
-            usd: Number,
-            brl: Number
-        },
-        paypal: { // Montante do Custo do produto pago através do paypal
-            usd: Number,
-            brl: Number
-        },
-        cheio: { // Montante que teria sido investido se o processo fosse feito integralmente por dentro (sem paypal)
-            usd: Number,
-            brl: Number
-        }
-    },
-    fob: {
-        declarado: { // FOB que constará da Invoice, ou seja, será o total declarado para o governo, mas não contemplará o montante enviado por paypal
-            usd: Number,
-            brl: Number
-        },
-        cheio: { // FOB real, como se o processo fosse feito integralmente por dentro (sem paypal)
-            usd: Number,
-            brl: Number
-        },
-        paypal: {
-            usd: Number,
-            brl: Number,
-            taxa_iof: {
-                usd: Number,
-                brl: Number,
-            },
-            taxa_paypal: {
-                usd: Number,
-                brl: Number,
-            },
-            taxa_conny: {
-                usd: Number,
-                brl: Number,
-            }
-        }
-    },
-    cif: {
-        declarado: { // CIF que constará da Invoice, ou seja, será o total declarado para o governo, mas não contemplará o montante enviado por paypal
-            usd: Number,
-            brl: Number
-        },
-        cheio: { // CIF real, como se o processo fosse feito integralmente por dentro (sem paypal)
-            usd: Number,
-            brl: Number
-        }
-    },
-    frete_maritimo: {
-        valor: {
-            usd: Number,
-            brl: Number
-        },
-        seguro: {
-            usd: Number,
-            brl: Number
-        }
-    },
-    medidas: {
-        peso: {
-            contratado: Number, // Por enquanto não vou usar esse valor > Só será usado quando importar um produto muito pesado.
-            ocupado: Number,
-            ocupado_percentual: Number // Por enquanto não vou usar esse valor > Só será usado quando importar um produto muito pesado.
-        },
-        volume: {
-            contratado: Number, // todo: Volume do Cntr escolhido para fazer o transporte da carga. Encontrar uma solução melhor para quando for trabalhar com outros volumes.
-            ocupado: Number,
-            ocupado_percentual: Number
-        }
-    },
-    tributos: {
-        declarado: { // Tributos que constarão da Invoice, ou seja, será o total declarado para o governo, mas não contemplará o montante enviado por paypal
-            ii: {
-                usd: Number,
-                brl: Number
-            },
-            ipi: {
-                usd: Number,
-                brl: Number
-            },
-            pis: {
-                usd: Number,
-                brl: Number
-            },
-            cofins: {
-                usd: Number,
-                brl: Number
-            },
-            icms: {
-                usd: Number,
-                brl: Number
-            },
-            total: {
-                usd: Number,
-                brl: Number
-            }
-        },
-        cheio: { // Tributaçao real, como se o processo fosse feito integralmente por dentro (sem paypal). Seria o total de impostos a pagar se não houvesse sonegação
-            ii: {
-                usd: Number,
-                brl: Number
-            },
-            ipi: {
-                usd: Number,
-                brl: Number
-            },
-            pis: {
-                usd: Number,
-                brl: Number
-            },
-            cofins: {
-                usd: Number,
-                brl: Number
-            },
-            icms: {
-                usd: Number,
-                brl: Number
-            },
-            total: {
-                usd: Number,
-                brl: Number
-            }
-        }
-    },
-    despesas: {
-        aduaneiras: {
-            usd: Number,
-            brl: Number
-        },
-        internacionais: { // Despesas originadas no exterior.
-            compartilhadas: [{ // Despesas a serem compartilhadas por todos os produtos (como viagem da Conny para acompanhar o carregamento do contêiner).
-                desc: String,
-                usd: Number,
-                brl: Number
-            }],
-            individualizadas: [{ // Despesas internacionais que dizem respeito a um único produto (viagem Conny para um fabricante, ou frete do produto para o porto.
-                desc: String,
-                usd: Number,
-                brl: Number
-            }],
-            totais: { // Somatório das custos compartilhadas e individualizadas.
-                usd: Number,
-                brl: Number
-            }
-        },
-        nacionais: { // Despesas originadas no exterior.
-            compartilhadas: { // Despesas a serem compartilhadas por todos os produtos (como viagem da Conny para acompanhar o carregamento do contêiner).
-                usd: Number,
-                brl: Number
-            },
-            individualizadas: { // Despesas internacionais que dizem respeito a um único produto (viagem Conny para um fabricante, ou frete do produto para o porto.
-                usd: Number,
-                brl: Number
-            },
-            totais: { // Somatório das custos compartilhadas e individualizadas.
-                usd: Number,
-                brl: Number
-            }
-        },
-        total: {
-            usd: Number,
-            brl: Number
-        }
-    },
-    resultados: {
-        investimento: { // Campo que designa o somatório dos custos unitários
-            declarado: { // Investimento que constará da Invoice, ou seja, será o total declarado para o governo, mas não contemplará o montante enviado por paypal
-                usd: Number,
-                brl: Number
-            },
-            paypal: { // Investimento feito através do paypal
-                usd: Number,
-                brl: Number
-            },
-            final: { // Montante EFETIVAMENTE desembolsado para a aquisiçao do produto > declarado + paypal
-                brl: Number
-            },
-            cheio: { // Montante que teria sido investido se o processo fosse feito integralmente por dentro (sem paypal)
-                brl: Number
-            }
-        },
-        lucro: {
-            unitario: { // Lucro real obtido na venda de CADA produto
-                brl: Number
-            },
-            total: { // Lucro real obtido na venda de TODOS os produtos
-                brl: Number
-            },
-        },
-        roi: { // ROI: Retorno Sobre Investimento > Lucro BRL / Investimento BRL
-            brl: Number
-        },
-        precos: {
-            custo: {
-                declarado: { // Preço de custo unitário baseado apenas no valor declarado - Não incluirá o montante enviado através do paypal
-                    usd: Number,
-                    brl: Number
-                },
-                paypal: { // Preço de custo unitário baseado apenas no valor enviado através do paypal, bem como nas taxas correspondentes
-                    usd: Number,
-                    brl: Number
-                },
-                final: { // Preço de custo unitário REAL (valor que o produto efetivamente custou ao final do processo), incluindo o declarado e paypal
-                    brl: Number
-                },
-                cheio: { // Preço de custo unitário do produto se toda a operação fosse feita "por dentro", sem envio de dinheiro pelo paypal
-                    brl: Number
-                }
-            },
-            venda: {
-                brl: Number
-            }
+    preco_venda: Number,
+    venda_media: {
+        diaria: {
+            unidades: Number
         }
     },
 });
@@ -471,7 +243,6 @@ let EstudoSchema = new Schema({
         // unique: true,
         // required: 'O Campo nome_estudo é obrigatório'
     },
-    estudo: ObjetoEstudoSchema,
     produtosDoEstudo: [
         {
             produto_ref: {
@@ -480,7 +251,7 @@ let EstudoSchema = new Schema({
             estudo_do_produto: EstudoDoProduto
         }
     ],
-    config: ObjetoConfigSchema
+    config: ConfigSchema
 });
 
 mongoose.model('Estudo', EstudoSchema);
