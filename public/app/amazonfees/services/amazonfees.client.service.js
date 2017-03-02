@@ -332,10 +332,11 @@ let ModuloAmz = function() {
 angular.module('amazonfees').factory('CompAmazon', ['Amazonfees', function(Amazonfees) {
 
     listas.set(Amazonfees.query());
-    let amz = new ModuloAmz();
+    let amz = {};
     let tipoLista = '';
 
     function novoTeste(produto) {
+        amz = new ModuloAmz();
         eval_fees(produto, opt.lista.fba);
         eval_fees(produto, opt.lista.misf);
         return amz.modulo;

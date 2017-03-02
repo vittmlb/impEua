@@ -1091,8 +1091,8 @@ angular.module('estudos').factory('CompEstudos', ['Custos', 'CompAmazon', '$http
     });
 
     function calculaCustosAmazonDoEstudoDoProduto(produto) {
-        let modulo_amazon = CompAmazon.calculo(produto);
-        produto.estudo_do_produto.set.modulos.amazon(modulo_amazon);
+        // let modulo_amazon = CompAmazon.calculo(produto);
+        produto.estudo_do_produto.set.modulos.amazon(CompAmazon.calculo(produto));
     }
 
     function Bamonos() {

@@ -63,6 +63,9 @@ angular.module('amazonrules').controller('AmazonrulesController', ['$scope', '$s
                 $scope.amazonrule = data;
                 $scope.amazonrule.rule_set.forEach(function (regra) {
                     $scope.setRules.push(regra);
+                    if(regra.tipo_rule === 'data') {
+                        regra.dados_rule.data = new Date(regra.dados_rule.data);
+                    }
                 });
             });
         };

@@ -173,11 +173,12 @@
                             <div class="produto-estudo-element">
                                 <div class="col-sm-4">
                                     <a data-toggle="collapse" data-target="#{{ itemEstudo._id }}" href="" class="pull-left">
-                                        <i class="fa fa-plus" style="cursor: pointer; margin-right: 3px;" ng-click="addDespesaInternacionalDoProdutoModal(itemEstudo)"></i>
-                                        <img style="width: 40px;" class="img-circle" ng-src="{{ itemEstudo.img_url }}" alt="Imagem {{ itemEstudo.nome }}">
+                                        <!--<i class="fa fa-plus" style="cursor: pointer; margin-right: 3px;" ng-click="addDespesaInternacionalDoProdutoModal(itemEstudo)"></i>-->
+                                        <img style="width: 40px; margin-left: 6px;" class="img-circle" ng-src="{{ itemEstudo.img_url }}" alt="Imagem {{ itemEstudo.nome }}">
                                     </a>
                                     <div class="media-body" style="margin-left: 70px;">
-                                        <small class="pull-right text-navy">{{ itemEstudo.estudo_do_produto.modulos.amazon.categoria }}</small>
+                                        <small class="pull-right text-navy" style="margin-left: 5px; margin-top: 1px;">{{ itemEstudo.estudo_do_produto.modulos.amazon.fba.fulfillment.nome_fee }}</small>
+                                        <small class="pull-right text-navy" style="margin-top: 1px;">{{ itemEstudo.estudo_do_produto.modulos.amazon.fba.inventory.nome_fee }}</small>
                                         <span style="cursor: pointer; font-size: 1.1em;" ng-click="produtoViewModal(itemEstudo)">{{ itemEstudo.nome | limitTo: 20 }}</span>
                                         <small class="text-muted"></small>
                                     </div>

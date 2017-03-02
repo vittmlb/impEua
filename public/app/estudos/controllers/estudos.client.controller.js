@@ -133,9 +133,9 @@ angular.module('estudos').controller('EstudosController', ['$scope', '$uibModal'
             }
             let estudo = new Estudos({
                 nome_estudo: $scope.estudo.nome_estudo,
-                estudo: $scope.estudo,
+                // estudo: $scope.estudo,
                 produtosDoEstudo: arrayTestes,
-                parametros: $scope.parametros
+                parametros: $scope.estudo.parametros
             });
             estudo.$save(function (response) {
                 alert(`Estudo id: ${response._id} criado com sucesso`);

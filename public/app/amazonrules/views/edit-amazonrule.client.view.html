@@ -95,10 +95,13 @@
                                                     data-ng-options="item for item in tiposRule">
                                             </select>
                                         </div>
-                                        <div class="col-sm-1">
+                                        <div class="col-sm-1" data-ng-show="rule.tipo_rule !== 'data'">
                                             <input type="number" step="any" class="form-control" data-ng-model="rule.dados_rule.valor" placeholder="Valor">
                                         </div>
-                                        <div class="col-sm-2">
+                                        <div class="col-sm-2" data-ng-show="rule.tipo_rule === 'data'">
+                                            <input type="date" class="form-control" id="inputRulesDadosData" data-ng-model="rule.dados_rule.data" placeholder="Data">
+                                        </div>
+                                        <div class="col-sm-2" data-ng-show="rule.tipo_rule !== 'data'">
                                             <select class="form-control" name="tipo_unidade"
                                                     data-ng-model="rule.dados_rule.unidade"
                                                     data-ng-options="item for item in tiposUnidade">
